@@ -1,0 +1,62 @@
+{
+  "name": "express-api-pzn",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "prisma": {
+    "seed": "ts-node prisma/seed.js"
+  },
+  "scripts": {
+    "testcontact": "jest contact.test.js -i",
+    "testaddress": "jest address.test.js -i",
+    "testuser": "jest user.test.js -i",
+    "start": "node ./src/main.js",
+    "serve": "nodemon ./src/main.js"
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.[t|j]sx?$": "babel-jest"
+    }
+  },
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "@prisma/client": "^5.2.0",
+    "bcrpyt": "^2.0.0",
+    "bcrypt": "^5.1.1",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "express-validator": "^7.0.1",
+    "joi": "^17.9.2",
+    "jsonwebtoken": "^9.0.2",
+    "multer": "^1.4.5-lts.1",
+    "nodemailer": "^6.9.5",
+    "pg": "^8.11.0",
+    "uuid": "^9.0.0",
+    "winston": "^3.10.0"
+  },
+  "devDependencies": {
+    "@babel/preset-env": "^7.22.10",
+    "@types/bcrypt": "^5.0.0",
+    "@types/cors": "^2.8.13",
+    "@types/dotenv": "^8.2.0",
+    "@types/express": "^4.17.17",
+    "@types/jest": "^29.5.3",
+    "@types/node": "^20.3.1",
+    "@types/supertest": "^2.0.12",
+    "@types/uuid": "^9.0.2",
+    "babel-jest": "^29.6.2",
+    "esbuild-register": "^3.4.2",
+    "jest": "^29.6.2",
+    "node": "^20.2.0",
+    "nodemon": "^3.0.1",
+    "prettier-plugin-prisma": "^4.13.0",
+    "prisma": "^4.16.2",
+    "supertest": "^6.3.3",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.1.3"
+  }
+}
