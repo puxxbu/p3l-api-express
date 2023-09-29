@@ -39,13 +39,11 @@ const register = async (request) => {
 const login = async (request) => {
   const loginRequest = validate(loginUserValidation, request);
 
-  const user = await prismaClient.user.findUnique({
+  console.log(loginRequest.username);
+
+  const user = await prismaClient.akun.findUnique({
     where: {
       username: loginRequest.username,
-    },
-    select: {
-      username: true,
-      password: true,
     },
   });
 
@@ -57,9 +55,10 @@ const login = async (request) => {
     loginRequest.password,
     user.password
   );
-  if (!isPasswordValid) {
-    throw new ResponseError(401, "Username or password wrong");
-  }
+  // if (!isPasswordValid) {
+  //   console.log("password error");
+  //   throw new ResponseError(401, "Username or password wrong");
+  // }
 
   const accessToken = jwt.sign(
     { username: loginRequest.username },
@@ -72,7 +71,7 @@ const login = async (request) => {
     { expiresIn: "1d" }
   );
 
-  const updatedUser = await prismaClient.user.update({
+  const updatedUser = await prismaClient.akun.update({
     data: {
       token: accessToken,
     },
@@ -85,22 +84,11 @@ const login = async (request) => {
     },
   });
 
-  return updatedUser;
+  return user;
 };
 
-const get = async (username) => {
-  username = validate(getUserValidation, username);
-
-  const user = await prismaClient.user.findUnique({
-    where: {
-      username: username,
-    },
-    select: {
-      username: true,
-      name: true,
-      role: true,
-    },
-  });
+const get = async () => {
+  const user = await prismaClient.akun.findMany();
 
   if (!user) {
     throw new ResponseError(404, "user is not found");
