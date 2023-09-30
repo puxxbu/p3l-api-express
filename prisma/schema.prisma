@@ -21,16 +21,17 @@ model akun {
 }
 
 model booking {
-  id_booking             Int                      @id(map: "pk_booking") @unique(map: "booking_pk")
+  id_booking             String                   @id(map: "pk_booking") @unique(map: "booking_pk") @db.VarChar(100)
   id_customer            Int
   id_pegawai             Int?
   tanggal_booking        DateTime                 @db.Date
-  tanggal_check_in       DateTime?                @db.Timestamp(6)
-  tanggal_check_out      DateTime?                @db.Timestamp(6)
+  tanggal_check_in       DateTime?                @db.Date
+  tanggal_check_out      DateTime?                @db.Date
   tamu_dewasa            Int?
   tamu_anak              Int?
   tanggal_pembayaran     DateTime?                @db.Date
   jenis_booking          String?                  @db.VarChar(255)
+  status_booking         String?                  @db.VarChar(100)
   customer               customer                 @relation(fields: [id_customer], references: [id_customer], onUpdate: Restrict, map: "fk_booking_relations_customer")
   pegawai                pegawai?                 @relation(fields: [id_pegawai], references: [id_pegawai], onDelete: Restrict, onUpdate: Restrict, map: "fk_booking_relations_pegawai")
   detail_booking_kamar   detail_booking_kamar[]
@@ -42,65 +43,57 @@ model booking {
 }
 
 model customer {
-  id_customer     Int              @id(map: "pk_customer") @unique(map: "customer_pk")
+  id_customer     Int       @id(map: "pk_customer") @unique(map: "customer_pk")
   id_akun         Int?
-  jenis_customer  String           @db.VarChar(255)
-  nama            String           @db.VarChar(255)
-  nomor_identitas String           @db.VarChar(255)
-  nomor_telepon   String           @db.VarChar(255)
-  email           String           @db.VarChar(255)
-  alamat          String?          @db.VarChar(255)
-  tanggal_dibuat  DateTime?        @db.Date
+  jenis_customer  String    @db.VarChar(255)
+  nama            String    @db.VarChar(255)
+  nomor_identitas String    @db.VarChar(255)
+  nomor_telepon   String    @db.VarChar(255)
+  email           String    @db.VarChar(255)
+  alamat          String    @db.VarChar(255)
+  tanggal_dibuat  DateTime  @db.Date
+  nama_institusi  String?   @db.VarChar(255)
   booking         booking[]
-  akun            akun?            @relation(fields: [id_akun], references: [id_akun], onDelete: Restrict, onUpdate: Restrict, map: "fk_customer_relations_akun")
-  customer_group  customer_group[]
+  akun            akun?     @relation(fields: [id_akun], references: [id_akun], onDelete: Restrict, onUpdate: Restrict, map: "fk_customer_relations_akun")
 
   @@index([id_akun], map: "relationship_4_fk")
 }
 
-model customer_group {
-  id_customer_group Int      @id(map: "pk_customer_group") @unique(map: "customer_group_pk")
-  id_customer       Int
-  nama_institusi    String?  @db.VarChar(255)
-  customer          customer @relation(fields: [id_customer], references: [id_customer], onUpdate: Restrict, map: "fk_customer_relations_customer")
-
-  @@index([id_customer], map: "relationship_14_fk")
-}
-
 model detail_booking_kamar {
-  id_detail_booking_kamar Int         @id(map: "pk_detail_booking_kamar") @unique(map: "detail_booking_kamar_pk")
-  id_booking              Int
-  id_jenis_kamar          Int
-  jumlah                  Int?
-  sub_total               Int?
-  booking                 booking     @relation(fields: [id_booking], references: [id_booking], onUpdate: Restrict, map: "fk_detail_b_relations_booking")
-  jenis_kamar             jenis_kamar @relation(fields: [id_jenis_kamar], references: [id_jenis_kamar], onUpdate: Restrict, map: "fk_detail_b_relations_jenis_ka")
+  id_detail_booking_kamar   Int                         @id(map: "pk_detail_booking_kamar") @unique(map: "detail_booking_kamar_pk")
+  id_booking                String                      @db.VarChar(100)
+  id_jenis_kamar            Int
+  jumlah                    Int?
+  sub_total                 Int?
+  booking                   booking                     @relation(fields: [id_booking], references: [id_booking], onUpdate: Restrict, map: "fk_detail_b_relations_booking")
+  jenis_kamar               jenis_kamar                 @relation(fields: [id_jenis_kamar], references: [id_jenis_kamar], onUpdate: Restrict, map: "fk_detail_b_relations_jenis_ka")
+  detail_ketersediaan_kamar detail_ketersediaan_kamar[]
 
   @@index([id_jenis_kamar], map: "relationship_8_fk")
   @@index([id_booking], map: "relationship_9_fk")
 }
 
 model detail_booking_layanan {
-  id_detail_booking_layanan Int       @id(map: "pk_detail_booking_layanan") @unique(map: "detail_booking_layanan_pk")
+  id_detail_booking_layanan Int      @id(map: "pk_detail_booking_layanan") @unique(map: "detail_booking_layanan_pk")
   id_fasilitas              Int
-  id_booking                Int
-  jumlah                    Int?
-  sub_total                 Int?
-  tanggal                   DateTime? @db.Date
-  booking                   booking   @relation(fields: [id_booking], references: [id_booking], onUpdate: Restrict, map: "fk_detail_b_relations_booking")
-  layanan                   layanan   @relation(fields: [id_fasilitas], references: [id_fasilitas], onUpdate: Restrict, map: "fk_detail_b_relations_layanan")
+  id_booking                String   @db.VarChar(100)
+  jumlah                    Int
+  sub_total                 Int
+  tanggal                   DateTime @db.Date
+  booking                   booking  @relation(fields: [id_booking], references: [id_booking], onUpdate: Restrict, map: "fk_detail_b_relations_booking")
+  layanan                   layanan  @relation(fields: [id_fasilitas], references: [id_fasilitas], onUpdate: Restrict, map: "fk_detail_b_relations_layanan")
 
   @@index([id_fasilitas], map: "relationship_10_fk")
   @@index([id_booking], map: "relationship_11_fk")
 }
 
 model invoice {
-  id_invoice        Int      @id(map: "pk_invoice") @unique(map: "invoice_pk")
-  id_booking        Int
+  id_invoice        String   @id(map: "pk_invoice") @unique(map: "invoice_pk") @db.VarChar(100)
+  id_booking        String   @db.VarChar(100)
   tanggal_pelunasan DateTime @db.Date
   total_pajak       Int
   jumlah_jaminan    Int
-  jumlah_deposit    Int
+  total_pembayaran  Int
   nama_pic_fo       String   @db.VarChar(255)
   booking           booking  @relation(fields: [id_booking], references: [id_booking], onUpdate: Restrict, map: "fk_invoice_relations_booking")
 
@@ -109,29 +102,29 @@ model invoice {
 
 model jenis_kamar {
   id_jenis_kamar       Int                    @id(map: "pk_jenis_kamar") @unique(map: "jenis_kamar_pk")
-  jenis_kamar          String?                @db.VarChar(100)
-  jenis_bed            String?                @db.VarChar(100)
-  kapasitas            String?                @db.VarChar(100)
+  jenis_kamar          String                 @db.VarChar(100)
+  jenis_bed            String                 @db.VarChar(100)
+  kapasitas            Int
+  jumlah_kasur         Int
   detail_booking_kamar detail_booking_kamar[]
   kamar                kamar[]
   tarif                tarif[]
 }
 
 model kamar {
-  id_kamar       Int         @id(map: "pk_kamar") @unique(map: "kamar_pk")
-  id_jenis_kamar Int
-  nomor_kamar    Int?
-  ketersediaan   Boolean?
-  jenis_kamar    jenis_kamar @relation(fields: [id_jenis_kamar], references: [id_jenis_kamar], onUpdate: Restrict, map: "fk_kamar_relations_jenis_ka")
+  id_kamar                  Int                         @id(map: "pk_kamar") @unique(map: "kamar_pk")
+  id_jenis_kamar            Int
+  nomor_kamar               Int
+  detail_ketersediaan_kamar detail_ketersediaan_kamar[]
+  jenis_kamar               jenis_kamar                 @relation(fields: [id_jenis_kamar], references: [id_jenis_kamar], onUpdate: Restrict, map: "fk_kamar_relations_jenis_ka")
 
   @@index([id_jenis_kamar], map: "relationship_3_fk")
 }
 
 model layanan {
   id_fasilitas           Int                      @id(map: "pk_layanan") @unique(map: "layanan_pk")
-  nama_layanan           String?                  @db.VarChar(100)
-  satuan                 String?                  @db.VarChar(100)
-  harga                  Int?
+  nama_layanan           String                   @db.VarChar(100)
+  harga                  Int
   detail_booking_layanan detail_booking_layanan[]
 }
 
@@ -146,16 +139,16 @@ model pegawai {
 }
 
 model role {
-  id_role   Int     @id(map: "pk_role") @unique(map: "role_pk")
-  nama_role String? @db.VarChar(100)
+  id_role   Int    @id(map: "pk_role") @unique(map: "role_pk")
+  nama_role String @db.VarChar(100)
   akun      akun[]
 }
 
 model season {
-  id_season       Int       @id(map: "pk_season") @unique(map: "season_pk")
-  nama_season     String?   @db.VarChar(100)
-  tanggal_mulai   DateTime? @db.Date
-  tanggal_selesai DateTime? @db.Date
+  id_season       Int      @id(map: "pk_season") @unique(map: "season_pk")
+  nama_season     String   @db.VarChar(100)
+  tanggal_mulai   DateTime @db.Date
+  tanggal_selesai DateTime @db.Date
   tarif           tarif[]
 }
 
@@ -163,10 +156,21 @@ model tarif {
   id_tarif       Int         @id(map: "pk_tarif") @unique(map: "tarif_pk")
   id_jenis_kamar Int
   id_season      Int
-  harga          Int?
+  harga          Int
   jenis_kamar    jenis_kamar @relation(fields: [id_jenis_kamar], references: [id_jenis_kamar], onUpdate: Restrict, map: "fk_tarif_relations_jenis_ka")
   season         season      @relation(fields: [id_season], references: [id_season], onUpdate: Restrict, map: "fk_tarif_relations_season")
 
   @@index([id_jenis_kamar], map: "relationship_1_fk")
   @@index([id_season], map: "relationship_2_fk")
+}
+
+model detail_ketersediaan_kamar {
+  id_ketersediaan_kamar   Int                  @id(map: "pk_detail_ketersediaan_kamar") @unique(map: "detail_ketersediaan_kamar_pk")
+  id_kamar                Int
+  id_detail_booking_kamar Int
+  detail_booking_kamar    detail_booking_kamar @relation(fields: [id_detail_booking_kamar], references: [id_detail_booking_kamar], onUpdate: Restrict, map: "fk_detail_k_relations_detail_b")
+  kamar                   kamar                @relation(fields: [id_kamar], references: [id_kamar], onUpdate: Restrict, map: "fk_detail_k_relations_kamar")
+
+  @@index([id_detail_booking_kamar], map: "relationship_18_fk2")
+  @@index([id_kamar], map: "relationship_19_fk")
 }

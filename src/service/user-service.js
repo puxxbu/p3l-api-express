@@ -84,7 +84,7 @@ const login = async (request) => {
     },
   });
 
-  return user;
+  return updatedUser;
 };
 
 const get = async () => {

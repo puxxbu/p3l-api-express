@@ -1,5 +1,5 @@
 {
-  "name": "express-api-pzn",
+  "name": "express-api-p3l",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -20,7 +20,7 @@
   },
   "author": "",
   "license": "ISC",
-  "type": "module",
+
   "dependencies": {
     "@prisma/client": "^5.2.0",
     "bcrpyt": "^2.0.0",
