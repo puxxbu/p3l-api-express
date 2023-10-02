@@ -1,4 +1,5 @@
 const { PrismaClient } = require("@prisma/client");
+const { func } = require("joi");
 
 const prisma = new PrismaClient();
 
@@ -567,37 +568,244 @@ async function main() {
   //   ],
   // });
 
-  await prisma.detail_ketersediaan_kamar.createMany({
-    data: [
-      {
-        id_ketersediaan_kamar: 1,
-        id_kamar: 1,
-        id_detail_booking_kamar: 1,
-      },
-      {
-        id_ketersediaan_kamar: 2,
-        id_kamar: 2,
-        id_detail_booking_kamar: 1,
-      },
-      {
-        id_ketersediaan_kamar: 3,
-        id_kamar: 2,
-        id_detail_booking_kamar: 1,
-      },
-      {
-        id_ketersediaan_kamar: 4,
-        id_kamar: 12,
-        id_detail_booking_kamar: 1,
-      },
-      {
-        id_ketersediaan_kamar: 5,
-        id_kamar: 13,
-        id_detail_booking_kamar: 1,
-      },
-    ],
-  });
+  // await prisma.detail_ketersediaan_kamar.createMany({
+  //   data: [
+  //     {
+  //       id_ketersediaan_kamar: 1,
+  //       id_kamar: 1,
+  //       id_detail_booking_kamar: 1,
+  //     },
+  //     {
+  //       id_ketersediaan_kamar: 2,
+  //       id_kamar: 2,
+  //       id_detail_booking_kamar: 1,
+  //     },
+  //     {
+  //       id_ketersediaan_kamar: 3,
+  //       id_kamar: 2,
+  //       id_detail_booking_kamar: 1,
+  //     },
+  //     {
+  //       id_ketersediaan_kamar: 4,
+  //       id_kamar: 12,
+  //       id_detail_booking_kamar: 1,
+  //     },
+  //     {
+  //       id_ketersediaan_kamar: 5,
+  //       id_kamar: 13,
+  //       id_detail_booking_kamar: 1,
+  //     },
+  //   ],
+  // });
+
+  // const result = await prisma.booking.findFirst({
+  //   select: {
+  //     detail_booking_kamar: {
+  //       select: {
+  //         jenis_kamar: {
+  //           select: {
+  //             tarif: {
+  //               select: { harga: true },
+  //               where: {
+  //                 id_jenis_kamar: 3,
+  //                 AND: {
+  //                   season: {
+  //                     tanggal_mulai: {
+  //                       lte: new Date("2023-09-11"),
+  //                     },
+  //                     tanggal_selesai: {
+  //                       gte: new Date("2023-09-11"),
+  //                     },
+  //                   },
+  //                 },
+  //               },
+  //             },
+  //           },
+  //         },
+  //       },
+  //     },
+  //   },
+  // });
+
+  //   const result = await prisma.$queryRaw`
+  //   SELECT t.harga, s.nama_season, t.id_jenis_kamar
+  //   FROM booking b
+  //   JOIN detail_booking_kamar dbk ON b.id_booking = dbk.id_booking
+  //   JOIN jenis_kamar jk ON dbk.id_jenis_kamar = jk.id_jenis_kamar
+  //   JOIN tarif t ON jk.id_jenis_kamar = t.id_jenis_kamar
+  //   JOIN season s ON t.id_season = s.id_season
+  //   WHERE b.tanggal_check_in BETWEEN s.tanggal_mulai AND s.tanggal_selesai
+  //   AND t.id_jenis_kamar = 3
+  // `;
+
+  // async function getLayananHarga(id_fasilitas, jumlah) {
+  //   try {
+  //     const result = await prisma.layanan.findFirst({
+  //       select: {
+  //         harga: true,
+  //       },
+  //       where: {
+  //         id_fasilitas: id_fasilitas,
+  //       },
+  //     });
+
+  //     return result.harga * jumlah;
+  //   } catch (error) {
+  //     throw new Error("Gagal mengambil data layanan:", error);
+  //   } finally {
+  //     await prisma.$disconnect();
+  //   }
+  // }
+
+  // await prisma.detail_booking_layanan.createMany({
+  //   data: [
+  //     {
+  //       id_detail_booking_layanan: 1,
+  //       id_fasilitas: 1,
+  //       id_booking: "1",
+  //       jumlah: 2,
+  //       sub_total: await getLayananHarga(1, 2),
+  //       tanggal: new Date("2023-09-26"),
+  //     },
+  //     {
+  //       id_detail_booking_layanan: 2,
+  //       id_fasilitas: 3,
+  //       id_booking: "2",
+  //       jumlah: 4,
+  //       sub_total: await getLayananHarga(3, 4),
+  //       tanggal: new Date("2023-09-11"),
+  //     },
+  //     {
+  //       id_detail_booking_layanan: 3,
+  //       id_fasilitas: 2,
+  //       id_booking: "3",
+  //       jumlah: 4,
+  //       sub_total: await getLayananHarga(2, 2),
+  //       tanggal: new Date("2023-09-28"),
+  //     },
+  //     {
+  //       id_detail_booking_layanan: 4,
+  //       id_fasilitas: 4,
+  //       id_booking: "3",
+  //       jumlah: 3,
+  //       sub_total: await getLayananHarga(4, 3),
+  //       tanggal: new Date("2023-09-24"),
+  //     },
+  //   ],
+  // });
+
+  async function getPajak(id_booking) {
+    try {
+      const result = await prisma.detail_booking_layanan.findMany({
+        select: {
+          sub_total: true,
+        },
+        where: {
+          id_booking: id_booking,
+        },
+      });
+
+      let total = 0;
+      result.forEach((item) => {
+        total += item.sub_total;
+      });
+
+      return total * 0.1;
+    } catch (error) {
+      throw new Error("Gagal mengambil data layanan:", error);
+    } finally {
+      await prisma.$disconnect();
+    }
+  }
+
+  async function getTotalMalam(id_booking) {
+    try {
+      const result = await prisma.$queryRaw`
+      SELECT
+        (DATE_PART('day', tanggal_check_out - tanggal_check_in) +
+        CASE WHEN DATE_PART('hour', tanggal_check_out - tanggal_check_in) >= 12 THEN 1 ELSE 0 END
+        + CASE WHEN DATE_PART('hour', tanggal_check_out) >= 12 THEN 1 ELSE 0 END) AS jumlah_malam
+      FROM booking
+      WHERE id_booking = ${id_booking};
+    `;
+
+      return result;
+    } catch (error) {
+      console.log(error);
+    } finally {
+      await prisma.$disconnect();
+    }
+  }
+
+  async function getTotalJaminan(id_booking) {
+    try {
+      const result = await prisma.detail_booking_kamar.findFirst({
+        select: {
+          sub_total: true,
+        },
+        where: {
+          id_booking: id_booking,
+        },
+      });
+
+      // let total = 0;
+      // result.forEach((item) => {
+      //   total += item.sub_total;
+      // });
+
+      return result.sub_total;
+    } catch (error) {
+      throw new Error("Gagal mengambil data layanan:", error);
+    } finally {
+      await prisma.$disconnect();
+    }
+  }
+
+  // await prisma.invoice.createMany({
+  //   data: [
+  //     {
+  //       id_invoice: "P300118-024",
+  //       id_booking: "1",
+  //       tanggal_pelunasan: new Date(),
+  //       total_pajak: 50000,
+  //       jumlah_jaminan: 200000,
+  //       total_pembayaran: 800000,
+  //       nama_pic_fo: "John Doe",
+  //     },
+  //     {
+  //       id_invoice: "P300118-025",
+  //       id_booking: "2",
+  //       tanggal_pelunasan: new Date(),
+  //       total_pajak: 50000,
+  //       jumlah_jaminan: 200000,
+  //       total_pembayaran: 800000,
+  //       nama_pic_fo: "John Doe",
+  //     },
+  //     {
+  //       id_invoice: "G300100-002",
+  //       id_booking: "3",
+  //       tanggal_pelunasan: new Date(),
+  //       total_pajak: 50000,
+  //       jumlah_jaminan: 200000,
+  //       total_pembayaran: 800000,
+  //       nama_pic_fo: "John Doe",
+  //     },
+  //     {
+  //       id_invoice: "G300100-003",
+  //       id_booking: "4",
+  //       tanggal_pelunasan: new Date(),
+  //       total_pajak: 50000,
+  //       jumlah_jaminan: 200000,
+  //       total_pembayaran: 800000,
+  //       nama_pic_fo: "John Doe",
+  //     },
+  //   ],
+  // });
 
   console.log("Seed data created successfully!");
+  console.log(await getPajak("1"));
+  console.log(await getTotalJaminan("2"));
+  console.log(await getTotalMalam("4"));
 }
 
 main()

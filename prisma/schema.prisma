@@ -25,8 +25,8 @@ model booking {
   id_customer            Int
   id_pegawai             Int?
   tanggal_booking        DateTime                 @db.Date
-  tanggal_check_in       DateTime?                @db.Date
-  tanggal_check_out      DateTime?                @db.Date
+  tanggal_check_in       DateTime?                @db.Timestamp(0)
+  tanggal_check_out      DateTime?                @db.Timestamp(0)
   tamu_dewasa            Int?
   tamu_anak              Int?
   tanggal_pembayaran     DateTime?                @db.Date
