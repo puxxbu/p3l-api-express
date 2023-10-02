@@ -729,7 +729,7 @@ async function main() {
       WHERE id_booking = ${id_booking};
     `;
 
-      return result;
+      return result[0].jumlah_malam;
     } catch (error) {
       console.log(error);
     } finally {
@@ -753,7 +753,7 @@ async function main() {
       //   total += item.sub_total;
       // });
 
-      return result.sub_total;
+      return result.sub_total * (await getTotalMalam(id_booking));
     } catch (error) {
       throw new Error("Gagal mengambil data layanan:", error);
     } finally {
@@ -764,43 +764,37 @@ async function main() {
   // await prisma.invoice.createMany({
   //   data: [
   //     {
-  //       id_invoice: "P300118-024",
-  //       id_booking: "1",
-  //       tanggal_pelunasan: new Date(),
-  //       total_pajak: 50000,
-  //       jumlah_jaminan: 200000,
-  //       total_pembayaran: 800000,
-  //       nama_pic_fo: "John Doe",
-  //     },
-  //     {
   //       id_invoice: "P300118-025",
   //       id_booking: "2",
   //       tanggal_pelunasan: new Date(),
-  //       total_pajak: 50000,
-  //       jumlah_jaminan: 200000,
-  //       total_pembayaran: 800000,
-  //       nama_pic_fo: "John Doe",
+  //       total_pajak: await getPajak("2"),
+  //       jumlah_jaminan: await getTotalJaminan("2"),
+  //       total_pembayaran: (await getPajak("2")) + (await getTotalJaminan("2")),
+  //       nama_pic_fo: "FO Santoso",
   //     },
-  //     {
-  //       id_invoice: "G300100-002",
-  //       id_booking: "3",
-  //       tanggal_pelunasan: new Date(),
-  //       total_pajak: 50000,
-  //       jumlah_jaminan: 200000,
-  //       total_pembayaran: 800000,
-  //       nama_pic_fo: "John Doe",
-  //     },
+
   //     {
   //       id_invoice: "G300100-003",
   //       id_booking: "4",
   //       tanggal_pelunasan: new Date(),
-  //       total_pajak: 50000,
-  //       jumlah_jaminan: 200000,
-  //       total_pembayaran: 800000,
-  //       nama_pic_fo: "John Doe",
+  //       total_pajak: await getPajak("4"),
+  //       jumlah_jaminan: await getTotalJaminan("4"),
+  //       total_pembayaran: (await getPajak("4")) + (await getTotalJaminan("4")),
+  //       nama_pic_fo: "FO Santoso",
   //     },
   //   ],
   // });
+
+  await prisma.booking.updateMany({
+    where: {
+      id_booking: {
+        in: ["2", "4"],
+      },
+    },
+    data: {
+      status_booking: "Check Out",
+    },
+  });
 
   console.log("Seed data created successfully!");
   console.log(await getPajak("1"));
