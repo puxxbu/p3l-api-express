@@ -7,7 +7,7 @@ export const authMiddleware = async (req, res, next) => {
   jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, async (err, decoded) => {
     if (err) return res.sendStatus(403); //token is invalid
 
-    const user = await prismaClient.user.findFirst({
+    const user = await prismaClient.akun.findFirst({
       where: {
         username: decoded.username,
       },
@@ -19,7 +19,20 @@ export const authMiddleware = async (req, res, next) => {
 };
 
 // const token = req.get("Authorization");
-//   if (!token) {
+// if (!token) {
+//   res
+//     .status(401)
+//     .json({
+//       errors: "Unauthorized",
+//     })
+//     .end();
+// } else {
+//   const user = await prismaClient.akun.findFirst({
+//     where: {
+//       token: token,
+//     },
+//   });
+//   if (!user) {
 //     res
 //       .status(401)
 //       .json({
@@ -27,20 +40,7 @@ export const authMiddleware = async (req, res, next) => {
 //       })
 //       .end();
 //   } else {
-//     const user = await prismaClient.user.findFirst({
-//       where: {
-//         token: token,
-//       },
-//     });
-//     if (!user) {
-//       res
-//         .status(401)
-//         .json({
-//           errors: "Unauthorized",
-//         })
-//         .end();
-//     } else {
-//       req.user = user;
-//       next();
-//     }
+//     req.user = user;
+//     next();
 //   }
+// }

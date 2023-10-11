@@ -5,8 +5,7 @@ Accept: application/json
 {
   "username" : "pablo1",
   "password" : "rahasia",
-  "name" : "pab krs",
-  "roleId" :  1001
+  "id_role" :  1001
 }
 
 ###
@@ -16,8 +15,8 @@ Content-Type: application/json
 Accept: application/json
 
 {
-  "username" : "admin",
-  "password" : "admin"
+  "username" : "pablo1",
+  "password" : "rahasia"
 }
 
 ###
@@ -25,7 +24,7 @@ Accept: application/json
 GET http://localhost:3000/api/users/current
 Content-Type: application/json
 Accept: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InBhYmxvMSIsImlhdCI6MTY5NDY3Mjg0NCwiZXhwIjoxNjk1MTkxMjQ0fQ.B43GNc53gJgWUgPu6b44giDE_4BxQas5PyQrdc789LI
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InBhYmxvMSIsImlhdCI6MTY5NzA0NDEwOCwiZXhwIjoxNjk3NTYyNTA4fQ.83dUjC7rqcYpTlMXauGJksQFiL7Q9FdjjiB_qBKorzQ
 
 
 ###

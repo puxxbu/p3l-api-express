@@ -13,11 +13,19 @@ import { v4 as uuid } from "uuid";
 import { transport } from "../utils/mail-transporter.js";
 import jwt from "jsonwebtoken";
 const register = async (request) => {
-  const user = validate(registerUserValidation, request);
+  const akun = validate(registerUserValidation, request);
 
-  const countUser = await prismaClient.user.count({
+  const count = await prismaClient.akun.count();
+
+  if (akun.id_role === 2001) {
+    akun.id_akun = 20000 + count + 1;
+  } else {
+    akun.id_akun = 10000 + count + 1;
+  }
+
+  const countUser = await prismaClient.akun.count({
     where: {
-      username: user.username,
+      username: akun.username,
     },
   });
 
@@ -25,13 +33,13 @@ const register = async (request) => {
     throw new ResponseError(400, "Username already exists");
   }
 
-  user.password = await bcrypt.hash(user.password, 10);
+  akun.password = await bcrypt.hash(akun.password, 10);
 
-  return prismaClient.user.create({
-    data: user,
+  return prismaClient.akun.create({
+    data: akun,
     select: {
       username: true,
-      name: true,
+      id_role: true,
     },
   });
 };
@@ -55,10 +63,10 @@ const login = async (request) => {
     loginRequest.password,
     user.password
   );
-  // if (!isPasswordValid) {
-  //   console.log("password error");
-  //   throw new ResponseError(401, "Username or password wrong");
-  // }
+  if (!isPasswordValid) {
+    console.log("password error");
+    throw new ResponseError(401, "Username or password wrong");
+  }
 
   const accessToken = jwt.sign(
     { username: loginRequest.username },
@@ -87,8 +95,16 @@ const login = async (request) => {
   return updatedUser;
 };
 
-const get = async () => {
-  const user = await prismaClient.akun.findMany();
+const get = async (username) => {
+  const user = await prismaClient.akun.findUnique({
+    where: {
+      username: username,
+    },
+    select: {
+      username: true,
+      id_role: true,
+    },
+  });
 
   if (!user) {
     throw new ResponseError(404, "user is not found");
