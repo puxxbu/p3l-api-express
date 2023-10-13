@@ -101,8 +101,8 @@ const get = async (username) => {
       username: username,
     },
     select: {
-      username: true,
-      id_role: true,
+      token: true,
+      role: true,
     },
   });
 
