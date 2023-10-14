@@ -6,6 +6,15 @@ const registerUserValidation = Joi.object({
   id_role: Joi.number().required(),
 });
 
+const dataCustomerValidation = Joi.object({
+  jenis_customer: Joi.string().max(100).required(),
+  nama: Joi.string().max(100).required(),
+  nomor_identitas: Joi.string().max(100).required(),
+  nomor_telepon: Joi.string().max(12).required(),
+  email: Joi.string().email({ tlds: { allow: false } }),
+  alamat: Joi.string().max(100).required(),
+});
+
 const loginUserValidation = Joi.object({
   username: Joi.string().max(100).required(),
   password: Joi.string().max(100).required(),
@@ -24,4 +33,5 @@ export {
   loginUserValidation,
   getUserValidation,
   updateUserValidation,
+  dataCustomerValidation,
 };

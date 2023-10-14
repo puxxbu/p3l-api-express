@@ -5,6 +5,7 @@ import {
   loginUserValidation,
   registerUserValidation,
   updateUserValidation,
+  dataCustomerValidation,
 } from "../validation/user-validation.js";
 import { validate } from "../validation/validation.js";
 import bcrypt from "bcrypt";
@@ -13,15 +14,8 @@ import { v4 as uuid } from "uuid";
 import { transport } from "../utils/mail-transporter.js";
 import jwt from "jsonwebtoken";
 const register = async (request) => {
-  const akun = validate(registerUserValidation, request);
-
+  const akun = validate(registerUserValidation, request.akun);
   const count = await prismaClient.akun.count();
-
-  if (akun.id_role === 2001) {
-    akun.id_akun = 20000 + count + 1;
-  } else {
-    akun.id_akun = 10000 + count + 1;
-  }
 
   const countUser = await prismaClient.akun.count({
     where: {
@@ -34,6 +28,42 @@ const register = async (request) => {
   }
 
   akun.password = await bcrypt.hash(akun.password, 10);
+
+  if (akun.id_role === 2001) {
+    const dataCustomer = validate(dataCustomerValidation, request.customer);
+
+    const countCustomer = await prismaClient.customer.findFirst({
+      orderBy: {
+        id_customer: "desc", // Mengurutkan berdasarkan id_customer secara menurun (descending)
+      },
+      take: 1, // Mengambil hanya 1 entitas dengan id_customer tertinggi
+    });
+
+    const id_akun = 20000 + count + 1;
+    akun.id_akun = id_akun;
+    dataCustomer.tanggal_dibuat = new Date();
+    dataCustomer.id_akun = id_akun;
+    dataCustomer.id_customer = countCustomer.id_customer + 1;
+
+    return prismaClient.$transaction([
+      prismaClient.akun.create({
+        data: akun,
+        select: {
+          username: true,
+          id_role: true,
+        },
+      }),
+      prismaClient.customer.create({
+        data: dataCustomer,
+        select: {
+          nama: true,
+          jenis_customer: true,
+        },
+      }),
+    ]);
+  } else {
+    akun.id_akun = 10000 + count + 1;
+  }
 
   return prismaClient.akun.create({
     data: akun,

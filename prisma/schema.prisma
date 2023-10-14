@@ -43,7 +43,7 @@ model booking {
 }
 
 model customer {
-  id_customer     Int       @id(map: "pk_customer") @unique(map: "customer_pk")
+  id_customer     Int       @id(map: "pk_customer") @unique(map: "customer_pk") @default(autoincrement())
   id_akun         Int?
   jenis_customer  String    @db.VarChar(255)
   nama            String    @db.VarChar(255)

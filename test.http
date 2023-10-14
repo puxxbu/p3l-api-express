@@ -3,9 +3,32 @@ Content-Type: application/json
 Accept: application/json
 
 {
-  "username" : "pablo1",
-  "password" : "rahasia",
-  "id_role" :  1001
+  "akun": {
+    "username": "pablo1233",
+    "password": "rahasia",
+    "id_role": 2001
+  },
+  "customer": {
+    "nama": "Pablo",
+    "jenis_customer": "Personal",
+    "nomor_identitas": "123123123",
+    "nomor_telepon": "081233214432",
+    "email": "abc@gmail.com",
+    "alamat": "Jl. Jalan"
+  }
+}
+
+###
+POST http://localhost:3000/api/users
+Content-Type: application/json
+Accept: application/json
+
+{
+  "akun": {
+    "username": "karyawan3",
+    "password": "rahasia",
+    "id_role": 1003
+  }
 }
 
 ###
@@ -15,7 +38,7 @@ Content-Type: application/json
 Accept: application/json
 
 {
-  "username" : "pablo1",
+  "username" : "pablo1233",
   "password" : "rahasia"
 }
 
