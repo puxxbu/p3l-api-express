@@ -50,6 +50,18 @@ const update = async (req, res, next) => {
   }
 };
 
+const changePassword = async (req, res, next) => {
+  try {
+    console.log(req.body);
+    const result = await userService.changePassword(req.body);
+    res.status(200).json({
+      data: result,
+    });
+  } catch (e) {
+    next(e);
+  }
+};
+
 const logout = async (req, res, next) => {
   try {
     await userService.logout(req.user.username);
@@ -131,4 +143,5 @@ export default {
   sendEmail,
   refreshToken,
   removeToken,
+  changePassword,
 };

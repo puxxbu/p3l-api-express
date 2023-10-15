@@ -143,8 +143,51 @@ const get = async (username) => {
   return user;
 };
 
+const changePassword = async (request) => {
+  const { username, oldPassword, newPassword } = request;
+
+  const user = await prismaClient.akun.findUnique({
+    where: {
+      username: username,
+    },
+  });
+
+  if (!user) {
+    throw new ResponseError(404, "user is not found");
+  }
+
+  const isPasswordValid = await bcrypt.compare(oldPassword, user.password);
+  if (!isPasswordValid) {
+    throw new ResponseError(401, "Old password is wrong");
+  }
+
+  const newHashedPassword = await bcrypt.hash(newPassword, 10);
+
+  return prismaClient.akun.update({
+    where: {
+      username: username,
+    },
+    data: {
+      password: newHashedPassword,
+    },
+  });
+};
+
+const logout = async (username) => {
+  return prismaClient.akun.update({
+    where: {
+      username: username,
+    },
+    data: {
+      token: null,
+    },
+  });
+};
+
 export default {
   register,
   login,
   get,
+  changePassword,
+  logout,
 };

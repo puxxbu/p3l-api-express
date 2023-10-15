@@ -39,7 +39,7 @@ Accept: application/json
 
 {
   "username" : "pablo1233",
-  "password" : "rahasia"
+  "password" : "rahasia123"
 }
 
 ###
@@ -59,6 +59,18 @@ Authorization: 555ead79-fe4c-4441-9afd-6bf14c3f94f8
 
 {
   "name" : "Eko Kurniawan Khannedy"
+}
+
+###
+PUT http://localhost:3000/api/users/password
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InBhYmxvMTIzMyIsImlhdCI6MTY5NzM3NTg5OSwiZXhwIjoxNjk3ODk0Mjk5fQ.xY_TtaCk0JpySFV55UNfDWUYhm43NdHaHSO-9RUbSd0
+
+{
+  "username" : "pablo1233",
+  "oldPassword" : "rahasia",
+  "newPassword" : "rahasia123"
 }
 
 ###

@@ -14,5 +14,6 @@ userRouter.use(authMiddleware);
 
 // User API
 userRouter.get("/api/users/current", userController.get);
+userRouter.put("/api/users/password", userController.changePassword);
 
 export { userRouter };
