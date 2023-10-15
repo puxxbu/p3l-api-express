@@ -31,8 +31,7 @@ const create = async (request) => {
   });
 };
 
-const getProfileById = async (request) => {
-  const { id } = request.params;
+const getProfileById = async (id) => {
   if (!id) {
     throw new ResponseError(400, "id is required");
   }
@@ -101,7 +100,7 @@ const updateProfile = async (request) => {
 };
 
 export default {
-  register,
-  login,
-  get,
+  create,
+  getProfileById,
+  updateProfile,
 };

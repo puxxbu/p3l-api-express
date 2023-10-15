@@ -4,6 +4,7 @@ import { authMiddleware } from "../middleware/auth-middleware.js";
 
 import cookieParser from "cookie-parser";
 import userController from "../controller/user-controller.js";
+import customerController from "../controller/customer-controller.js";
 
 const userRouter = new express.Router();
 
@@ -15,5 +16,10 @@ userRouter.use(authMiddleware);
 // User API
 userRouter.get("/api/users/current", userController.get);
 userRouter.put("/api/users/password", userController.changePassword);
+
+//Customer API
+
+userRouter.post("/api/customer", customerController.create);
+userRouter.get("/api/customer/:id", customerController.getProfileById);
 
 export { userRouter };
