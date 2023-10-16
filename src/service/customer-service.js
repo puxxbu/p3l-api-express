@@ -55,8 +55,10 @@ const getProfileById = async (id) => {
 
 const updateProfile = async (request) => {
   const dataCustomer = validate(dataCustomerValidation, request.customer);
-  if (request.password !== undefined) {
-    const { username, oldPassword, newPassword } = request.password;
+  const idCustomer = request.id_customer;
+
+  if (request.akun !== undefined) {
+    const { username, oldPassword, newPassword } = request.akun;
 
     const user = await prismaClient.akun.findUnique({
       where: {
@@ -72,6 +74,7 @@ const updateProfile = async (request) => {
     if (!isPasswordValid) {
       throw new ResponseError(401, "Old password is wrong");
     }
+    const newHashedPassword = await bcrypt.hash(newPassword, 10);
 
     return prismaClient.$transaction([
       prismaClient.akun.update({
@@ -79,12 +82,12 @@ const updateProfile = async (request) => {
           username: username,
         },
         data: {
-          token: null,
+          password: newHashedPassword,
         },
       }),
       prismaClient.customer.update({
         where: {
-          id_customer: dataCustomer.id_customer,
+          id_customer: idCustomer,
         },
         data: dataCustomer,
       }),
@@ -93,7 +96,7 @@ const updateProfile = async (request) => {
 
   return prismaClient.customer.update({
     where: {
-      id_customer: dataCustomer.id_customer,
+      id_customer: idCustomer,
     },
     data: dataCustomer,
   });

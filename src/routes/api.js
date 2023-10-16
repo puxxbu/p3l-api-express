@@ -21,5 +21,6 @@ userRouter.put("/api/users/password", userController.changePassword);
 
 userRouter.post("/api/customer", customerController.create);
 userRouter.get("/api/customer/:id", customerController.getProfileById);
+userRouter.put("/api/customer", customerController.updateProfile);
 
 export { userRouter };
