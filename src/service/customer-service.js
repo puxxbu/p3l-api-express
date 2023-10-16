@@ -1,15 +1,8 @@
 import { prismaClient } from "../app/database.js";
 import { ResponseError } from "../error/response-error.js";
-import {
-  getUserValidation,
-  loginUserValidation,
-  registerUserValidation,
-  updateUserValidation,
-  dataCustomerValidation,
-} from "../validation/user-validation.js";
+import { dataCustomerValidation } from "../validation/user-validation.js";
 import { validate } from "../validation/validation.js";
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
 
 const create = async (request) => {
   const dataCustomer = validate(dataCustomerValidation, request);

@@ -106,20 +106,46 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InBhY
     "jenis_customer": "Personal",
     "nomor_identitas": "123123123",
     "nomor_telepon": "081233214432",
-    "email": "abc@gmail.com",
+    "email": "abc@gmail.com",                                                               
     "alamat": "Jl. Jalan"
   },
   "id_customer" : 7
 }
 
 ###
-
-GET http://localhost:3000/api/customer/8
+POST http://localhost:3000/api/kamar
 Content-Type: application/json
 Accept: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InBhYmxvMTIzMyIsImlhdCI6MTY5NzM4NjgxNiwiZXhwIjoxNjk3OTA1MjE2fQ.1KXr2fb-EVNHbLA42zzqqxYpYgNSwhkUQaNjYihN4G0
 
+{
+  "nomor_kamar": "1234",
+  "id_jenis_kamar": 1
+}
 
+###
+GET http://localhost:3000/api/kamar/3
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InBhYmxvMTIzMyIsImlhdCI6MTY5NzM4NjgxNiwiZXhwIjoxNjk3OTA1MjE2fQ.1KXr2fb-EVNHbLA42zzqqxYpYgNSwhkUQaNjYihN4G0
+
+###
+PUT http://localhost:3000/api/kamar/3
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InBhYmxvMTIzMyIsImlhdCI6MTY5NzM4NjgxNiwiZXhwIjoxNjk3OTA1MjE2fQ.1KXr2fb-EVNHbLA42zzqqxYpYgNSwhkUQaNjYihN4G0
+
+###
+
+PUT http://localhost:3000/api/kamar/23
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InBhYmxvMTIzMyIsImlhdCI6MTY5NzM4NjgxNiwiZXhwIjoxNjk3OTA1MjE2fQ.1KXr2fb-EVNHbLA42zzqqxYpYgNSwhkUQaNjYihN4G0
+
+{
+  "nomor_kamar" : 1234,
+  "id_jenis_kamar" : 1
+}
 ###
 
 DELETE http://localhost:3000/api/users/logout
