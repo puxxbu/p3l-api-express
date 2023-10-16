@@ -8,7 +8,7 @@ const createKamarValidation = Joi.object({
 const searchKamarValidation = Joi.object({
   page: Joi.number().positive().default(1),
   size: Joi.number().min(1).positive().max(100).default(10),
-  nomor_kamar: Joi.number().positive().required(),
+  nomor_kamar: Joi.number().positive().optional(),
 });
 
 export { createKamarValidation, searchKamarValidation };

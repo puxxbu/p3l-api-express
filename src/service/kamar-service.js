@@ -141,57 +141,80 @@ const remove = async (id) => {
   });
 };
 
-const search = async (request) => {
-  const { limit, page, search } = request;
-  const offset = (page - 1) * limit;
+// const search = async (request) => {
+//   const { limit, page, search } = request;
+//   const offset = (page - 1) * limit;
 
-  const dataKamar = await prismaClient.kamar.findMany({
-    where: {
-      nomor_kamar: {
-        contains: search,
-        mode: "insensitive",
-      },
-    },
-    skip: offset,
-    take: limit,
-    select: {
-      id_kamar: true,
-      id_jenis_kamar: true,
-      nomor_kamar: true,
-    },
+//   const dataKamar = await prismaClient.kamar.findMany({
+//     where: {
+//       nomor_kamar: {
+//         contains: search,
+//         mode: "insensitive",
+//       },
+//     },
+//     skip: offset,
+//     take: limit,
+//     select: {
+//       id_kamar: true,
+//       id_jenis_kamar: true,
+//       nomor_kamar: true,
+//     },
+//   });
+
+//   const countKamar = await prismaClient.kamar.count({
+//     where: {
+//       nomor_kamar: {
+//         contains: search,
+//         mode: "insensitive",
+//       },
+//     },
+//   });
+
+//   return {
+//     data: dataKamar,
+//     paging: {
+//       count: countKamar,
+//       total_page: Math.ceil(countKamar / limit),
+//       current_page: page,
+//       per_page: limit,
+//     },
+//   };
+// };
+
+const search = async (request) => {
+  request = validate(searchKamarValidation, request);
+
+  const skip = (request.page - 1) * request.size;
+
+  const filters = [];
+
+  filters.push({
+    nomor_kamar: request.nomor_kamar,
   });
 
-  const countKamar = await prismaClient.kamar.count({
+  const kamar = await prismaClient.kamar.findMany({
     where: {
-      nomor_kamar: {
-        contains: search,
-        mode: "insensitive",
-      },
+      AND: filters,
+    },
+    take: request.size,
+    skip: skip,
+  });
+
+  const totalItems = await prismaClient.kamar.count({
+    where: {
+      AND: filters,
     },
   });
 
   return {
-    data: dataKamar,
+    data: kamar,
     paging: {
-      count: countKamar,
-      total_page: Math.ceil(countKamar / limit),
-      current_page: page,
-      per_page: limit,
+      page: request.page,
+      total_item: totalItems,
+      total_page: Math.ceil(totalItems / request.size),
     },
   };
 };
-
-// const search = async (user, request) => {
-//   request = validate(searchKamarValidation, request);
-
-//   const skip = (request.page - 1) * request.size;
-
-//   filters.push({
-//     nomor_kamar: user.username,
-//   });
-
-//   const filters = [];
-// };
 
 export default {
   create,
