@@ -12,6 +12,9 @@ export const authMiddleware = async (req, res, next) => {
         username: decoded.username,
       },
     });
+
+    if (user.token !== token) return res.sendStatus(403); //token is invalid
+
     req.user = user;
     console.log(user);
     next();
