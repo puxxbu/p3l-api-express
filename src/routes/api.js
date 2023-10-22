@@ -6,6 +6,7 @@ import cookieParser from "cookie-parser";
 import userController from "../controller/user-controller.js";
 import customerController from "../controller/customer-controller.js";
 import kamarController from "../controller/kamar-controller.js";
+import seasonController from "../controller/season-controller.js";
 
 const userRouter = new express.Router();
 
@@ -30,5 +31,12 @@ userRouter.get("/api/kamar/:id", kamarController.getKamarById);
 userRouter.put("/api/kamar/:id", kamarController.updateKamar);
 userRouter.delete("/api/kamar/:id", kamarController.remove);
 userRouter.get("/api/kamar", kamarController.search);
+
+//Season API
+userRouter.post("/api/season", seasonController.create);
+userRouter.get("/api/season/:id", seasonController.getSeasonById);
+userRouter.put("/api/season/:id", seasonController.updateSeason);
+userRouter.delete("/api/season/:id", seasonController.remove);
+userRouter.get("/api/season", seasonController.search);
 
 export { userRouter };

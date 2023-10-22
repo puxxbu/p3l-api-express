@@ -141,46 +141,6 @@ const remove = async (id) => {
   });
 };
 
-// const search = async (request) => {
-//   const { limit, page, search } = request;
-//   const offset = (page - 1) * limit;
-
-//   const dataKamar = await prismaClient.kamar.findMany({
-//     where: {
-//       nomor_kamar: {
-//         contains: search,
-//         mode: "insensitive",
-//       },
-//     },
-//     skip: offset,
-//     take: limit,
-//     select: {
-//       id_kamar: true,
-//       id_jenis_kamar: true,
-//       nomor_kamar: true,
-//     },
-//   });
-
-//   const countKamar = await prismaClient.kamar.count({
-//     where: {
-//       nomor_kamar: {
-//         contains: search,
-//         mode: "insensitive",
-//       },
-//     },
-//   });
-
-//   return {
-//     data: dataKamar,
-//     paging: {
-//       count: countKamar,
-//       total_page: Math.ceil(countKamar / limit),
-//       current_page: page,
-//       per_page: limit,
-//     },
-//   };
-// };
-
 const search = async (request) => {
   request = validate(searchKamarValidation, request);
 
