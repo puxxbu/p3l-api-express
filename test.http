@@ -211,104 +211,10 @@ Content-Type: application/json
 Accept: application/json
 Authorization: 0993d07e-a757-45c6-9c0c-c956076bc709
 
-###
 
-POST http://localhost:3000/api/contacts
+### Remove Season
+
+DELETE http://localhost:3000/api/season/4
 Content-Type: application/json
 Accept: application/json
-Authorization: 555ead79-fe4c-4441-9afd-6bf14c3f94f8
-
-{
-  "first_name" : "ngabdi",
-  "last_name" : "ngabdi",
-  "email" : "isogaming2@pzn.com",
-  "phone" : "324234234234"
-}
-
-###
-
-GET http://localhost:3000/api/contacts
-Content-Type: application/json
-Accept: application/json
-Authorization: 555ead79-fe4c-4441-9afd-6bf14c3f94f8
-
-###
-
-GET http://localhost:3000/api/contacts/317
-Content-Type: application/json
-Accept: application/json
-Authorization: 555ead79-fe4c-4441-9afd-6bf14c3f94f8
-
-### Update
-
-PUT http://localhost:3000/api/contacts/317
-Content-Type: application/json
-Accept: application/json
-Authorization: 555ead79-fe4c-4441-9afd-6bf14c3f94f8
-
-{
-  "first_name": "Rully",
-  "last_name": "Nugraha",
-  "email": "rully@pzn.com",
-  "phone": "324234234234"
-}
-
-### Delete Contact
-
-DELETE http://localhost:3000/api/contacts/317
-Content-Type: application/json
-Accept: application/json
-Authorization: 555ead79-fe4c-4441-9afd-6bf14c3f94f8
-
-### Create Address
-
-POST http://localhost:3000/api/contacts/316/addresses
-Content-Type: application/json
-Accept: application/json
-Authorization: 555ead79-fe4c-4441-9afd-6bf14c3f94f8
-
-{
-  "street" : "Kantor",
-  "city" : "Jakarta",
-  "province" : "DKI JAKARTA",
-  "country" : "Indonesia",
-  "postal_code" : "324234"
-}
-
-
-### List Addresses
-
-GET http://localhost:3000/api/contacts/316/addresses
-Content-Type: application/json
-Accept: application/json
-Authorization: 555ead79-fe4c-4441-9afd-6bf14c3f94f8
-
-
-### Get Address
-
-GET http://localhost:3000/api/contacts/316/addresses/46
-Content-Type: application/json
-Accept: application/json
-Authorization: 555ead79-fe4c-4441-9afd-6bf14c3f94f8
-
-### Update Address
-
-PUT http://localhost:3000/api/contacts/316/addresses/46
-Content-Type: application/json
-Accept: application/json
-Authorization: 555ead79-fe4c-4441-9afd-6bf14c3f94f8
-
-{
-  "street" : "Kantor Bekerja",
-  "city" : "Bekasi",
-  "province" : "Jawa Barat",
-  "country" : "Indonesia",
-  "postal_code" : "324234"
-}
-
-### Remove Address
-
-DELETE http://localhost:3000/api/contacts/316/addresses/46
-Content-Type: application/json
-Accept: application/json
-Authorization: 555ead79-fe4c-4441-9afd-6bf14c3f94f8
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InBhYmxvMTIzMyIsImlhdCI6MTY5Nzk1MjM5MCwiZXhwIjoxNjk4NDcwNzkwfQ.XvBjQyowOZUYmGTqExM-ATtHcnOyJs-QPrMFsH_TMT0
