@@ -147,10 +147,61 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InBhY
   "id_jenis_kamar" : 1
 }
 ###
-GET http://localhost:3000/api/kamar?page=1
+GET http://localhost:3000/api/kamar?nomor_kamar=1
 Content-Type: application/json
 Accept: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InBhYmxvMTIzMyIsImlhdCI6MTY5NzM4NjgxNiwiZXhwIjoxNjk3OTA1MjE2fQ.1KXr2fb-EVNHbLA42zzqqxYpYgNSwhkUQaNjYihN4G0
+
+
+###
+
+
+###
+POST http://localhost:3000/api/season
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InBhYmxvMTIzMyIsImlhdCI6MTY5Nzk1MjM5MCwiZXhwIjoxNjk4NDcwNzkwfQ.XvBjQyowOZUYmGTqExM-ATtHcnOyJs-QPrMFsH_TMT0
+
+{
+  "nama_season": "Liburan Natal 2021",
+  "tanggal_mulai": "2021-12-01",
+  "tanggal_selesai": "2021-12-31"
+}
+
+###
+GET http://localhost:3000/api/season/4
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InBhYmxvMTIzMyIsImlhdCI6MTY5Nzk1MjM5MCwiZXhwIjoxNjk4NDcwNzkwfQ.XvBjQyowOZUYmGTqExM-ATtHcnOyJs-QPrMFsH_TMT0
+
+###
+PUT http://localhost:3000/api/season/4
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InBhYmxvMTIzMyIsImlhdCI6MTY5Nzk1MjM5MCwiZXhwIjoxNjk4NDcwNzkwfQ.XvBjQyowOZUYmGTqExM-ATtHcnOyJs-QPrMFsH_TMT0
+
+{
+  "nama_season": "Liburan Natal 2021",
+  "tanggal_mulai": "2021-12-01",
+  "tanggal_selesai": "2021-12-31"
+}
+
+###
+
+PUT http://localhost:3000/api/kamar/23
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InBhYmxvMTIzMyIsImlhdCI6MTY5NzM4NjgxNiwiZXhwIjoxNjk3OTA1MjE2fQ.1KXr2fb-EVNHbLA42zzqqxYpYgNSwhkUQaNjYihN4G0
+
+{
+  "nomor_kamar" : 1234,
+  "id_jenis_kamar" : 1
+}
+###
+GET http://localhost:3000/api/season?nama_season=Musim
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InBhYmxvMTIzMyIsImlhdCI6MTY5Nzk1MjM5MCwiZXhwIjoxNjk4NDcwNzkwfQ.XvBjQyowOZUYmGTqExM-ATtHcnOyJs-QPrMFsH_TMT0
 
 
 ###

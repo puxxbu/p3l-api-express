@@ -17,7 +17,7 @@ const create = async (request) => {
 
   const checkDuplicate = await prismaClient.season.findFirst({
     where: {
-      id_season: dataSeason.id_season,
+      nama_season: dataSeason.nama_season,
     },
   });
 
@@ -131,7 +131,9 @@ const search = async (request) => {
   const filters = [];
 
   filters.push({
-    nama_season: request.nama_season,
+    nama_season: {
+      contains: request.nama_season,
+    },
   });
 
   const season = await prismaClient.season.findMany({
