@@ -1,6 +1,9 @@
 import { prismaClient } from "../app/database.js";
 import { ResponseError } from "../error/response-error.js";
-import { createJenisKamarValidation } from "../validation/jenisKamar-validation.js";
+import {
+  createJenisKamarValidation,
+  searchJenisKamarValidation,
+} from "../validation/jenisKamar-validation.js";
 
 import { validate } from "../validation/validation.js";
 
@@ -125,7 +128,7 @@ const remove = async (id) => {
 };
 
 const search = async (request) => {
-  request = validate(searchSeasonValidation, request);
+  request = validate(searchJenisKamarValidation, request);
 
   const skip = (request.page - 1) * request.size;
 

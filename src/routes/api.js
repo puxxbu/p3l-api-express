@@ -7,6 +7,7 @@ import userController from "../controller/user-controller.js";
 import customerController from "../controller/customer-controller.js";
 import kamarController from "../controller/kamar-controller.js";
 import seasonController from "../controller/season-controller.js";
+import jenisKamarController from "../controller/jenisKamar-controller.js";
 
 const userRouter = new express.Router();
 
@@ -31,6 +32,13 @@ userRouter.get("/api/kamar/:id", kamarController.getKamarById);
 userRouter.put("/api/kamar/:id", kamarController.updateKamar);
 userRouter.delete("/api/kamar/:id", kamarController.remove);
 userRouter.get("/api/kamar", kamarController.search);
+
+//JenisKamar API
+userRouter.post("/api/jenis-kamar", jenisKamarController.create);
+userRouter.get("/api/jenis-kamar/:id", jenisKamarController.getJenisKamarById);
+userRouter.put("/api/jenis-kamar/:id", jenisKamarController.updateJenisKamar);
+userRouter.delete("/api/jenis-kamar/:id", jenisKamarController.remove);
+userRouter.get("/api/jenis-kamar", jenisKamarController.search);
 
 //Season API
 userRouter.post("/api/season", seasonController.create);
