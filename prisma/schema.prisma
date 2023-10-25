@@ -23,7 +23,8 @@ model akun {
 model booking {
   id_booking             String                   @id(map: "pk_booking") @unique(map: "booking_pk") @db.VarChar(100)
   id_customer            Int
-  id_pegawai             Int?
+  id_pegawai_1           Int?                     @map("id_pegawai_1")
+  id_pegawai_2           Int?                     @map("id_pegawai_2")
   tanggal_booking        DateTime                 @db.Date
   tanggal_check_in       DateTime?                @db.Timestamp(0)
   tanggal_check_out      DateTime?                @db.Timestamp(0)
@@ -33,12 +34,14 @@ model booking {
   jenis_booking          String?                  @db.VarChar(255)
   status_booking         String?                  @db.VarChar(100)
   customer               customer                 @relation(fields: [id_customer], references: [id_customer], onUpdate: Restrict, map: "fk_booking_relations_customer")
-  pegawai                pegawai?                 @relation(fields: [id_pegawai], references: [id_pegawai], onDelete: Restrict, onUpdate: Restrict, map: "fk_booking_relations_pegawai")
+  pegawai_1              pegawai?                 @relation("Pegawai1Relation", fields: [id_pegawai_1], references: [id_pegawai], onDelete: Restrict, onUpdate: Restrict, map: "fk_booking_relations_pegawai_1")
+  pegawai_2              pegawai?                 @relation("Pegawai2Relation", fields: [id_pegawai_2], references: [id_pegawai], onDelete: Restrict, onUpdate: Restrict, map: "fk_booking_relations_pegawai_2")
   detail_booking_kamar   detail_booking_kamar[]
   detail_booking_layanan detail_booking_layanan[]
   invoice                invoice[]
 
-  @@index([id_pegawai], map: "relationship_18_fk")
+  @@index([id_pegawai_1], map: "relationship_18_fk_1")
+  @@index([id_pegawai_2], map: "relationship_18_fk_2")
   @@index([id_customer], map: "relationship_7_fk")
 }
 
@@ -132,7 +135,8 @@ model pegawai {
   id_pegawai   Int       @id(map: "pk_pegawai") @unique(map: "pegawai_pk")
   id_akun      Int
   nama_pegawai String    @db.Char(10)
-  booking      booking[]
+  bookings_1   booking[] @relation("Pegawai1Relation")
+  bookings_2   booking[] @relation("Pegawai2Relation")
   akun         akun      @relation(fields: [id_akun], references: [id_akun], onUpdate: Restrict, map: "fk_pegawai_relations_akun")
 
   @@index([id_akun], map: "relationship_16_fk")
