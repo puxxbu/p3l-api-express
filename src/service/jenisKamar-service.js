@@ -18,8 +18,8 @@ const create = async (request) => {
 
   const checkDuplicate = await prismaClient.jenis_kamar.findFirst({
     where: {
-      jenis_kamar: dataSeason.jenis_kamar,
-      jenis_bed: dataSeason.jenis_bed,
+      jenis_kamar: dataJenisKamar.jenis_kamar,
+      jenis_bed: dataJenisKamar.jenis_bed,
     },
   });
 
@@ -76,8 +76,9 @@ const update = async (request, id) => {
   const checkDuplicate = await prismaClient.jenis_kamar.findFirst({
     where: {
       jenis_kamar: dataJenisKamar.jenis_kamar,
+      jenis_bed: dataJenisKamar.jenis_bed,
       NOT: {
-        id_season: idJenisKamar,
+        id_jenis_kamar: idJenisKamar,
       },
     },
   });
@@ -134,33 +135,42 @@ const search = async (request) => {
 
   const filters = [];
 
-  filters.push({
-    jenis_kamar: {
-      contains: request.jenis_kamar,
-    },
-  });
+  // filters.push({
+  //   jenis_kamar: request.jenis_kamar,
+  // });
 
-  if (request.jenis_bed) {
-    filter.push({
-      jenis_bed: {
-        contains: request.jenis_bed,
+  if (request.jenis_kamar) {
+    filters.push({
+      jenis_kamar: {
+        contains: request.jenis_kamar,
+        mode: "insensitive",
       },
     });
   }
+
+  // if (request.jenis_kamar) {
+  //   filters.push({
+  //     jenis_bed: {
+  //       contains: request.jenis_kamar,
+  //     },
+  //   });
+  // }
   if (request.kapasitas) {
-    filter.push({
+    filters.push({
       kapasitas: {
         contains: request.kapasitas,
       },
     });
   }
   if (request.jumlah_kasur) {
-    filter.push({
+    filters.push({
       jumlah_kasur: {
         contains: request.jumlah_kasur,
       },
     });
   }
+
+  console.log(filters);
 
   const jenisKamar = await prismaClient.jenis_kamar.findMany({
     where: {

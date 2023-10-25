@@ -168,10 +168,10 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InBhY
 }
 
 ###
-GET http://localhost:3000/api/season/4
+GET http://localhost:3000/api/season
 Content-Type: application/json
 Accept: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InBhYmxvMTIzMyIsImlhdCI6MTY5Nzk1MjM5MCwiZXhwIjoxNjk4NDcwNzkwfQ.XvBjQyowOZUYmGTqExM-ATtHcnOyJs-QPrMFsH_TMT0
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InBhYmxvMSIsImlhdCI6MTY5ODEzOTc1OSwiZXhwIjoxNjk4NjU4MTU5fQ.NpI6FQsfvpWVogUDovO1gio0vYuaJjnPDc8H_-2Zo5Q
 
 ###
 PUT http://localhost:3000/api/season/4
@@ -197,11 +197,10 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InBhY
   "id_jenis_kamar" : 1
 }
 ###
-GET http://localhost:3000/api/season?nama_season=Musim
+GET http://localhost:3000/api/season?page=1
 Content-Type: application/json
 Accept: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InBhYmxvMTIzMyIsImlhdCI6MTY5Nzk1MjM5MCwiZXhwIjoxNjk4NDcwNzkwfQ.XvBjQyowOZUYmGTqExM-ATtHcnOyJs-QPrMFsH_TMT0
-
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InBhYmxvMSIsImlhdCI6MTY5ODEzOTc1OSwiZXhwIjoxNjk4NjU4MTU5fQ.NpI6FQsfvpWVogUDovO1gio0vYuaJjnPDc8H_-2Zo5Q
 
 ###
 
@@ -225,7 +224,28 @@ Accept: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InBhYmxvMTIzMyIsImlhdCI6MTY5Nzk1MjM5MCwiZXhwIjoxNjk4NDcwNzkwfQ.XvBjQyowOZUYmGTqExM-ATtHcnOyJs-QPrMFsH_TMT0
 
 ### Jenis Kamar 
-GET http://localhost:3000/api/jenis-kamar/
+GET http://localhost:3000/api/jenis-kamar?jenis_kamar=superior
 Content-Type: application/json
 Accept: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InBhYmxvMTIzMyIsImlhdCI6MTY5Nzk1MjM5MCwiZXhwIjoxNjk4NDcwNzkwfQ.XvBjQyowOZUYmGTqExM-ATtHcnOyJs-QPrMFsH_TMT0
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InBhYmxvMSIsImlhdCI6MTY5ODEzOTc1OSwiZXhwIjoxNjk4NjU4MTU5fQ.NpI6FQsfvpWVogUDovO1gio0vYuaJjnPDc8H_-2Zo5Q
+
+### Jenis Kamar by ID
+GET http://localhost:3000/api/jenis-kamar/1
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InBhYmxvMSIsImlhdCI6MTY5ODEzOTc1OSwiZXhwIjoxNjk4NjU4MTU5fQ.NpI6FQsfvpWVogUDovO1gio0vYuaJjnPDc8H_-2Zo5Q
+
+### POST Jenis Kamar
+
+POST http://localhost:3000/api/jenis-kamar
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InBhYmxvMSIsImlhdCI6MTY5ODEzOTc1OSwiZXhwIjoxNjk4NjU4MTU5fQ.NpI6FQsfvpWVogUDovO1gio0vYuaJjnPDc8H_-2Zo5Q
+
+{
+  "jenis_kamar": "Test Jenis Kamar",
+  "jenis_bed": "Test Jenis Bed",
+  "kapasitas": 2,
+  "jumlah_kasur": 123
+
+}
