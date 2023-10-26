@@ -8,6 +8,8 @@ import customerController from "../controller/customer-controller.js";
 import kamarController from "../controller/kamar-controller.js";
 import seasonController from "../controller/season-controller.js";
 import jenisKamarController from "../controller/jenisKamar-controller.js";
+import fasilitasController from "../controller/fasilitas-controller.js";
+import tarifController from "../controller/tarif-controller.js";
 
 const userRouter = new express.Router();
 
@@ -46,5 +48,18 @@ userRouter.get("/api/season/:id", seasonController.getSeasonById);
 userRouter.put("/api/season/:id", seasonController.updateSeason);
 userRouter.delete("/api/season/:id", seasonController.remove);
 userRouter.get("/api/season", seasonController.search);
+
+//Fasilitas API
+userRouter.post("/api/fasilitas", fasilitasController.create);
+userRouter.get("/api/fasilitas/:id", fasilitasController.getFasilitasById);
+userRouter.put("/api/fasilitas/:id", fasilitasController.updateFasilitas);
+userRouter.delete("/api/fasilitas/:id", fasilitasController.remove);
+userRouter.get("/api/fasilitas", fasilitasController.search);
+
+userRouter.post("/api/tarif", tarifController.create);
+userRouter.get("/api/tarif/:id", tarifController.getTarifById);
+userRouter.put("/api/tarif/:id", tarifController.updateTarif);
+userRouter.delete("/api/tarif/:id", tarifController.remove);
+userRouter.get("/api/tarif", tarifController.search);
 
 export { userRouter };

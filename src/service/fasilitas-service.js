@@ -1,6 +1,9 @@
 import { prismaClient } from "../app/database.js";
 import { ResponseError } from "../error/response-error.js";
-import { createFasilitasValidation } from "../validation/fasilitas-validation.js";
+import {
+  createFasilitasValidation,
+  searchFasilitasValidation,
+} from "../validation/fasilitas-validation.js";
 
 import { validate } from "../validation/validation.js";
 
@@ -120,7 +123,7 @@ const remove = async (id) => {
 };
 
 const search = async (request) => {
-  request = validate(searchSeasonValidation, request);
+  request = validate(searchFasilitasValidation, request);
 
   const skip = (request.page - 1) * request.size;
 
@@ -129,6 +132,7 @@ const search = async (request) => {
   filters.push({
     nama_layanan: {
       contains: request.nama_layanan,
+      mode: "insensitive",
     },
   });
 

@@ -23,8 +23,8 @@ model akun {
 model booking {
   id_booking             String                   @id(map: "pk_booking") @unique(map: "booking_pk") @db.VarChar(100)
   id_customer            Int
-  id_pegawai_1           Int?                     @map("id_pegawai_1")
-  id_pegawai_2           Int?                     @map("id_pegawai_2")
+  id_pegawai_sm          Int?                     @map("id_pegawai_sm")
+  id_pegawai_fo          Int?                     @map("id_pegawai_fo")
   tanggal_booking        DateTime                 @db.Date
   tanggal_check_in       DateTime?                @db.Timestamp(0)
   tanggal_check_out      DateTime?                @db.Timestamp(0)
@@ -34,14 +34,14 @@ model booking {
   jenis_booking          String?                  @db.VarChar(255)
   status_booking         String?                  @db.VarChar(100)
   customer               customer                 @relation(fields: [id_customer], references: [id_customer], onUpdate: Restrict, map: "fk_booking_relations_customer")
-  pegawai_1              pegawai?                 @relation("Pegawai1Relation", fields: [id_pegawai_1], references: [id_pegawai], onDelete: Restrict, onUpdate: Restrict, map: "fk_booking_relations_pegawai_1")
-  pegawai_2              pegawai?                 @relation("Pegawai2Relation", fields: [id_pegawai_2], references: [id_pegawai], onDelete: Restrict, onUpdate: Restrict, map: "fk_booking_relations_pegawai_2")
+  pegawai_1              pegawai?                 @relation("Pegawai1Relation", fields: [id_pegawai_sm], references: [id_pegawai], onDelete: Restrict, onUpdate: Restrict, map: "fk_booking_relations_pegawai_1")
+  pegawai_2              pegawai?                 @relation("Pegawai2Relation", fields: [id_pegawai_fo], references: [id_pegawai], onDelete: Restrict, onUpdate: Restrict, map: "fk_booking_relations_pegawai_2")
   detail_booking_kamar   detail_booking_kamar[]
   detail_booking_layanan detail_booking_layanan[]
   invoice                invoice[]
 
-  @@index([id_pegawai_1], map: "relationship_18_fk_1")
-  @@index([id_pegawai_2], map: "relationship_18_fk_2")
+  @@index([id_pegawai_sm], map: "relationship_21_fk_1")
+  @@index([id_pegawai_fo], map: "relationship_20_fk_2")
   @@index([id_customer], map: "relationship_7_fk")
 }
 

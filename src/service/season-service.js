@@ -133,6 +133,7 @@ const search = async (request) => {
   filters.push({
     nama_season: {
       contains: request.nama_season,
+      mode: "insensitive",
     },
   });
 
