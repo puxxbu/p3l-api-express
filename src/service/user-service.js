@@ -143,8 +143,8 @@ const get = async (username) => {
   return user;
 };
 
-const changePassword = async (request) => {
-  const { username, oldPassword, newPassword } = request;
+const changePassword = async (request, username) => {
+  const { oldPassword, newPassword } = request;
 
   const user = await prismaClient.akun.findUnique({
     where: {

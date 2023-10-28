@@ -34,8 +34,35 @@ const updateProfile = async (req, res, next) => {
   }
 };
 
+const search = async (req, res, next) => {
+  try {
+    const result = await customerService.search(req.query);
+    res.status(200).json({
+      data: result.data,
+      paging: result.paging,
+    });
+  } catch (e) {
+    next(e);
+  }
+};
+
+const getCurrentProfile = async (req, res, next) => {
+  try {
+    const username = req.user.username;
+    console.log(username + "TESSSSSSSSSSSSSSSSSSSSSS");
+    const result = await customerService.getCurrentProfile(username);
+    res.status(200).json({
+      data: result,
+    });
+  } catch (e) {
+    next(e);
+  }
+};
+
 export default {
   create,
   getProfileById,
   updateProfile,
+  search,
+  getCurrentProfile,
 };

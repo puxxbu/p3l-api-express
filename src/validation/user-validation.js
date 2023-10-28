@@ -12,6 +12,8 @@ const dataCustomerValidation = Joi.object({
   nomor_identitas: Joi.string().max(100).required(),
   nomor_telepon: Joi.string().max(12).required(),
   email: Joi.string().email({ tlds: { allow: false } }),
+  tanggal_dibuat: Joi.date().required(),
+  nama_institusi: Joi.string().max(100).optional(),
   alamat: Joi.string().max(100).required(),
 });
 
@@ -28,10 +30,17 @@ const updateUserValidation = Joi.object({
   name: Joi.string().max(100).optional(),
 });
 
+const searchUserValidation = Joi.object({
+  page: Joi.number().positive().default(1),
+  size: Joi.number().min(1).positive().max(100).default(10),
+  user_attribute: Joi.string().optional(),
+});
+
 export {
   registerUserValidation,
   loginUserValidation,
   getUserValidation,
   updateUserValidation,
   dataCustomerValidation,
+  searchUserValidation,
 };

@@ -15,11 +15,38 @@ const create = async (request) => {
     take: 1, // Mengambil hanya 1 entitas dengan id_customer tertinggi
   });
 
+  const checkDate = await prismaClient.season.findFirst({
+    where: {
+      OR: [
+        {
+          tanggal_mulai: {
+            lte: dataSeason.tanggal_selesai,
+          },
+          tanggal_selesai: {
+            gte: dataSeason.tanggal_mulai,
+          },
+        },
+        {
+          tanggal_mulai: {
+            gte: dataSeason.tanggal_selesai,
+          },
+          tanggal_selesai: {
+            lte: dataSeason.tanggal_mulai,
+          },
+        },
+      ],
+    },
+  });
+
   const checkDuplicate = await prismaClient.season.findFirst({
     where: {
       nama_season: dataSeason.nama_season,
     },
   });
+
+  if (checkDate !== null) {
+    throw new ResponseError(400, "Tanggal Tidak boleh bertabrakan");
+  }
 
   if (checkDuplicate !== null) {
     throw new ResponseError(400, "Nama Season already exists");

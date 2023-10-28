@@ -4,12 +4,12 @@ Accept: application/json
 
 {
   "akun": {
-    "username": "pablo1233",
-    "password": "rahasia",
+    "username": "pablo221233",
+    "password": "rahasiaqwe",
     "id_role": 2001
   },
   "customer": {
-    "nama": "Pablo",
+    "nama": "Pablo12",
     "jenis_customer": "Personal",
     "nomor_identitas": "123123123",
     "nomor_telepon": "081233214432",
@@ -38,7 +38,7 @@ Content-Type: application/json
 Accept: application/json
 
 {
-  "username" : "pablo1233",
+  "username" : "customer",
   "password" : "rahasia"
 }
 
@@ -47,9 +47,13 @@ Accept: application/json
 GET http://localhost:3000/api/users/current
 Content-Type: application/json
 Accept: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InBhYmxvMSIsImlhdCI6MTY5NzE5NjQxMCwiZXhwIjoxNjk3NzE0ODEwfQ.eYCzvXklgSiR_A3ICp7WEo0G62HlLDpO2nMZTgqm094
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImN1c3RvbWVyIiwiaWF0IjoxNjk4NDc3ODkzLCJleHAiOjE2OTg5OTYyOTN9.Y1PHfvHXM1U7hl6qUYAwRyoQ0aKKvDn3iOnqnqHSa5k
+###
 
-
+GET http://localhost:3000/api/customer/current
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImN1c3RvbWVyIiwiaWF0IjoxNjk4NDc4NDEyLCJleHAiOjE2OTg5OTY4MTJ9.cR9ZJVEOd2I1V5Agbd-5qq4y4ehLEea5VkMq8y7v0tk
 ###
 
 PATCH http://localhost:3000/api/users/current
@@ -65,12 +69,11 @@ Authorization: 555ead79-fe4c-4441-9afd-6bf14c3f94f8
 PUT http://localhost:3000/api/users/password
 Content-Type: application/json
 Accept: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InBhYmxvMTIzMyIsImlhdCI6MTY5NzM3NTg5OSwiZXhwIjoxNjk3ODk0Mjk5fQ.xY_TtaCk0JpySFV55UNfDWUYhm43NdHaHSO-9RUbSd0
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InBhYmxvMSIsImlhdCI6MTY5ODEzOTc1OSwiZXhwIjoxNjk4NjU4MTU5fQ.NpI6FQsfvpWVogUDovO1gio0vYuaJjnPDc8H_-2Zo5Q
 
 {
-  "username" : "pablo1233",
-  "oldPassword" : "rahasia",
-  "newPassword" : "rahasia123"
+  "oldPassword" : "rahasia123",
+  "newPassword" : "rahasia"
 }
 
 ###
@@ -197,7 +200,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InBhY
   "id_jenis_kamar" : 1
 }
 ###
-GET http://localhost:3000/api/season?page=1
+GET http://localhost:3000/api/season?size=50
 Content-Type: application/json
 Accept: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InBhYmxvMSIsImlhdCI6MTY5ODEzOTc1OSwiZXhwIjoxNjk4NjU4MTU5fQ.NpI6FQsfvpWVogUDovO1gio0vYuaJjnPDc8H_-2Zo5Q
@@ -252,14 +255,15 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InBhY
 
 
 ### Jenis Kamar 
-GET http://localhost:3000/api/fasilitas
+GET http://localhost:3000/api/customer
 Content-Type: application/json
 Accept: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InBhYmxvMSIsImlhdCI6MTY5ODEzOTc1OSwiZXhwIjoxNjk4NjU4MTU5fQ.NpI6FQsfvpWVogUDovO1gio0vYuaJjnPDc8H_-2Zo5Q
 
 
+
 ### Tarif
-GET http://localhost:3000/api/tarif?tarif_attribute=120000
+GET http://localhost:3000/api/tarif/1
 Content-Type: application/json
 Accept: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InBhYmxvMSIsImlhdCI6MTY5ODEzOTc1OSwiZXhwIjoxNjk4NjU4MTU5fQ.NpI6FQsfvpWVogUDovO1gio0vYuaJjnPDc8H_-2Zo5Q

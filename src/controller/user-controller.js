@@ -52,8 +52,9 @@ const update = async (req, res, next) => {
 
 const changePassword = async (req, res, next) => {
   try {
-    console.log(req.body);
-    const result = await userService.changePassword(req.body);
+    const username = req.user.username;
+    console.log(username);
+    const result = await userService.changePassword(req.body, username);
     res.status(200).json({
       data: result,
     });

@@ -59,12 +59,6 @@ const getTarifById = async (id) => {
     where: {
       id_tarif: id,
     },
-    select: {
-      id_tarif: true,
-      jenis_kamar: true,
-      season: true,
-      harga: true,
-    },
   });
 };
 
@@ -156,14 +150,6 @@ const search = async (request) => {
       filters.push({
         jenis_kamar: {
           jenis_kamar: {
-            contains: request.tarif_attribute,
-            mode: "insensitive",
-          },
-        },
-      });
-      filters.push({
-        jenis_kamar: {
-          jenis_bed: {
             contains: request.tarif_attribute,
             mode: "insensitive",
           },

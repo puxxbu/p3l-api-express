@@ -1,6 +1,9 @@
 import { prismaClient } from "../app/database.js";
 import { ResponseError } from "../error/response-error.js";
-import { dataCustomerValidation } from "../validation/user-validation.js";
+import {
+  dataCustomerValidation,
+  searchUserValidation,
+} from "../validation/user-validation.js";
 import { validate } from "../validation/validation.js";
 import bcrypt from "bcrypt";
 
@@ -95,8 +98,76 @@ const updateProfile = async (request) => {
   });
 };
 
+const search = async (request) => {
+  request = validate(searchUserValidation, request);
+
+  const skip = (request.page - 1) * request.size;
+
+  const filters = [];
+
+  if (request.user_attribute !== undefined) {
+    filters.push({
+      nama: {
+        contains: request.user_attribute,
+        mode: "insensitive",
+      },
+    });
+  }
+
+  let where = {};
+
+  if (filters.length > 1) {
+    where = {
+      OR: filters,
+    };
+  } else {
+    where = {
+      AND: filters,
+    };
+  }
+
+  const customer = await prismaClient.customer.findMany({
+    where,
+    take: request.size,
+    skip: skip,
+  });
+
+  const totalItems = await prismaClient.customer.count({
+    where,
+  });
+
+  return {
+    data: customer,
+    paging: {
+      page: request.page,
+      total_item: totalItems,
+      total_page: Math.ceil(totalItems / request.size),
+    },
+  };
+};
+
+const getCurrentProfile = async (username) => {
+  const user = await prismaClient.akun.findUnique({
+    where: {
+      username: username,
+    },
+  });
+
+  if (!user) {
+    throw new ResponseError(404, "User Tidak Ditemukan");
+  }
+
+  return prismaClient.customer.findFirst({
+    where: {
+      id_akun: 20001,
+    },
+  });
+};
+
 export default {
   create,
   getProfileById,
   updateProfile,
+  search,
+  getCurrentProfile,
 };
