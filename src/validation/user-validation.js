@@ -7,7 +7,7 @@ const registerUserValidation = Joi.object({
 });
 
 const dataCustomerValidation = Joi.object({
-  jenis_customer: Joi.string().max(100).required(),
+  jenis_customer: Joi.string().max(100).optional(),
   nama: Joi.string().max(100).required(),
   nomor_identitas: Joi.string().max(100).required(),
   nomor_telepon: Joi.string().max(12).required(),
@@ -33,7 +33,7 @@ const updateUserValidation = Joi.object({
 const searchUserValidation = Joi.object({
   page: Joi.number().positive().default(1),
   size: Joi.number().min(1).positive().max(100).default(10),
-  user_attribute: Joi.string().optional(),
+  id_customer: Joi.string().optional(),
 });
 
 export {

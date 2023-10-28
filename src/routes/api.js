@@ -27,9 +27,13 @@ userRouter.put("/api/users/password", userController.changePassword);
 userRouter.post("/api/customer", customerController.create);
 userRouter.get("/api/customer/current", customerController.getCurrentProfile);
 userRouter.get("/api/customer/:id", customerController.getProfileById);
-
 userRouter.put("/api/customer", customerController.updateProfile);
 userRouter.get("/api/customer", customerController.search);
+userRouter.get(
+  "/api/customer/:id/booking-history",
+  customerController.getBookHistory
+);
+userRouter.get("/api/customer/booking/:id", customerController.getBookingById);
 
 //Kamar API
 userRouter.post("/api/kamar", kamarController.create);

@@ -164,10 +164,99 @@ const getCurrentProfile = async (username) => {
   });
 };
 
+const getUserBookingHistory = async (request, id) => {
+  request = validate(searchUserValidation, request);
+
+  const skip = (request.page - 1) * request.size;
+
+  const history = await prismaClient.booking.findMany({
+    where: {
+      id_customer: id,
+    },
+    select: {
+      id_booking: true,
+      pegawai_1: true,
+      pegawai_2: true,
+      tanggal_booking: true,
+      tanggal_check_in: true,
+      tanggal_check_out: true,
+      status_booking: true,
+    },
+    take: request.size,
+    skip: skip,
+  });
+
+  const totalItems = await prismaClient.customer.count({
+    where: {
+      id_customer: id,
+    },
+  });
+
+  return {
+    data: history,
+    paging: {
+      page: request.page,
+      total_item: totalItems,
+      total_page: Math.ceil(totalItems / request.size),
+    },
+  };
+};
+
+const getBookingById = async (id) => {
+  if (!id) {
+    throw new ResponseError(400, "id is required");
+  }
+
+  console.log(id);
+
+  const countBooking = await prismaClient.booking.count({
+    where: {
+      id_booking: id,
+    },
+  });
+
+  if (countBooking === 0) {
+    throw new ResponseError(404, "booking is not found");
+  }
+
+  return prismaClient.booking.findFirst({
+    where: {
+      id_booking: id,
+    },
+    select: {
+      id_booking: true,
+      customer: {
+        select: {
+          nama: true,
+          alamat: true,
+        },
+      },
+      tanggal_check_in: true,
+      tanggal_check_out: true,
+      tamu_dewasa: true,
+      tamu_anak: true,
+      tanggal_pembayaran: true,
+      detail_booking_kamar: {
+        select: {
+          jenis_kamar: true,
+          sub_total: true,
+        },
+      },
+      invoice: {
+        select: {
+          total_pembayaran: true,
+        },
+      },
+    },
+  });
+};
+
 export default {
   create,
   getProfileById,
   updateProfile,
   search,
   getCurrentProfile,
+  getUserBookingHistory,
+  getBookingById,
 };

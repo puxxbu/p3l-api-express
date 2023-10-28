@@ -49,8 +49,33 @@ const search = async (req, res, next) => {
 const getCurrentProfile = async (req, res, next) => {
   try {
     const username = req.user.username;
-    console.log(username + "TESSSSSSSSSSSSSSSSSSSSSS");
+
     const result = await customerService.getCurrentProfile(username);
+    res.status(200).json({
+      data: result,
+    });
+  } catch (e) {
+    next(e);
+  }
+};
+
+const getBookHistory = async (req, res, next) => {
+  try {
+    const id = parseInt(req.params.id);
+    const result = await customerService.getUserBookingHistory(req.query, id);
+    res.status(200).json({
+      data: result.data,
+      paging: result.paging,
+    });
+  } catch (e) {
+    next(e);
+  }
+};
+
+const getBookingById = async (req, res, next) => {
+  try {
+    const id = req.params.id;
+    const result = await customerService.getBookingById(id);
     res.status(200).json({
       data: result,
     });
@@ -65,4 +90,6 @@ export default {
   updateProfile,
   search,
   getCurrentProfile,
+  getBookHistory,
+  getBookingById,
 };
