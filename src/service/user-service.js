@@ -31,6 +31,7 @@ const register = async (request) => {
 
   if (akun.id_role === 2001) {
     const dataCustomer = validate(dataCustomerValidation, request.customer);
+    dataCustomer.tanggal_dibuat = new Date();
 
     const countCustomer = await prismaClient.customer.findFirst({
       orderBy: {
@@ -101,13 +102,20 @@ const login = async (request) => {
   const accessToken = jwt.sign(
     { username: loginRequest.username },
     process.env.ACCESS_TOKEN_SECRET,
-    { expiresIn: "6d" }
+    { expiresIn: "30d" }
   );
-  const refreshToken = jwt.sign(
-    { username: loginRequest.username },
-    process.env.REFRESH_TOKEN_SECRET,
-    { expiresIn: "1d" }
-  );
+
+  if (user.token !== null) {
+    return prismaClient.akun.findUnique({
+      where: {
+        username: user.username,
+      },
+      select: {
+        token: true,
+        role: true,
+      },
+    });
+  }
 
   const updatedUser = await prismaClient.akun.update({
     data: {

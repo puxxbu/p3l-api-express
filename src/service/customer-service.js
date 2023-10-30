@@ -181,6 +181,7 @@ const getUserBookingHistory = async (request, id) => {
       tanggal_check_in: true,
       tanggal_check_out: true,
       status_booking: true,
+      status_booking: true,
     },
     take: request.size,
     skip: skip,

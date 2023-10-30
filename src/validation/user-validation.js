@@ -12,7 +12,7 @@ const dataCustomerValidation = Joi.object({
   nomor_identitas: Joi.string().max(100).required(),
   nomor_telepon: Joi.string().max(12).required(),
   email: Joi.string().email({ tlds: { allow: false } }),
-  tanggal_dibuat: Joi.date().required(),
+  tanggal_dibuat: Joi.date().optional(),
   nama_institusi: Joi.string().max(100).optional(),
   alamat: Joi.string().max(100).required(),
 });
