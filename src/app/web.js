@@ -12,7 +12,7 @@ web.use(express.json());
 
 //express cors
 web.use(credentials);
-web.use(cors(corsOptions));
+web.use(cors());
 web.use(express.urlencoded({ extended: true }));
 web.use(cookieParser());
 
