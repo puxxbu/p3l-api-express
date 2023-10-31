@@ -38,7 +38,7 @@ Content-Type: application/json
 Accept: application/json
 
 {
-  "username" : "customer",
+  "username" : "sm",
   "password" : "rahasia"
 }
 
