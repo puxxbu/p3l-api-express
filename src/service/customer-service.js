@@ -227,6 +227,8 @@ const getBookingById = async (id) => {
     select: {
       id_booking: true,
       customer: true,
+      pegawai_1: true,
+      pegawai_2: true,
       tanggal_check_in: true,
       tanggal_check_out: true,
       tamu_dewasa: true,
@@ -236,13 +238,18 @@ const getBookingById = async (id) => {
         select: {
           jenis_kamar: true,
           sub_total: true,
+          jumlah: true,
         },
       },
-      invoice: {
+      detail_booking_layanan: {
         select: {
-          total_pembayaran: true,
+          layanan: true,
+          jumlah: true,
+          sub_total: true,
+          tanggal: true,
         },
       },
+      invoice: true,
     },
   });
 };

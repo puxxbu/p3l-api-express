@@ -38,7 +38,7 @@ Content-Type: application/json
 Accept: application/json
 
 {
-  "username" : "customer",
+  "username" : "sm",
   "password" : "rahasia"
 }
 
@@ -98,16 +98,11 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InBhY
 PUT http://localhost:3000/api/customer
 Content-Type: application/json
 Accept: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InBhYmxvMTIzMyIsImlhdCI6MTY5NzM4NjgxNiwiZXhwIjoxNjk3OTA1MjE2fQ.1KXr2fb-EVNHbLA42zzqqxYpYgNSwhkUQaNjYihN4G0
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImN1c3RvbWVyIiwiaWF0IjoxNjk4NjQyNTQ4LCJleHAiOjE2OTkxNjA5NDh9.yuhGmNrwj7s9ZOAmhLu-3nOc_Q3DEtrrHvoFdKGSksg
 
 {
-  "akun": {
-    "username" : "pablo1233",
-    "oldPassword" : "rahasia",
-    "newPassword" : "rahasia"
-  },
   "customer": {
-    "nama": "Pablo12312312231",
+    "nama": "PabloEdited",
     "jenis_customer": "Personal",
     "nomor_identitas": "123123123",
     "nomor_telepon": "081233214432",
