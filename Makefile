@@ -19,6 +19,9 @@ dbmigrate:
 dbup:
 	npx prisma db push
 
+azure:
+	psql "--host=gah-p3l.postgres.database.azure.com" "--port=5432" "--dbname=db_gah" "--username=puxxbu"
+
 
 
 

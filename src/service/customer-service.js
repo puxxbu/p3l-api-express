@@ -159,7 +159,7 @@ const getCurrentProfile = async (username) => {
 
   return prismaClient.customer.findFirst({
     where: {
-      id_akun: 20001,
+      id_akun: user.id_akun,
     },
   });
 };
@@ -226,12 +226,7 @@ const getBookingById = async (id) => {
     },
     select: {
       id_booking: true,
-      customer: {
-        select: {
-          nama: true,
-          alamat: true,
-        },
-      },
+      customer: true,
       tanggal_check_in: true,
       tanggal_check_out: true,
       tamu_dewasa: true,

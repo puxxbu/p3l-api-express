@@ -47,13 +47,15 @@ Accept: application/json
 GET http://localhost:3000/api/users/current
 Content-Type: application/json
 Accept: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImN1c3RvbWVyIiwiaWF0IjoxNjk4NTU2NTQyLCJleHAiOjE2OTkwNzQ5NDJ9.bpHu11mc9RGKvpdcoQ7z4Q8xact08ClhmpAV9aWD90A
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImN1c3RvbWVyIiwiaWF0IjoxNjk4NjQyNTQ4LCJleHAiOjE2OTkxNjA5NDh9.yuhGmNrwj7s9ZOAmhLu-3nOc_Q3DEtrrHvoFdKGSksg
+
+
 ###
 
 GET http://localhost:3000/api/customer/current
 Content-Type: application/json
 Accept: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImN1c3RvbWVyIiwiaWF0IjoxNjk4NDc4NDEyLCJleHAiOjE2OTg5OTY4MTJ9.cR9ZJVEOd2I1V5Agbd-5qq4y4ehLEea5VkMq8y7v0tk
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImN1c3RvbWVyIiwiaWF0IjoxNjk4NjQyNTQ4LCJleHAiOjE2OTkxNjA5NDh9.yuhGmNrwj7s9ZOAmhLu-3nOc_Q3DEtrrHvoFdKGSksg
 ###
 
 PATCH http://localhost:3000/api/users/current
@@ -268,12 +270,13 @@ Content-Type: application/json
 Accept: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InBhYmxvMSIsImlhdCI6MTY5ODEzOTc1OSwiZXhwIjoxNjk4NjU4MTU5fQ.NpI6FQsfvpWVogUDovO1gio0vYuaJjnPDc8H_-2Zo5Q
 ### Tarif
-GET http://localhost:3000/api/customer/2/booking-history
+GET http://localhost:3000/api/customer/2/booking-history?page=1
 Content-Type: application/json
 Accept: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImN1c3RvbWVyIiwiaWF0IjoxNjk4NjQyNTQ4LCJleHAiOjE2OTkxNjA5NDh9.yuhGmNrwj7s9ZOAmhLu-3nOc_Q3DEtrrHvoFdKGSksg
+
 ### Tarif
-GET http://localhost:3000/api/customer/booking/1
+GET http://localhost:3000/api/customer/booking/2
 Content-Type: application/json
 Accept: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImN1c3RvbWVyIiwiaWF0IjoxNjk4NjQyNTQ4LCJleHAiOjE2OTkxNjA5NDh9.yuhGmNrwj7s9ZOAmhLu-3nOc_Q3DEtrrHvoFdKGSksg
