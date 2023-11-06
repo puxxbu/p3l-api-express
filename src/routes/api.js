@@ -10,6 +10,7 @@ import seasonController from "../controller/season-controller.js";
 import jenisKamarController from "../controller/jenisKamar-controller.js";
 import fasilitasController from "../controller/fasilitas-controller.js";
 import tarifController from "../controller/tarif-controller.js";
+import bookingController from "../controller/booking-controller.js";
 
 const userRouter = new express.Router();
 
@@ -68,5 +69,8 @@ userRouter.get("/api/tarif/:id", tarifController.getTarifById);
 userRouter.put("/api/tarif/:id", tarifController.updateTarif);
 userRouter.delete("/api/tarif/:id", tarifController.remove);
 userRouter.get("/api/tarif", tarifController.search);
+
+//Booking API
+userRouter.get("/api/booking/kamar", bookingController.searchAvailableKamar);
 
 export { userRouter };
