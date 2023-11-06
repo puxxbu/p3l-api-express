@@ -30,6 +30,7 @@ model booking {
   tanggal_check_out      DateTime?                @db.Timestamp(0)
   tamu_dewasa            Int?
   tamu_anak              Int?
+  no_rekening            String?                  @db.VarChar(255)
   tanggal_pembayaran     DateTime?                @db.Date
   jenis_booking          String?                  @db.VarChar(255)
   status_booking         String?                  @db.VarChar(100)
@@ -109,6 +110,7 @@ model jenis_kamar {
   jenis_bed            String                 @db.VarChar(100)
   kapasitas            Int
   jumlah_kasur         Int
+  base_harga           Int
   detail_booking_kamar detail_booking_kamar[]
   kamar                kamar[]
   tarif                tarif[]

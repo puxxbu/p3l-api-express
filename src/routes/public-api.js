@@ -29,6 +29,9 @@ const upload = multer({
 });
 
 const publicRouter = express.Router();
+publicRouter.get("/api/", (req, res) => {
+  res.send("Hello World!");
+});
 publicRouter.post("/api/users", userController.register);
 publicRouter.post("/api/users/login", userController.login);
 
