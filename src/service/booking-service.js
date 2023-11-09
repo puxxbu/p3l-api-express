@@ -415,8 +415,9 @@ const createBook = async (request) => {
 
   let list_id_dbk = [];
 
-  dataDetailBooking.map(async (detail, index) => {
+  for (const [index, detail] of dataDetailBooking.entries()) {
     detail.id_booking = id_booking;
+
     const countAvailableKamar = await prismaClient.kamar.count({
       where: {
         id_jenis_kamar: detail.id_jenis_kamar,
@@ -454,7 +455,7 @@ const createBook = async (request) => {
 
       throw new ResponseError(
         400,
-        `Jumlah kamar (${detail.jumlah}) untuk jenis kamar (${detail.id_jenis_kamar}) tidak mencukupi, tersisa (${countAvailableKamar}))`
+        `Jumlah kamar (${detail.jumlah}) untuk jenis kamar (${detail.id_jenis_kamar}) tidak mencukupi, tersisa (${countAvailableKamar})`
       );
     }
 
@@ -466,7 +467,7 @@ const createBook = async (request) => {
     });
 
     detail.id_detail_booking_kamar =
-      countDbk.id_detail_booking_kamar + 1 + index;
+      (countDbk ? countDbk.id_detail_booking_kamar : 0) + 1 + index;
 
     console.log(JSON.stringify(detail, null, 2));
 
@@ -505,7 +506,7 @@ const createBook = async (request) => {
     if (kamarAvail.length < detail.jumlah) {
       throw new ResponseError(
         400,
-        `Jumlah kamar (${detail.jumlah}) untuk jenis kamar (${detail.id_jenis_kamar}) tidak mencukupi, tersisa (${countAvailableKamar}))`
+        `Jumlah kamar (${detail.jumlah}) untuk jenis kamar (${detail.id_jenis_kamar}) tidak mencukupi, tersisa (${countAvailableKamar})`
       );
     }
 
@@ -550,7 +551,7 @@ const createBook = async (request) => {
 
     detail.id_detail_booking_kamar = count.id_detail_booking_kamar + 1;
     list_id_dbk.push(detail.id_detail_booking_kamar);
-  });
+  }
 
   return prismaClient.booking.findFirst({
     where: {
