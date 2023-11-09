@@ -393,6 +393,16 @@ const createBook = async (request) => {
   let list_id_dbk = [];
 
   dataDetailBooking.forEach(async (detail) => {
+    const countDbk = await prismaClient.detail_booking_kamar.findFirst({
+      orderBy: {
+        id_detail_booking_kamar: "desc",
+      },
+      take: 1,
+    });
+
+    detail.id_detail_booking_kamar = countDbk.id_detail_booking_kamar + 1;
+
+    detail.id_booking = id_booking;
     const countAvailableKamar = await prismaClient.kamar.count({
       where: {
         id_jenis_kamar: detail.id_jenis_kamar,
@@ -401,7 +411,7 @@ const createBook = async (request) => {
             some: {
               detail_booking_kamar: {
                 booking: {
-                  OR: [
+                  AND: [
                     {
                       tanggal_check_in: {
                         lte: formatToISO(dataBooking.tanggal_check_out),
@@ -421,12 +431,16 @@ const createBook = async (request) => {
       },
     });
 
-    if (countAvailableKamar < detail.jumlah) {
+    if ((await countAvailableKamar) < detail.jumlah) {
       // throw new ResponseError(
       //   400,
       //   `Jumlah kamar (${detail.jumlah}) untuk jenis kamar (${detail.id_jenis_kamar}) tidak mencukupi, tersisa (${countAvailableKamar}))`
       // );
     }
+
+    await prismaClient.detail_booking_kamar.create({
+      data: detail,
+    });
 
     const kamarAvail = await prismaClient.kamar.findMany({
       where: {
@@ -436,7 +450,7 @@ const createBook = async (request) => {
             some: {
               detail_booking_kamar: {
                 booking: {
-                  OR: [
+                  AND: [
                     {
                       tanggal_check_in: {
                         lte: formatToISO(dataBooking.tanggal_check_out),
@@ -470,6 +484,7 @@ const createBook = async (request) => {
       const id_kamar = kamarAvail[i].id_kamar;
       const id_detail_booking_kamar = detail.id_detail_booking_kamar;
 
+      console.log(id_detail_booking_kamar);
       resultDkk.push(
         await prismaClient.detail_ketersediaan_kamar.create({
           data: {
@@ -490,11 +505,6 @@ const createBook = async (request) => {
 
     detail.id_detail_booking_kamar = count.id_detail_booking_kamar + 1;
     list_id_dbk.push(detail.id_detail_booking_kamar);
-    detail.id_booking = id_booking;
-
-    await prismaClient.detail_booking_kamar.create({
-      data: detail,
-    });
   });
 
   dataBooking.id_booking = id_booking;
