@@ -415,146 +415,142 @@ const createBook = async (request) => {
 
   let list_id_dbk = [];
 
-  await Promise.all(
-    dataDetailBooking.map(async (detail) => {
-      const countDbk = await prismaClient.detail_booking_kamar.findFirst({
-        orderBy: {
-          id_detail_booking_kamar: "desc",
-        },
-        take: 1,
-      });
-
-      detail.id_detail_booking_kamar = countDbk.id_detail_booking_kamar + 1;
-
-      detail.id_booking = id_booking;
-      const countAvailableKamar = await prismaClient.kamar.count({
-        where: {
-          id_jenis_kamar: detail.id_jenis_kamar,
-          NOT: {
-            detail_ketersediaan_kamar: {
-              some: {
-                detail_booking_kamar: {
-                  booking: {
-                    AND: [
-                      {
-                        tanggal_check_in: {
-                          lte: dataBooking.tanggal_check_out,
-                        },
+  dataDetailBooking.map(async (detail, index) => {
+    detail.id_booking = id_booking;
+    const countAvailableKamar = await prismaClient.kamar.count({
+      where: {
+        id_jenis_kamar: detail.id_jenis_kamar,
+        NOT: {
+          detail_ketersediaan_kamar: {
+            some: {
+              detail_booking_kamar: {
+                booking: {
+                  AND: [
+                    {
+                      tanggal_check_in: {
+                        lte: dataBooking.tanggal_check_out,
                       },
-                      {
-                        tanggal_check_out: {
-                          gte: dataBooking.tanggal_check_in,
-                        },
+                    },
+                    {
+                      tanggal_check_out: {
+                        gte: dataBooking.tanggal_check_in,
                       },
-                    ],
-                  },
+                    },
+                  ],
                 },
               },
             },
           },
         },
-      });
+      },
+    });
 
-      if (countAvailableKamar < detail.jumlah) {
-        await prismaClient.booking.delete({
-          where: {
-            id_booking: id_booking,
-          },
-        });
-
-        throw new ResponseError(
-          400,
-          `Jumlah kamar (${detail.jumlah}) untuk jenis kamar (${detail.id_jenis_kamar}) tidak mencukupi, tersisa (${countAvailableKamar}))`
-        );
-      }
-
-      console.log(detail);
-      await prismaClient.detail_booking_kamar.create({
-        data: detail,
-      });
-
-      const kamarAvail = await prismaClient.kamar.findMany({
+    if (countAvailableKamar < detail.jumlah) {
+      await prismaClient.booking.delete({
         where: {
-          id_jenis_kamar: detail.id_jenis_kamar,
-          NOT: {
-            detail_ketersediaan_kamar: {
-              some: {
-                detail_booking_kamar: {
-                  booking: {
-                    AND: [
-                      {
-                        tanggal_check_in: {
-                          lte: dataBooking.tanggal_check_out,
-                        },
+          id_booking: id_booking,
+        },
+      });
+
+      throw new ResponseError(
+        400,
+        `Jumlah kamar (${detail.jumlah}) untuk jenis kamar (${detail.id_jenis_kamar}) tidak mencukupi, tersisa (${countAvailableKamar}))`
+      );
+    }
+
+    const countDbk = await prismaClient.detail_booking_kamar.findFirst({
+      orderBy: {
+        id_detail_booking_kamar: "desc",
+      },
+      take: 1,
+    });
+
+    detail.id_detail_booking_kamar =
+      countDbk.id_detail_booking_kamar + 1 + index;
+
+    console.log(JSON.stringify(detail, null, 2));
+
+    await prismaClient.detail_booking_kamar.create({
+      data: detail,
+    });
+
+    const kamarAvail = await prismaClient.kamar.findMany({
+      where: {
+        id_jenis_kamar: detail.id_jenis_kamar,
+        NOT: {
+          detail_ketersediaan_kamar: {
+            some: {
+              detail_booking_kamar: {
+                booking: {
+                  AND: [
+                    {
+                      tanggal_check_in: {
+                        lte: dataBooking.tanggal_check_out,
                       },
-                      {
-                        tanggal_check_out: {
-                          gte: dataBooking.tanggal_check_in,
-                        },
+                    },
+                    {
+                      tanggal_check_out: {
+                        gte: dataBooking.tanggal_check_in,
                       },
-                    ],
-                  },
+                    },
+                  ],
                 },
               },
             },
           },
         },
-      });
+      },
+    });
 
-      if (kamarAvail.length < detail.jumlah) {
-        throw new ResponseError(
-          400,
-          `Jumlah kamar (${detail.jumlah}) untuk jenis kamar (${detail.id_jenis_kamar}) tidak mencukupi, tersisa (${countAvailableKamar}))`
+    if (kamarAvail.length < detail.jumlah) {
+      throw new ResponseError(
+        400,
+        `Jumlah kamar (${detail.jumlah}) untuk jenis kamar (${detail.id_jenis_kamar}) tidak mencukupi, tersisa (${countAvailableKamar}))`
+      );
+    }
+
+    let resultDkk = [];
+
+    if (kamarAvail.length >= detail.jumlah) {
+      for (let i = 0; i < detail.jumlah; i++) {
+        const countdkk = await prismaClient.detail_ketersediaan_kamar.findFirst(
+          {
+            orderBy: {
+              id_ketersediaan_kamar: "desc",
+            },
+            take: 1,
+          }
+        );
+
+        const id_ketersediaan_kamar = countdkk
+          ? countdkk.id_ketersediaan_kamar + 1
+          : 1;
+        const id_kamar = kamarAvail[i].id_kamar;
+        const id_detail_booking_kamar = detail.id_detail_booking_kamar;
+
+        console.log(id_detail_booking_kamar);
+        resultDkk.push(
+          await prismaClient.detail_ketersediaan_kamar.create({
+            data: {
+              id_ketersediaan_kamar,
+              id_kamar,
+              id_detail_booking_kamar,
+            },
+          })
         );
       }
+    }
 
-      let resultDkk = [];
+    const count = await prismaClient.detail_booking_kamar.findFirst({
+      orderBy: {
+        id_detail_booking_kamar: "desc",
+      },
+      take: 1,
+    });
 
-      if (kamarAvail.length >= detail.jumlah) {
-        for (let i = 0; i < detail.jumlah; i++) {
-          const countdkk =
-            await prismaClient.detail_ketersediaan_kamar.findFirst({
-              orderBy: {
-                id_ketersediaan_kamar: "desc",
-              },
-              take: 1,
-            });
-
-          // throw new ResponseError(
-          //   400,
-          //   `Jumlah countdkk (${countdkk}) untuk jenis kamar (${detail.id_jenis_kamar}) tidak mencukupi, tersisa (${countAvailableKamar}))`
-          // );
-
-          const id_ketersediaan_kamar = countdkk
-            ? countdkk.id_ketersediaan_kamar + 1
-            : 1;
-          const id_kamar = kamarAvail[i].id_kamar;
-          const id_detail_booking_kamar = detail.id_detail_booking_kamar;
-
-          console.log(id_detail_booking_kamar);
-          resultDkk.push(
-            await prismaClient.detail_ketersediaan_kamar.create({
-              data: {
-                id_ketersediaan_kamar,
-                id_kamar,
-                id_detail_booking_kamar,
-              },
-            })
-          );
-        }
-      }
-
-      const count = await prismaClient.detail_booking_kamar.findFirst({
-        orderBy: {
-          id_detail_booking_kamar: "desc",
-        },
-        take: 1,
-      });
-
-      detail.id_detail_booking_kamar = count.id_detail_booking_kamar + 1;
-      list_id_dbk.push(detail.id_detail_booking_kamar);
-    })
-  );
+    detail.id_detail_booking_kamar = count.id_detail_booking_kamar + 1;
+    list_id_dbk.push(detail.id_detail_booking_kamar);
+  });
 
   return prismaClient.booking.findFirst({
     where: {
