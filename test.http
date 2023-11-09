@@ -295,8 +295,8 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNtI
    "booking" : {
      "id_customer": 2,
       "tanggal_booking": "2023-09-19",
-      "tanggal_check_in": "2023-11-06 08:00:00",
-      "tanggal_check_out": "2023-11-28 10:00:00",
+      "tanggal_check_in": "2024-11-06 08:00:00",
+      "tanggal_check_out": "2024-11-28 10:00:00",
       "tamu_dewasa": 2,
       "tamu_anak": 8,
       "tanggal_pembayaran": "2023-09-20",
@@ -309,7 +309,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNtI
    "detail_booking" : [
     {
       "id_jenis_kamar": 1,
-      "jumlah": 12,
+      "jumlah": 4,
       "sub_total": 480000
     }
    ]
