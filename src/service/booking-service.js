@@ -394,6 +394,25 @@ const createBook = async (request) => {
   dataBooking.tanggal_check_in = formatToISO(dataBooking.tanggal_check_in);
   dataBooking.tanggal_check_out = formatToISO(dataBooking.tanggal_check_out);
 
+  await prismaClient.booking.create({
+    data: dataBooking,
+    select: {
+      id_booking: true,
+      id_customer: true,
+      tanggal_booking: true,
+      tanggal_check_in: true,
+      tanggal_check_out: true,
+      tamu_dewasa: true,
+      tamu_anak: true,
+      tanggal_pembayaran: true,
+      jenis_booking: true,
+      status_booking: true,
+      no_rekening: true,
+      catatan_tambahan: true,
+      detail_booking_kamar: true,
+    },
+  });
+
   let list_id_dbk = [];
 
   await Promise.all(
@@ -437,31 +456,19 @@ const createBook = async (request) => {
       });
 
       if (countAvailableKamar < detail.jumlah) {
+        await prismaClient.booking.delete({
+          where: {
+            id_booking: id_booking,
+          },
+        });
+
         throw new ResponseError(
           400,
           `Jumlah kamar (${detail.jumlah}) untuk jenis kamar (${detail.id_jenis_kamar}) tidak mencukupi, tersisa (${countAvailableKamar}))`
         );
       }
 
-      await prismaClient.booking.create({
-        data: dataBooking,
-        select: {
-          id_booking: true,
-          id_customer: true,
-          tanggal_booking: true,
-          tanggal_check_in: true,
-          tanggal_check_out: true,
-          tamu_dewasa: true,
-          tamu_anak: true,
-          tanggal_pembayaran: true,
-          jenis_booking: true,
-          status_booking: true,
-          no_rekening: true,
-          catatan_tambahan: true,
-          detail_booking_kamar: true,
-        },
-      });
-
+      console.log(detail);
       await prismaClient.detail_booking_kamar.create({
         data: detail,
       });
@@ -512,11 +519,6 @@ const createBook = async (request) => {
               },
               take: 1,
             });
-
-          console.log(
-            countdkk +
-              " PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP \n PPPPPPPPPPPPPPPPPPPPPPPPPPPP"
-          );
 
           // throw new ResponseError(
           //   400,

@@ -70,7 +70,7 @@ model detail_booking_kamar {
   id_jenis_kamar            Int
   jumlah                    Int?
   sub_total                 Int?
-  booking                   booking                     @relation(fields: [id_booking], references: [id_booking], onUpdate: Restrict, map: "fk_detail_b_relations_booking")
+  booking                   booking                     @relation(fields: [id_booking], references: [id_booking], onUpdate: Restrict, onDelete: Cascade, map: "fk_detail_b_relations_booking")
   jenis_kamar               jenis_kamar                 @relation(fields: [id_jenis_kamar], references: [id_jenis_kamar], onUpdate: Restrict, map: "fk_detail_b_relations_jenis_ka")
   detail_ketersediaan_kamar detail_ketersediaan_kamar[]
 
@@ -85,7 +85,7 @@ model detail_booking_layanan {
   jumlah                    Int
   sub_total                 Int
   tanggal                   DateTime @db.Date
-  booking                   booking  @relation(fields: [id_booking], references: [id_booking], onUpdate: Restrict, map: "fk_detail_b_relations_booking")
+  booking                   booking  @relation(fields: [id_booking], references: [id_booking], onUpdate: Restrict, onDelete: Cascade, map: "fk_detail_b_relations_booking")
   layanan                   layanan  @relation(fields: [id_fasilitas], references: [id_fasilitas], onUpdate: Restrict, map: "fk_detail_b_relations_layanan")
 
   @@index([id_fasilitas], map: "relationship_10_fk")
@@ -175,7 +175,7 @@ model detail_ketersediaan_kamar {
   id_ketersediaan_kamar   Int                  @id(map: "pk_detail_ketersediaan_kamar") @unique(map: "detail_ketersediaan_kamar_pk")
   id_kamar                Int
   id_detail_booking_kamar Int
-  detail_booking_kamar    detail_booking_kamar @relation(fields: [id_detail_booking_kamar], references: [id_detail_booking_kamar], onUpdate: Restrict, map: "fk_detail_k_relations_detail_b")
+  detail_booking_kamar    detail_booking_kamar @relation(fields: [id_detail_booking_kamar], references: [id_detail_booking_kamar], onUpdate: Restrict, onDelete: Cascade, map: "fk_detail_k_relations_detail_b")
   kamar                   kamar                @relation(fields: [id_kamar], references: [id_kamar], onUpdate: Restrict, map: "fk_detail_k_relations_kamar")
 
   @@index([id_detail_booking_kamar], map: "relationship_18_fk2")
