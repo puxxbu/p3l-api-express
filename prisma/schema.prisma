@@ -37,6 +37,7 @@ model booking {
   customer               customer                 @relation(fields: [id_customer], references: [id_customer], onUpdate: Restrict, map: "fk_booking_relations_customer")
   pegawai_1              pegawai?                 @relation("Pegawai1Relation", fields: [id_pegawai_sm], references: [id_pegawai], onDelete: Restrict, onUpdate: Restrict, map: "fk_booking_relations_pegawai_1")
   pegawai_2              pegawai?                 @relation("Pegawai2Relation", fields: [id_pegawai_fo], references: [id_pegawai], onDelete: Restrict, onUpdate: Restrict, map: "fk_booking_relations_pegawai_2")
+  catatan_tambahan       String?                  @db.VarChar(255)
   detail_booking_kamar   detail_booking_kamar[]
   detail_booking_layanan detail_booking_layanan[]
   invoice                invoice[]

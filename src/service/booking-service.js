@@ -1,6 +1,11 @@
+import moment from "moment";
 import { prismaClient } from "../app/database.js";
 import { ResponseError } from "../error/response-error.js";
-import { searchKamarValidation } from "../validation/booking-validation.js";
+import {
+  createBookingValidation,
+  detailBookingValidation,
+  searchKamarValidation,
+} from "../validation/booking-validation.js";
 import {
   createTarifValidation,
   searchTarifValidation,
@@ -227,7 +232,7 @@ const searchAvailableKamar = async (request) => {
 
   let tanggal_check_in = new Date();
 
-  request.tanggal_check_in = "2023-09-12T11:00:00.000Z";
+  // request.tanggal_check_in = "2023-09-12T11:00:00.000Z";
 
   if (request.tanggal_check_in !== undefined) {
     tanggal_check_in = new Date(request.tanggal_check_in);
@@ -354,6 +359,100 @@ const searchAvailableKamar = async (request) => {
       total_page: Math.ceil(totalItems / request.size),
     },
   };
+};
+
+async function isBookingIdUnique(bookingId) {
+  const existingBooking = await prismaClient.booking.findUnique({
+    where: {
+      id_booking: bookingId,
+    },
+  });
+  return !existingBooking;
+}
+
+const createBook = async (request) => {
+  const dataBooking = validate(createBookingValidation, request.booking);
+  const dataDetailBooking = validate(
+    detailBookingValidation,
+    request.detail_booking
+  );
+
+  let isUnique = false;
+  let id_booking;
+
+  while (!isUnique) {
+    const timestamp = moment().format("YYMMDD");
+    const randomSuffix = Math.floor(Math.random() * 1000);
+    id_booking = `P${timestamp}-${randomSuffix}`;
+
+    isUnique = await isBookingIdUnique(id_booking);
+  }
+
+  let list_id_dbk = [];
+
+  dataDetailBooking.forEach(async (detail) => {
+    const count = await prismaClient.detail_booking_kamar.findFirst({
+      orderBy: {
+        id_detail_booking_kamar: "desc",
+      },
+      take: 1,
+    });
+
+    detail.id_detail_booking_kamar = count.id_detail_booking_kamar + 1;
+    list_id_dbk.push(detail.id_detail_booking_kamar);
+    detail.id_booking = id_booking;
+
+    await prismaClient.detail_booking_kamar.create({
+      data: detail,
+    });
+  });
+
+  list_id_dbk.forEach(async (id_dbk) => {
+    const detailBookingKamar =
+      await prismaClient.detail_booking_kamar.findUnique({
+        where: {
+          id_detail_booking_kamar: id_dbk,
+        },
+      });
+
+    const kamar = await prismaClient.kamar.findUnique({
+      where: {
+        id_kamar: detailBookingKamar.id_kamar,
+      },
+    });
+
+    const jumlahKamar = kamar.jumlah_kamar - detailBookingKamar.jumlah;
+
+    await prismaClient.kamar.update({
+      where: {
+        id_kamar: detailBookingKamar.id_kamar,
+      },
+      data: {
+        jumlah_kamar: jumlahKamar,
+      },
+    });
+  });
+
+  const checkDuplicate = await prismaClient.tarif.findFirst({
+    where: {
+      id_jenis_kamar: dataTarif.id_jenis_kamar,
+      id_season: dataTarif.id_season,
+    },
+  });
+
+  if (checkDuplicate !== null) {
+    throw new ResponseError(400, "Tarif is already exists");
+  }
+
+  return prismaClient.tarif.create({
+    data: dataTarif,
+    select: {
+      id_tarif: true,
+      jenis_kamar: true,
+      season: true,
+      harga: true,
+    },
+  });
 };
 
 export default {
