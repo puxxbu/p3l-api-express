@@ -467,7 +467,7 @@ const createBook = async (request) => {
     });
 
     detail.id_detail_booking_kamar =
-      (countDbk ? countDbk.id_detail_booking_kamar : 0) + 1 + index;
+      (countDbk ? countDbk.id_detail_booking_kamar : 0) + 1;
 
     console.log(JSON.stringify(detail, null, 2));
 
