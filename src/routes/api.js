@@ -72,5 +72,6 @@ userRouter.get("/api/tarif", tarifController.search);
 
 //Booking API
 userRouter.get("/api/booking/kamar", bookingController.searchAvailableKamar);
+userRouter.post("/api/booking", bookingController.createBook);
 
 export { userRouter };

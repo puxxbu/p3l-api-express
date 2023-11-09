@@ -804,9 +804,9 @@ async function main() {
           some: {
             detail_booking_kamar: {
               booking: {
-                OR: [
-                  { tanggal_check_in: { lte: new Date() } },
-                  { tanggal_check_out: { gte: new Date() } },
+                AND: [
+                  { tanggal_check_in: { lte: "2024-11-28T00:00:00.000Z" } },
+                  { tanggal_check_out: { gte: "2024-11-06T00:00:00.000Z" } },
                 ],
               },
             },

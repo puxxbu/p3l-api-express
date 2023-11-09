@@ -73,6 +73,17 @@ const searchAvailableKamar = async (req, res, next) => {
   }
 };
 
+const createBook = async (req, res, next) => {
+  try {
+    const result = await bookingService.createBook(req.body);
+    res.status(200).json({
+      data: result,
+    });
+  } catch (e) {
+    next(e);
+  }
+};
+
 export default {
   create,
   getTarifById,
@@ -80,4 +91,5 @@ export default {
   remove,
   search,
   searchAvailableKamar,
+  createBook,
 };

@@ -12,6 +12,8 @@ import {
 } from "../validation/tarif-validation.js";
 
 import { validate } from "../validation/validation.js";
+import { PrismaClient } from "@prisma/client";
+import { formatToISO } from "../utils/date-formatter.js";
 
 const create = async (request) => {
   const dataTarif = validate(createTarifValidation, request);
@@ -391,6 +393,94 @@ const createBook = async (request) => {
   let list_id_dbk = [];
 
   dataDetailBooking.forEach(async (detail) => {
+    const countAvailableKamar = await prismaClient.kamar.count({
+      where: {
+        id_jenis_kamar: detail.id_jenis_kamar,
+        NOT: {
+          detail_ketersediaan_kamar: {
+            some: {
+              detail_booking_kamar: {
+                booking: {
+                  OR: [
+                    {
+                      tanggal_check_in: {
+                        lte: formatToISO(dataBooking.tanggal_check_out),
+                      },
+                    },
+                    {
+                      tanggal_check_out: {
+                        gte: formatToISO(dataBooking.tanggal_check_in),
+                      },
+                    },
+                  ],
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (countAvailableKamar < detail.jumlah) {
+      // throw new ResponseError(
+      //   400,
+      //   `Jumlah kamar (${detail.jumlah}) untuk jenis kamar (${detail.id_jenis_kamar}) tidak mencukupi, tersisa (${countAvailableKamar}))`
+      // );
+    }
+
+    const kamarAvail = await prismaClient.kamar.findMany({
+      where: {
+        id_jenis_kamar: detail.id_jenis_kamar,
+        NOT: {
+          detail_ketersediaan_kamar: {
+            some: {
+              detail_booking_kamar: {
+                booking: {
+                  OR: [
+                    {
+                      tanggal_check_in: {
+                        lte: formatToISO(dataBooking.tanggal_check_out),
+                      },
+                    },
+                    {
+                      tanggal_check_out: {
+                        gte: formatToISO(dataBooking.tanggal_check_in),
+                      },
+                    },
+                  ],
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+
+    let resultDkk = [];
+
+    for (let i = 0; i < detail.jumlah; i++) {
+      const countdkk = await prismaClient.detail_ketersediaan_kamar.findFirst({
+        orderBy: {
+          id_ketersediaan_kamar: "desc",
+        },
+        take: 1,
+      });
+
+      const id_ketersediaan_kamar = countdkk.id_ketersediaan_kamar + 1;
+      const id_kamar = kamarAvail[i].id_kamar;
+      const id_detail_booking_kamar = detail.id_detail_booking_kamar;
+
+      resultDkk.push(
+        await prismaClient.detail_ketersediaan_kamar.create({
+          data: {
+            id_ketersediaan_kamar,
+            id_kamar,
+            id_detail_booking_kamar,
+          },
+        })
+      );
+    }
+
     const count = await prismaClient.detail_booking_kamar.findFirst({
       orderBy: {
         id_detail_booking_kamar: "desc",
@@ -407,50 +497,24 @@ const createBook = async (request) => {
     });
   });
 
-  list_id_dbk.forEach(async (id_dbk) => {
-    const detailBookingKamar =
-      await prismaClient.detail_booking_kamar.findUnique({
-        where: {
-          id_detail_booking_kamar: id_dbk,
-        },
-      });
+  dataBooking.id_booking = id_booking;
 
-    const kamar = await prismaClient.kamar.findUnique({
-      where: {
-        id_kamar: detailBookingKamar.id_kamar,
-      },
-    });
-
-    const jumlahKamar = kamar.jumlah_kamar - detailBookingKamar.jumlah;
-
-    await prismaClient.kamar.update({
-      where: {
-        id_kamar: detailBookingKamar.id_kamar,
-      },
-      data: {
-        jumlah_kamar: jumlahKamar,
-      },
-    });
-  });
-
-  const checkDuplicate = await prismaClient.tarif.findFirst({
-    where: {
-      id_jenis_kamar: dataTarif.id_jenis_kamar,
-      id_season: dataTarif.id_season,
-    },
-  });
-
-  if (checkDuplicate !== null) {
-    throw new ResponseError(400, "Tarif is already exists");
-  }
-
-  return prismaClient.tarif.create({
-    data: dataTarif,
+  return prismaClient.booking.create({
+    data: dataBooking,
     select: {
-      id_tarif: true,
-      jenis_kamar: true,
-      season: true,
-      harga: true,
+      id_booking: true,
+      id_customer: true,
+      tanggal_booking: true,
+      tanggal_check_in: true,
+      tanggal_check_out: true,
+      tamu_dewasa: true,
+      tamu_anak: true,
+      tanggal_pembayaran: true,
+      jenis_booking: true,
+      status_booking: true,
+      no_rekening: true,
+      catatan_tambahan: true,
+      detail_booking_kamar: true,
     },
   });
 };
@@ -462,4 +526,5 @@ export default {
   remove,
   search,
   searchAvailableKamar,
+  createBook,
 };
