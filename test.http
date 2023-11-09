@@ -47,15 +47,13 @@ Accept: application/json
 GET http://localhost:8080/api
 Content-Type: application/json
 Accept: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImN1c3RvbWVyIiwiaWF0IjoxNjk4NjQyNTQ4LCJleHAiOjE2OTkxNjA5NDh9.yuhGmNrwj7s9ZOAmhLu-3nOc_Q3DEtrrHvoFdKGSksg
-
-
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImN1c3RvbWVyMiIsImlhdCI6MTY5ODY1NTIwNCwiZXhwIjoxNzAxMjQ3MjA0fQ.ejkVfII83RTyspKYO8wHYJyEA-f8xefzEjiuHO7-qUo
 ###
 
 GET http://localhost:3000/api/customer/current
 Content-Type: application/json
 Accept: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImN1c3RvbWVyIiwiaWF0IjoxNjk4NjQyNTQ4LCJleHAiOjE2OTkxNjA5NDh9.yuhGmNrwj7s9ZOAmhLu-3nOc_Q3DEtrrHvoFdKGSksg
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImN1c3RvbWVyMiIsImlhdCI6MTY5ODY1NTIwNCwiZXhwIjoxNzAxMjQ3MjA0fQ.ejkVfII83RTyspKYO8wHYJyEA-f8xefzEjiuHO7-qUo
 ###
 
 PATCH http://localhost:3000/api/users/current
@@ -71,10 +69,10 @@ Authorization: 555ead79-fe4c-4441-9afd-6bf14c3f94f8
 PUT http://localhost:3000/api/users/password
 Content-Type: application/json
 Accept: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InBhYmxvMSIsImlhdCI6MTY5ODEzOTc1OSwiZXhwIjoxNjk4NjU4MTU5fQ.NpI6FQsfvpWVogUDovO1gio0vYuaJjnPDc8H_-2Zo5Q
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImN1c3RvbWVyMiIsImlhdCI6MTY5ODY1NTIwNCwiZXhwIjoxNzAxMjQ3MjA0fQ.ejkVfII83RTyspKYO8wHYJyEA-f8xefzEjiuHO7-qUo
 
 {
-  "oldPassword" : "rahasia123",
+  "oldPassword" : "rahasia2",
   "newPassword" : "rahasia"
 }
 
