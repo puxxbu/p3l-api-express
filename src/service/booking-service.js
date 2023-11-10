@@ -204,6 +204,7 @@ const search = async (request) => {
   };
 };
 
+// TODO Inject ketersediaan kamar pada list
 const searchAvailableKamar = async (request) => {
   request = validate(searchKamarValidation, request);
 
@@ -396,21 +397,6 @@ const createBook = async (request) => {
 
   await prismaClient.booking.create({
     data: dataBooking,
-    select: {
-      id_booking: true,
-      id_customer: true,
-      tanggal_booking: true,
-      tanggal_check_in: true,
-      tanggal_check_out: true,
-      tamu_dewasa: true,
-      tamu_anak: true,
-      tanggal_pembayaran: true,
-      jenis_booking: true,
-      status_booking: true,
-      no_rekening: true,
-      catatan_tambahan: true,
-      detail_booking_kamar: true,
-    },
   });
 
   let list_id_dbk = [];
@@ -569,6 +555,8 @@ const createBook = async (request) => {
       jenis_booking: true,
       status_booking: true,
       no_rekening: true,
+      pegawai_1: true,
+      pegawai_2: true,
       catatan_tambahan: true,
       detail_booking_kamar: true,
     },
