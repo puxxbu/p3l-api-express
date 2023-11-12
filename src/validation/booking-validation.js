@@ -23,6 +23,16 @@ const createBookingValidation = Joi.object({
   catatan_tambahan: Joi.string().optional(),
 });
 
+const detailFasilitasValidation = Joi.array()
+  .items(
+    Joi.object({
+      id_fasilitas: Joi.number().positive().required(),
+      jumlah: Joi.number().positive().required(),
+      sub_total: Joi.number().positive().required(),
+    })
+  )
+  .required();
+
 const detailBookingValidation = Joi.array()
   .items(
     Joi.object({
@@ -37,4 +47,5 @@ export {
   searchKamarValidation,
   createBookingValidation,
   detailBookingValidation,
+  detailFasilitasValidation,
 };

@@ -303,8 +303,8 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNtI
       "jenis_booking": "Personal",
       "status_booking": "Check Out",
       "id_pegawai_fo": 3,
-      "no_rekening": "20202020",
-      "catatan_tambahan": "Terdapat AC"
+      "no_rekening": "20202020"
+     
    },
    "detail_booking" : [
     {
@@ -324,6 +324,13 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNtI
     },
     {
       "id_jenis_kamar": 4,
+      "jumlah": 2,
+      "sub_total": 480000
+    }
+   ],
+   "fasilitas" : [
+    {
+      "id_fasilitas": 1,
       "jumlah": 2,
       "sub_total": 480000
     }

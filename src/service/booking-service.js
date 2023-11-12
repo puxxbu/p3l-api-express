@@ -4,6 +4,7 @@ import { ResponseError } from "../error/response-error.js";
 import {
   createBookingValidation,
   detailBookingValidation,
+  detailFasilitasValidation,
   searchKamarValidation,
 } from "../validation/booking-validation.js";
 import {
@@ -395,7 +396,7 @@ const createBook = async (request) => {
   dataBooking.tanggal_check_in = formatToISO(dataBooking.tanggal_check_in);
   dataBooking.tanggal_check_out = formatToISO(dataBooking.tanggal_check_out);
 
-  await prismaClient.booking.create({
+  const dataBook = await prismaClient.booking.create({
     data: dataBooking,
   });
 
@@ -539,6 +540,36 @@ const createBook = async (request) => {
     list_id_dbk.push(detail.id_detail_booking_kamar);
   }
 
+  if (request.fasilitas !== undefined) {
+    const dataFasilitas = validate(
+      detailFasilitasValidation,
+      request.fasilitas
+    );
+
+    for (const [index, detail] of dataFasilitas.entries()) {
+      console.log(JSON.stringify(detail, null, 2));
+      const countDbl = await prismaClient.detail_booking_layanan.findFirst({
+        orderBy: {
+          id_detail_booking_layanan: "desc",
+        },
+        take: 1,
+      });
+
+      detail.id_detail_booking_layanan = countDbl.id_detail_booking_layanan + 1;
+
+      await prismaClient.detail_booking_layanan.create({
+        data: {
+          id_detail_booking_layanan: detail.id_detail_booking_layanan,
+          id_booking: id_booking,
+          id_fasilitas: detail.id_fasilitas,
+          jumlah: detail.jumlah,
+          tanggal: new Date(),
+          sub_total: detail.sub_total,
+        },
+      });
+    }
+  }
+
   return prismaClient.booking.findFirst({
     where: {
       id_booking: dataBooking.id_booking,
@@ -558,7 +589,26 @@ const createBook = async (request) => {
       pegawai_1: true,
       pegawai_2: true,
       catatan_tambahan: true,
-      detail_booking_kamar: true,
+      detail_booking_kamar: {
+        select: {
+          id_detail_booking_kamar: true,
+          id_booking: true,
+          id_jenis_kamar: true,
+          jumlah: true,
+          sub_total: true,
+          detail_ketersediaan_kamar: {
+            select: {
+              kamar: {
+                select: {
+                  jenis_kamar: true,
+                  nomor_kamar: true,
+                },
+              },
+            },
+          },
+        },
+      },
+      detail_booking_layanan: true,
     },
   });
 };

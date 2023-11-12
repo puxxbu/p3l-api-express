@@ -79,17 +79,17 @@ model detail_booking_kamar {
 }
 
 model detail_booking_layanan {
-  id_detail_booking_layanan Int      @id(map: "pk_detail_booking_layanan") @unique(map: "detail_booking_layanan_pk")
+  id_detail_booking_layanan Int      @id @unique
   id_fasilitas              Int
   id_booking                String   @db.VarChar(100)
   jumlah                    Int
   sub_total                 Int
   tanggal                   DateTime @db.Date
-  booking                   booking  @relation(fields: [id_booking], references: [id_booking], onUpdate: Restrict, onDelete: Cascade, map: "fk_detail_b_relations_booking")
-  layanan                   layanan  @relation(fields: [id_fasilitas], references: [id_fasilitas], onUpdate: Restrict, map: "fk_detail_b_relations_layanan")
+  booking                   booking  @relation(fields: [id_booking], onUpdate: Restrict, onDelete: Cascade, references: [id_booking])
+  layanan                   layanan  @relation(fields: [id_fasilitas], onUpdate: Restrict, references: [id_fasilitas])
 
-  @@index([id_fasilitas], map: "relationship_10_fk")
-  @@index([id_booking], map: "relationship_11_fk")
+  @@index([id_fasilitas])
+  @@index([id_booking])
 }
 
 model invoice {
