@@ -16,4 +16,14 @@ const searchJenisKamarValidation = Joi.object({
   jumlah_kasur: Joi.number().optional(),
 });
 
-export { createJenisKamarValidation, searchJenisKamarValidation };
+const showAvailabilityValidation = Joi.object({
+  id_jenis_kamar: Joi.number().positive().required(),
+  tanggal_check_in: Joi.string().required(),
+  tanggal_check_out: Joi.string().required(),
+});
+
+export {
+  createJenisKamarValidation,
+  searchJenisKamarValidation,
+  showAvailabilityValidation,
+};

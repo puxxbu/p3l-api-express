@@ -45,6 +45,10 @@ userRouter.get("/api/kamar", kamarController.search);
 
 //JenisKamar API
 userRouter.post("/api/jenis-kamar", jenisKamarController.create);
+userRouter.get(
+  "/api/jenis-kamar/status",
+  jenisKamarController.showAvailability
+);
 userRouter.get("/api/jenis-kamar/:id", jenisKamarController.getJenisKamarById);
 userRouter.put("/api/jenis-kamar/:id", jenisKamarController.updateJenisKamar);
 userRouter.delete("/api/jenis-kamar/:id", jenisKamarController.remove);
