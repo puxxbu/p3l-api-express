@@ -281,10 +281,11 @@ Content-Type: application/json
 Accept: application/json
 
 ### Fasilitas
-GET http://localhost:3000/api/fasilitas?size=100
+GET http://localhost:3000/api/customer/group?size=100
 Content-Type: application/json
 Accept: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNtIiwiaWF0IjoxNjk4NzU0ODU5LCJleHAiOjE3MDEzNDY4NTl9.46MklXr0lciK4Y7bNaJIBrURDmZHDUrCaYB0oBZfyfs
+
 ### Fasilitas
 POST http://localhost:3000/api/booking
 Content-Type: application/json
@@ -295,8 +296,8 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNtI
    "booking" : {
      "id_customer": 2,
       "tanggal_booking": "2023-09-19",
-      "tanggal_check_in": "2022-11-06 08:00:00",
-      "tanggal_check_out": "2022-11-28 10:00:00",
+      "tanggal_check_in": "2023-11-06 08:00:00",
+      "tanggal_check_out": "2023-11-28 10:00:00",
       "tamu_dewasa": 2,
       "tamu_anak": 8,
       "tanggal_pembayaran": "2023-09-20",
@@ -343,3 +344,21 @@ Content-Type: application/json
 Accept: application/json
 
 ### Fasilitas
+
+### Fasilitas
+PUT http://localhost:3000/api/booking/change-status/P231114-451
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNtIiwiaWF0IjoxNjk4NzU0ODU5LCJleHAiOjE3MDEzNDY4NTl9.46MklXr0lciK4Y7bNaJIBrURDmZHDUrCaYB0oBZfyfs
+
+{
+   "status_booking" : "coba"
+}
+
+### Fasilitas
+
+### Fasilitas
+GET http://localhost:3000/api/customer/booking/P231114-451
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNtIiwiaWF0IjoxNjk4NzU0ODU5LCJleHAiOjE3MDEzNDY4NTl9.46MklXr0lciK4Y7bNaJIBrURDmZHDUrCaYB0oBZfyfs

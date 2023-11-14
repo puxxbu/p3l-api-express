@@ -84,6 +84,18 @@ const createBook = async (req, res, next) => {
   }
 };
 
+const updateBookingStatus = async (req, res, next) => {
+  try {
+    const id = req.params.id;
+    const result = await bookingService.updateStatusBooking(req.body, id);
+    res.status(200).json({
+      data: result,
+    });
+  } catch (e) {
+    next(e);
+  }
+};
+
 export default {
   create,
   getTarifById,
@@ -92,4 +104,5 @@ export default {
   search,
   searchAvailableKamar,
   createBook,
+  updateBookingStatus,
 };

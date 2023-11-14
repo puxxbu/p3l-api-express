@@ -618,6 +618,30 @@ const createBook = async (request) => {
   });
 };
 
+const updateStatusBooking = async (request, id) => {
+  const status_booking = request.status_booking;
+  const idBooking = id;
+
+  const checkBooking = await prismaClient.booking.findUnique({
+    where: {
+      id_booking: idBooking,
+    },
+  });
+
+  if (checkBooking === null) {
+    throw new ResponseError(404, "Tarif is not found");
+  }
+
+  return prismaClient.booking.update({
+    where: {
+      id_booking: idBooking,
+    },
+    data: {
+      status_booking: status_booking,
+    },
+  });
+};
+
 export default {
   create,
   getTarifById,
@@ -626,4 +650,5 @@ export default {
   search,
   searchAvailableKamar,
   createBook,
+  updateStatusBooking,
 };

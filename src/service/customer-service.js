@@ -2,6 +2,7 @@ import { prismaClient } from "../app/database.js";
 import { ResponseError } from "../error/response-error.js";
 import {
   dataCustomerValidation,
+  searchGroupValidation,
   searchUserValidation,
 } from "../validation/user-validation.js";
 import { validate } from "../validation/validation.js";
@@ -229,17 +230,31 @@ const getBookingById = async (id) => {
       customer: true,
       pegawai_1: true,
       pegawai_2: true,
+      no_rekening: true,
       status_booking: true,
       tanggal_check_in: true,
       tanggal_check_out: true,
       tamu_dewasa: true,
       tamu_anak: true,
       tanggal_pembayaran: true,
+
       detail_booking_kamar: {
         select: {
+          id_detail_booking_kamar: true,
+          id_booking: true,
           jenis_kamar: true,
-          sub_total: true,
           jumlah: true,
+          sub_total: true,
+          detail_ketersediaan_kamar: {
+            select: {
+              kamar: {
+                select: {
+                  jenis_kamar: true,
+                  nomor_kamar: true,
+                },
+              },
+            },
+          },
         },
       },
       detail_booking_layanan: {
@@ -255,6 +270,58 @@ const getBookingById = async (id) => {
   });
 };
 
+const searchGroup = async (request) => {
+  request = validate(searchGroupValidation, request);
+
+  const skip = (request.page - 1) * request.size;
+
+  const filters = [];
+
+  if (request.user_attribute !== undefined) {
+    filters.push({
+      nama: {
+        contains: request.user_attribute,
+        mode: "insensitive",
+      },
+    });
+  }
+
+  let where = {};
+
+  if (filters.length > 1) {
+    where = {
+      OR: filters,
+    };
+  } else {
+    where = {
+      AND: filters,
+    };
+  }
+
+  const customer = await prismaClient.customer.findMany({
+    where: {
+      jenis_customer: "Group",
+    },
+    take: request.size,
+    skip: skip,
+  });
+
+  const totalItems = await prismaClient.customer.count({
+    where: {
+      jenis_customer: "Group",
+    },
+  });
+
+  return {
+    data: customer,
+    paging: {
+      page: request.page,
+      total_item: totalItems,
+      total_page: Math.ceil(totalItems / request.size),
+    },
+  };
+};
+
 export default {
   create,
   getProfileById,
@@ -263,4 +330,5 @@ export default {
   getCurrentProfile,
   getUserBookingHistory,
   getBookingById,
+  searchGroup,
 };

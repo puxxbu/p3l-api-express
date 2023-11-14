@@ -27,6 +27,7 @@ userRouter.put("/api/users/password", userController.changePassword);
 //Customer API
 
 userRouter.post("/api/customer", customerController.create);
+userRouter.get("/api/customer/group", customerController.getGroupCustomer);
 userRouter.get("/api/customer/current", customerController.getCurrentProfile);
 userRouter.get("/api/customer/:id", customerController.getProfileById);
 userRouter.put("/api/customer", customerController.updateProfile);
@@ -78,5 +79,9 @@ userRouter.get("/api/tarif", tarifController.search);
 //Booking API
 
 userRouter.post("/api/booking", bookingController.createBook);
+userRouter.put(
+  "/api/booking/change-status/:id",
+  bookingController.updateBookingStatus
+);
 
 export { userRouter };
