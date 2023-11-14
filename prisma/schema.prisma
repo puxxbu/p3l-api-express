@@ -12,8 +12,8 @@ model akun {
   id_role  Int
   username String     @unique @db.VarChar(255)
   password String     @db.VarChar(255)
-  role     role       @relation(fields: [id_role], references: [id_role], onUpdate: Restrict, map: "fk_akun_relations_role")
   token    String?    @db.VarChar(255)
+  role     role       @relation(fields: [id_role], references: [id_role], onUpdate: Restrict, map: "fk_akun_relations_role")
   customer customer[]
   pegawai  pegawai[]
 
@@ -23,17 +23,17 @@ model akun {
 model booking {
   id_booking             String                   @id(map: "pk_booking") @unique(map: "booking_pk") @db.VarChar(100)
   id_customer            Int
-  id_pegawai_sm          Int?                     @map("id_pegawai_sm")
-  id_pegawai_fo          Int?                     @map("id_pegawai_fo")
   tanggal_booking        DateTime                 @db.Date
   tanggal_check_in       DateTime?                @db.Timestamp(0)
   tanggal_check_out      DateTime?                @db.Timestamp(0)
   tamu_dewasa            Int?
   tamu_anak              Int?
-  no_rekening            String?                  @db.VarChar(255)
   tanggal_pembayaran     DateTime?                @db.Date
   jenis_booking          String?                  @db.VarChar(255)
   status_booking         String?                  @db.VarChar(100)
+  id_pegawai_fo          Int?                     @map("id_pegawai_fo")
+  id_pegawai_sm          Int?                     @map("id_pegawai_sm")
+  no_rekening            String?                  @db.VarChar(255)
   customer               customer                 @relation(fields: [id_customer], references: [id_customer], onUpdate: Restrict, map: "fk_booking_relations_customer")
   pegawai_1              pegawai?                 @relation("Pegawai1Relation", fields: [id_pegawai_sm], references: [id_pegawai], onDelete: Restrict, onUpdate: Restrict, map: "fk_booking_relations_pegawai_1")
   pegawai_2              pegawai?                 @relation("Pegawai2Relation", fields: [id_pegawai_fo], references: [id_pegawai], onDelete: Restrict, onUpdate: Restrict, map: "fk_booking_relations_pegawai_2")
