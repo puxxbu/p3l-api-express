@@ -548,14 +548,19 @@ const createBook = async (request) => {
 
     for (const [index, detail] of dataFasilitas.entries()) {
       console.log(JSON.stringify(detail, null, 2));
-      const countDbl = await prismaClient.detail_booking_layanan.findFirst({
+      let countDbl = await prismaClient.detail_booking_layanan.findFirst({
         orderBy: {
           id_detail_booking_layanan: "desc",
         },
         take: 1,
       });
 
-      detail.id_detail_booking_layanan = countDbl.id_detail_booking_layanan + 1;
+      if (countDbl === null) {
+        detail.id_detail_booking_layanan = 1;
+      } else {
+        detail.id_detail_booking_layanan =
+          countDbl.id_detail_booking_layanan + 1;
+      }
 
       await prismaClient.detail_booking_layanan.create({
         data: {
@@ -576,7 +581,7 @@ const createBook = async (request) => {
     },
     select: {
       id_booking: true,
-      id_customer: true,
+      customer: true,
       tanggal_booking: true,
       tanggal_check_in: true,
       tanggal_check_out: true,

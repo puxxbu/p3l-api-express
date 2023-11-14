@@ -11,6 +11,7 @@ import jenisKamarController from "../controller/jenisKamar-controller.js";
 import fasilitasController from "../controller/fasilitas-controller.js";
 import tarifController from "../controller/tarif-controller.js";
 import bookingController from "../controller/booking-controller.js";
+import { publicRouter } from "./public-api.js";
 
 const userRouter = new express.Router();
 
@@ -45,7 +46,7 @@ userRouter.get("/api/kamar", kamarController.search);
 
 //JenisKamar API
 userRouter.post("/api/jenis-kamar", jenisKamarController.create);
-userRouter.get(
+publicRouter.get(
   "/api/jenis-kamar/status",
   jenisKamarController.showAvailability
 );
@@ -75,7 +76,7 @@ userRouter.delete("/api/tarif/:id", tarifController.remove);
 userRouter.get("/api/tarif", tarifController.search);
 
 //Booking API
-userRouter.get("/api/booking/kamar", bookingController.searchAvailableKamar);
+
 userRouter.post("/api/booking", bookingController.createBook);
 
 export { userRouter };

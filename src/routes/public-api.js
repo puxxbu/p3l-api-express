@@ -1,6 +1,7 @@
 import express from "express";
 import userController from "../controller/user-controller.js";
 import multer from "multer";
+import bookingController from "../controller/booking-controller.js";
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -37,5 +38,6 @@ publicRouter.post("/api/users/login", userController.login);
 
 publicRouter.post("/api/upload", upload.single("file"), userController.upload);
 publicRouter.post("/api/notifyEmail", userController.sendEmail);
+publicRouter.get("/api/booking/kamar", bookingController.searchAvailableKamar);
 
 export { publicRouter };

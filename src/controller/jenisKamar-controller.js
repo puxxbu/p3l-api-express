@@ -61,7 +61,7 @@ const search = async (req, res, next) => {
 
 const showAvailability = async (req, res, next) => {
   try {
-    const result = await jenisKamarService.showAvailability(req.body);
+    const result = await jenisKamarService.showAvailability(req.query);
     res.status(200).json({
       data: result,
     });

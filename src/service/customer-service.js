@@ -229,6 +229,7 @@ const getBookingById = async (id) => {
       customer: true,
       pegawai_1: true,
       pegawai_2: true,
+      status_booking: true,
       tanggal_check_in: true,
       tanggal_check_out: true,
       tamu_dewasa: true,
