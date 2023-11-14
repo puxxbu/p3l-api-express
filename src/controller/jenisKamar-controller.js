@@ -59,10 +59,22 @@ const search = async (req, res, next) => {
   }
 };
 
+const showAvailability = async (req, res, next) => {
+  try {
+    const result = await jenisKamarService.showAvailability(req.query);
+    res.status(200).json({
+      data: result,
+    });
+  } catch (e) {
+    next(e);
+  }
+};
+
 export default {
   create,
   getJenisKamarById,
   updateJenisKamar,
   remove,
   search,
+  showAvailability,
 };

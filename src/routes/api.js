@@ -11,6 +11,7 @@ import jenisKamarController from "../controller/jenisKamar-controller.js";
 import fasilitasController from "../controller/fasilitas-controller.js";
 import tarifController from "../controller/tarif-controller.js";
 import bookingController from "../controller/booking-controller.js";
+import { publicRouter } from "./public-api.js";
 
 const userRouter = new express.Router();
 
@@ -26,6 +27,7 @@ userRouter.put("/api/users/password", userController.changePassword);
 //Customer API
 
 userRouter.post("/api/customer", customerController.create);
+userRouter.get("/api/customer/group", customerController.getGroupCustomer);
 userRouter.get("/api/customer/current", customerController.getCurrentProfile);
 userRouter.get("/api/customer/:id", customerController.getProfileById);
 userRouter.put("/api/customer", customerController.updateProfile);
@@ -45,6 +47,10 @@ userRouter.get("/api/kamar", kamarController.search);
 
 //JenisKamar API
 userRouter.post("/api/jenis-kamar", jenisKamarController.create);
+publicRouter.get(
+  "/api/jenis-kamar/status",
+  jenisKamarController.showAvailability
+);
 userRouter.get("/api/jenis-kamar/:id", jenisKamarController.getJenisKamarById);
 userRouter.put("/api/jenis-kamar/:id", jenisKamarController.updateJenisKamar);
 userRouter.delete("/api/jenis-kamar/:id", jenisKamarController.remove);
@@ -71,6 +77,11 @@ userRouter.delete("/api/tarif/:id", tarifController.remove);
 userRouter.get("/api/tarif", tarifController.search);
 
 //Booking API
-userRouter.get("/api/booking/kamar", bookingController.searchAvailableKamar);
+
+userRouter.post("/api/booking", bookingController.createBook);
+userRouter.put(
+  "/api/booking/change-status/:id",
+  bookingController.updateBookingStatus
+);
 
 export { userRouter };

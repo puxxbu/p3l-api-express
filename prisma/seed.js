@@ -694,72 +694,72 @@ async function main() {
   //   ],
   // });
 
-  async function getPajak(id_booking) {
-    try {
-      const result = await prisma.detail_booking_layanan.findMany({
-        select: {
-          sub_total: true,
-        },
-        where: {
-          id_booking: id_booking,
-        },
-      });
+  // async function getPajak(id_booking) {
+  //   try {
+  //     const result = await prisma.detail_booking_layanan.findMany({
+  //       select: {
+  //         sub_total: true,
+  //       },
+  //       where: {
+  //         id_booking: id_booking,
+  //       },
+  //     });
 
-      let total = 0;
-      result.forEach((item) => {
-        total += item.sub_total;
-      });
+  //     let total = 0;
+  //     result.forEach((item) => {
+  //       total += item.sub_total;
+  //     });
 
-      return total * 0.1;
-    } catch (error) {
-      throw new Error("Gagal mengambil data layanan:", error);
-    } finally {
-      await prisma.$disconnect();
-    }
-  }
+  //     return total * 0.1;
+  //   } catch (error) {
+  //     throw new Error("Gagal mengambil data layanan:", error);
+  //   } finally {
+  //     await prisma.$disconnect();
+  //   }
+  // }
 
-  async function getTotalMalam(id_booking) {
-    try {
-      const result = await prisma.$queryRaw`
-      SELECT
-        (DATE_PART('day', tanggal_check_out - tanggal_check_in) +
-        CASE WHEN DATE_PART('hour', tanggal_check_out - tanggal_check_in) >= 12 THEN 1 ELSE 0 END
-        + CASE WHEN DATE_PART('hour', tanggal_check_out) >= 12 THEN 1 ELSE 0 END) AS jumlah_malam
-      FROM booking
-      WHERE id_booking = ${id_booking};
-    `;
+  // async function getTotalMalam(id_booking) {
+  //   try {
+  //     const result = await prisma.$queryRaw`
+  //     SELECT
+  //       (DATE_PART('day', tanggal_check_out - tanggal_check_in) +
+  //       CASE WHEN DATE_PART('hour', tanggal_check_out - tanggal_check_in) >= 12 THEN 1 ELSE 0 END
+  //       + CASE WHEN DATE_PART('hour', tanggal_check_out) >= 12 THEN 1 ELSE 0 END) AS jumlah_malam
+  //     FROM booking
+  //     WHERE id_booking = ${id_booking};
+  //   `;
 
-      return result[0].jumlah_malam;
-    } catch (error) {
-      console.log(error);
-    } finally {
-      await prisma.$disconnect();
-    }
-  }
+  //     return result[0].jumlah_malam;
+  //   } catch (error) {
+  //     console.log(error);
+  //   } finally {
+  //     await prisma.$disconnect();
+  //   }
+  // }
 
-  async function getTotalJaminan(id_booking) {
-    try {
-      const result = await prisma.detail_booking_kamar.findFirst({
-        select: {
-          sub_total: true,
-        },
-        where: {
-          id_booking: id_booking,
-        },
-      });
+  // async function getTotalJaminan(id_booking) {
+  //   try {
+  //     const result = await prisma.detail_booking_kamar.findFirst({
+  //       select: {
+  //         sub_total: true,
+  //       },
+  //       where: {
+  //         id_booking: id_booking,
+  //       },
+  //     });
 
-      // let total = 0;
-      // result.forEach((item) => {
-      //   total += item.sub_total;
-      // });
+  //     // let total = 0;
+  //     // result.forEach((item) => {
+  //     //   total += item.sub_total;
+  //     // });
 
-      return result.sub_total * (await getTotalMalam(id_booking));
-    } catch (error) {
-      throw new Error("Gagal mengambil data layanan:", error);
-    } finally {
-      await prisma.$disconnect();
-    }
-  }
+  //     return result.sub_total * (await getTotalMalam(id_booking));
+  //   } catch (error) {
+  //     throw new Error("Gagal mengambil data layanan:", error);
+  //   } finally {
+  //     await prisma.$disconnect();
+  //   }
+  // }
 
   // await prisma.invoice.createMany({
   //   data: [
@@ -785,16 +785,39 @@ async function main() {
   //   ],
   // });
 
-  await prisma.booking.updateMany({
+  // await prisma.booking.updateMany({
+  //   where: {
+  //     id_booking: {
+  //       in: ["2", "4"],
+  //     },
+  //   },
+  //   data: {
+  //     status_booking: "Check Out",
+  //   },
+  // });
+
+  const result = await prisma.kamar.findMany({
     where: {
-      id_booking: {
-        in: ["2", "4"],
+      id_jenis_kamar: 6,
+      NOT: {
+        detail_ketersediaan_kamar: {
+          some: {
+            detail_booking_kamar: {
+              booking: {
+                AND: [
+                  { tanggal_check_in: { lte: "2024-11-28T00:00:00.000Z" } },
+                  { tanggal_check_out: { gte: "2024-11-06T00:00:00.000Z" } },
+                ],
+              },
+            },
+          },
+        },
       },
     },
-    data: {
-      status_booking: "Check Out",
-    },
   });
+
+  console.log(await result);
+  console.log(new Date());
 
   console.log("Seed data created successfully!");
   console.log(await getPajak("1"));

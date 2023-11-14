@@ -84,6 +84,18 @@ const getBookingById = async (req, res, next) => {
   }
 };
 
+const getGroupCustomer = async (req, res, next) => {
+  try {
+    const result = await customerService.searchGroup(req.query);
+    res.status(200).json({
+      data: result.data,
+      paging: result.paging,
+    });
+  } catch (e) {
+    next(e);
+  }
+};
+
 export default {
   create,
   getProfileById,
@@ -92,4 +104,5 @@ export default {
   getCurrentProfile,
   getBookHistory,
   getBookingById,
+  getGroupCustomer,
 };

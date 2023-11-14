@@ -276,7 +276,89 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImN1c
 
 
 ### Tarif
-GET http://localhost:3000/api/booking/kamar
+GET http://localhost:3000/api/booking/kamar?tanggal_check_in=2023-11-09
+Content-Type: application/json
+Accept: application/json
+
+### Fasilitas
+GET http://localhost:3000/api/customer/group?size=100
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNtIiwiaWF0IjoxNjk4NzU0ODU5LCJleHAiOjE3MDEzNDY4NTl9.46MklXr0lciK4Y7bNaJIBrURDmZHDUrCaYB0oBZfyfs
+
+### Fasilitas
+POST http://localhost:3000/api/booking
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNtIiwiaWF0IjoxNjk4NzU0ODU5LCJleHAiOjE3MDEzNDY4NTl9.46MklXr0lciK4Y7bNaJIBrURDmZHDUrCaYB0oBZfyfs
+
+{
+   "booking" : {
+     "id_customer": 2,
+      "tanggal_booking": "2023-09-19",
+      "tanggal_check_in": "2023-11-06 08:00:00",
+      "tanggal_check_out": "2023-11-28 10:00:00",
+      "tamu_dewasa": 2,
+      "tamu_anak": 8,
+      "tanggal_pembayaran": "2023-09-20",
+      "jenis_booking": "Personal",
+      "status_booking": "Check Out",
+      "id_pegawai_fo": 3,
+      "no_rekening": "20202020"
+     
+   },
+   "detail_booking" : [
+    {
+      "id_jenis_kamar": 1,
+      "jumlah": 2,
+      "sub_total": 480000
+    },
+    {
+      "id_jenis_kamar": 2,
+      "jumlah": 2,
+      "sub_total": 480000
+    },
+    {
+      "id_jenis_kamar": 3,
+      "jumlah": 2,
+      "sub_total": 480000
+    },
+    {
+      "id_jenis_kamar": 4,
+      "jumlah": 2,
+      "sub_total": 480000
+    }
+   ],
+   "fasilitas" : [
+    {
+      "id_fasilitas": 1,
+      "jumlah": 2,
+      "sub_total": 480000
+    }
+   ]
+}
+
+### Fasilitas
+GET http://localhost:3000/api/jenis-kamar/status?id_jenis_kamar=1&tanggal_check_in=2021-11-06 08:00:00&tanggal_check_out=2021-11-28 10:00:00
+Content-Type: application/json
+Accept: application/json
+
+### Fasilitas
+
+### Fasilitas
+PUT http://localhost:3000/api/booking/change-status/P231114-451
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNtIiwiaWF0IjoxNjk4NzU0ODU5LCJleHAiOjE3MDEzNDY4NTl9.46MklXr0lciK4Y7bNaJIBrURDmZHDUrCaYB0oBZfyfs
+
+{
+   "status_booking" : "coba"
+}
+
+### Fasilitas
+
+### Fasilitas
+GET http://localhost:3000/api/customer/booking/P231114-451
 Content-Type: application/json
 Accept: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNtIiwiaWF0IjoxNjk4NzU0ODU5LCJleHAiOjE3MDEzNDY4NTl9.46MklXr0lciK4Y7bNaJIBrURDmZHDUrCaYB0oBZfyfs

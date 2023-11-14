@@ -36,6 +36,11 @@ const searchUserValidation = Joi.object({
   id_customer: Joi.string().optional(),
 });
 
+const searchGroupValidation = Joi.object({
+  page: Joi.number().positive().default(1),
+  size: Joi.number().min(1).positive().max(100).default(10),
+});
+
 export {
   registerUserValidation,
   loginUserValidation,
@@ -43,4 +48,5 @@ export {
   updateUserValidation,
   dataCustomerValidation,
   searchUserValidation,
+  searchGroupValidation,
 };

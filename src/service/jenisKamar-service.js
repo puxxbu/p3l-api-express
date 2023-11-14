@@ -1,8 +1,10 @@
 import { prismaClient } from "../app/database.js";
 import { ResponseError } from "../error/response-error.js";
+import { formatToISO } from "../utils/date-formatter.js";
 import {
   createJenisKamarValidation,
   searchJenisKamarValidation,
+  showAvailabilityValidation,
 } from "../validation/jenisKamar-validation.js";
 
 import { validate } from "../validation/validation.js";
@@ -128,6 +130,38 @@ const remove = async (id) => {
   });
 };
 
+const showAvailability = async (request) => {
+  const data = validate(showAvailabilityValidation, request);
+
+  return prismaClient.kamar.count({
+    where: {
+      id_jenis_kamar: data.id_jenis_kamar,
+      NOT: {
+        detail_ketersediaan_kamar: {
+          some: {
+            detail_booking_kamar: {
+              booking: {
+                AND: [
+                  {
+                    tanggal_check_in: {
+                      lte: formatToISO(data.tanggal_check_out),
+                    },
+                  },
+                  {
+                    tanggal_check_out: {
+                      gte: formatToISO(data.tanggal_check_in),
+                    },
+                  },
+                ],
+              },
+            },
+          },
+        },
+      },
+    },
+  });
+};
+
 const search = async (request) => {
   request = validate(searchJenisKamarValidation, request);
 
@@ -202,4 +236,5 @@ export default {
   update,
   remove,
   search,
+  showAvailability,
 };
