@@ -33,7 +33,7 @@ Accept: application/json
 
 ###
 
-POST http://localhost:3000/api/users/login
+POST http://20.2.72.17/api/users/login
 Content-Type: application/json
 Accept: application/json
 
@@ -276,7 +276,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImN1c
 
 
 ### Tarif
-GET http://20.2.72.17/api/booking/kamar?tanggal_check_in=2023-11-09
+GET http://localhost:3000/api/booking/kamar?tanggal_check_in=2023-10-06&tanggal_check_out=2023-10-09
 Content-Type: application/json
 Accept: application/json
 
@@ -296,8 +296,8 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNtI
    "booking" : {
      "id_customer": 2,
       "tanggal_booking": "2023-09-19",
-      "tanggal_check_in": "2023-11-06 08:00:00",
-      "tanggal_check_out": "2023-11-28 10:00:00",
+      "tanggal_check_in": "2023-12-06 08:00:00",
+      "tanggal_check_out": "2023-12-09 10:00:00",
       "tamu_dewasa": 2,
       "tamu_anak": 8,
       "tanggal_pembayaran": "2023-09-20",
@@ -315,19 +315,10 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNtI
     },
     {
       "id_jenis_kamar": 2,
-      "jumlah": 2,
-      "sub_total": 480000
-    },
-    {
-      "id_jenis_kamar": 3,
-      "jumlah": 2,
-      "sub_total": 480000
-    },
-    {
-      "id_jenis_kamar": 4,
-      "jumlah": 2,
+      "jumlah": 1,
       "sub_total": 480000
     }
+    
    ],
    "fasilitas" : [
     {

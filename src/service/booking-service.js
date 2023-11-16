@@ -235,11 +235,15 @@ const searchAvailableKamar = async (request) => {
   }
 
   let tanggal_check_in = new Date();
+  let tanggal_check_out = new Date();
 
   // request.tanggal_check_in = "2023-09-12T11:00:00.000Z";
 
   if (request.tanggal_check_in !== undefined) {
     tanggal_check_in = new Date(request.tanggal_check_in);
+  }
+  if (request.tanggal_check_out !== undefined) {
+    tanggal_check_out = new Date(request.tanggal_check_out);
   }
 
   let where = {};
@@ -254,47 +258,78 @@ const searchAvailableKamar = async (request) => {
     };
   }
 
-  const ketersediaanKamar = await prismaClient.detail_booking_kamar.findMany({
-    where: {
-      booking: {
-        tanggal_check_in: {
-          lte: tanggal_check_in,
-        },
-        tanggal_check_out: {
-          gte: tanggal_check_in,
-        },
-      },
-    },
+  const ketersediaanKamar = await prismaClient.jenis_kamar.findMany({
     select: {
       id_jenis_kamar: true,
-      booking: {
-        select: {
-          tanggal_check_in: true,
-          tanggal_check_out: true,
-        },
-      },
     },
   });
 
-  // Membuat objek Map untuk menghitung jumlah yang sama
-  const kamarMap = new Map();
-  ketersediaanKamar.forEach((kamar) => {
-    const key = JSON.stringify(kamar);
-    const count = kamarMap.get(key) || 0;
-    kamarMap.set(key, count + 1);
-  });
+  const updatedKetersediaanKamar = await Promise.all(
+    ketersediaanKamar.map(async (data) => {
+      const jumlahKamar = await prismaClient.kamar.count({
+        where: {
+          id_jenis_kamar: data.id_jenis_kamar,
+          NOT: {
+            detail_ketersediaan_kamar: {
+              some: {
+                detail_booking_kamar: {
+                  booking: {
+                    AND: [
+                      {
+                        tanggal_check_in: {
+                          lte: tanggal_check_out.toISOString(),
+                        },
+                      },
+                      {
+                        tanggal_check_out: {
+                          gte: tanggal_check_in.toISOString(),
+                        },
+                      },
+                    ],
+                  },
+                },
+              },
+            },
+          },
+        },
+      });
 
-  // Mengonversi kembali ke array objek dengan atribut "jumlah"
-  const ketersediaanSederhana = Array.from(kamarMap.entries()).map(
-    ([key, count]) => {
-      const { id_jenis_kamar, booking } = JSON.parse(key);
       return {
-        id_jenis_kamar,
-        booking,
-        jumlah: count,
+        ...data,
+        ketersediaan_kamar: jumlahKamar,
       };
-    }
+    })
   );
+
+  if (ketersediaanKamar.length === 0) {
+    return {
+      data: [],
+      ketersediaan: [],
+      paging: {
+        page: request.page,
+        total_item: 0,
+        total_page: 0,
+      },
+    };
+  }
+
+  // const kamarMap = new Map();
+  // ketersediaanKamar.forEach((kamar) => {
+  //   const key = JSON.stringify(kamar);
+  //   const count = kamarMap.get(key) || 0;
+  //   kamarMap.set(key, count + 1);
+  // });
+
+  // const ketersediaanSederhana = Array.from(kamarMap.entries()).map(
+  //   ([key, count]) => {
+  //     const { id_jenis_kamar, booking } = JSON.parse(key);
+  //     return {
+  //       id_jenis_kamar,
+  //       booking,
+  //       jumlah: count,
+  //     };
+  //   }
+  // );
 
   const jenisKamarCounts = await prismaClient.kamar.groupBy({
     by: ["id_jenis_kamar"],
@@ -353,10 +388,18 @@ const searchAvailableKamar = async (request) => {
     where,
   });
 
+  const kamarTersedia = kamar.filter((kamarItem) => {
+    const idJenisKamar = kamarItem.id_jenis_kamar;
+    const ketersediaan = updatedKetersediaanKamar.find(
+      (ketersediaanItem) => ketersediaanItem.id_jenis_kamar === idJenisKamar
+    );
+
+    return ketersediaan && ketersediaan.ketersediaan_kamar > 0;
+  });
+
   return {
-    data: kamar,
-    ketersediaan: ketersediaanSederhana,
-    jumlahKamar: jenisKamarCounts,
+    data: kamarTersedia,
+    ketersediaan: updatedKetersediaanKamar,
     paging: {
       page: request.page,
       total_item: totalItems,
@@ -373,6 +416,8 @@ async function isBookingIdUnique(bookingId) {
   });
   return !existingBooking;
 }
+
+// Contoh penggunaan fungsi
 
 const createBook = async (request) => {
   const dataBooking = validate(createBookingValidation, request.booking);

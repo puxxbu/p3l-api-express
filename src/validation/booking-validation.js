@@ -5,6 +5,7 @@ const searchKamarValidation = Joi.object({
   size: Joi.number().min(1).positive().max(100).default(10),
   kamar_attribute: Joi.string().optional(),
   tanggal_check_in: Joi.string().optional(),
+  tanggal_check_out: Joi.string().optional(),
 });
 
 const createBookingValidation = Joi.object({
