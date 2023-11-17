@@ -279,12 +279,12 @@ const searchAvailableKamar = async (request) => {
                         AND: [
                           {
                             tanggal_check_in: {
-                              lte: tanggal_check_in.toISOString(),
+                              lte: tanggal_check_out.toISOString(),
                             },
                           },
                           {
                             tanggal_check_out: {
-                              gte: tanggal_check_out.toISOString(),
+                              gte: tanggal_check_in.toISOString(),
                             },
                           },
                         ],

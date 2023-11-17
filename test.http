@@ -276,7 +276,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImN1c
 
 
 ### Tarif
-GET http://localhost:3000/api/booking/kamar?tanggal_check_in=2023-10-06&tanggal_check_out=2023-10-09
+GET http://localhost:3000/api/booking/kamar?tanggal_check_in=2022-11-06&tanggal_check_out=2022-11-28
 Content-Type: application/json
 Accept: application/json
 
