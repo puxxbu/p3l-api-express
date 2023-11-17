@@ -796,27 +796,72 @@ async function main() {
   //   },
   // });
 
+  // const result = await prisma.kamar.findMany({
+  //   where: {
+  //     id_jenis_kamar: 1,
+  //     NOT: {
+  //       detail_ketersediaan_kamar: {
+  //         some: {
+  //           detail_booking_kamar: {
+  //             booking: {
+  //               AND: [
+  //                 { tanggal_check_in: { lte: "2022-11-28T00:00:00.000Z" } },
+  //                 { tanggal_check_out: { gte: "2022-11-06T00:00:00.000Z" } },
+  //               ],
+  //             },
+  //           },
+  //         },
+  //       },
+  //     },
+  //   },
+  // });
+
+  // const result2 = await prisma.kamar.findMany({
+  //   where: {
+  //     id_jenis_kamar: 1,
+  //     detail_ketersediaan_kamar: {
+  //       some: {
+  //         status: "Canceled",
+  //       },
+  //     },
+  //   },
+  // });
+
   const result = await prisma.kamar.findMany({
     where: {
-      id_jenis_kamar: 6,
-      NOT: {
-        detail_ketersediaan_kamar: {
-          some: {
-            detail_booking_kamar: {
-              booking: {
-                AND: [
-                  { tanggal_check_in: { lte: "2024-11-28T00:00:00.000Z" } },
-                  { tanggal_check_out: { gte: "2024-11-06T00:00:00.000Z" } },
-                ],
+      id_jenis_kamar: 1,
+      OR: [
+        {
+          NOT: {
+            detail_ketersediaan_kamar: {
+              some: {
+                detail_booking_kamar: {
+                  booking: {
+                    AND: [
+                      { tanggal_check_in: { lte: "2022-11-28T00:00:00.000Z" } },
+                      {
+                        tanggal_check_out: { gte: "2022-11-06T00:00:00.000Z" },
+                      },
+                    ],
+                  },
+                },
               },
             },
           },
         },
-      },
+        {
+          detail_ketersediaan_kamar: {
+            some: {
+              status: "Canceled",
+            },
+          },
+        },
+      ],
     },
   });
 
   console.log(await result);
+  // console.log(await result2);
   console.log(new Date());
 
   console.log("Seed data created successfully!");

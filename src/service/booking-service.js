@@ -269,28 +269,39 @@ const searchAvailableKamar = async (request) => {
       const jumlahKamar = await prismaClient.kamar.count({
         where: {
           id_jenis_kamar: data.id_jenis_kamar,
-          NOT: {
-            detail_ketersediaan_kamar: {
-              some: {
-                detail_booking_kamar: {
-                  booking: {
-                    AND: [
-                      {
-                        tanggal_check_in: {
-                          lte: tanggal_check_out.toISOString(),
-                        },
+          OR: [
+            {
+              NOT: {
+                detail_ketersediaan_kamar: {
+                  some: {
+                    detail_booking_kamar: {
+                      booking: {
+                        AND: [
+                          {
+                            tanggal_check_in: {
+                              lte: tanggal_check_in.toISOString(),
+                            },
+                          },
+                          {
+                            tanggal_check_out: {
+                              gte: tanggal_check_out.toISOString(),
+                            },
+                          },
+                        ],
                       },
-                      {
-                        tanggal_check_out: {
-                          gte: tanggal_check_in.toISOString(),
-                        },
-                      },
-                    ],
+                    },
                   },
                 },
               },
             },
-          },
+            {
+              detail_ketersediaan_kamar: {
+                some: {
+                  status: "Canceled",
+                },
+              },
+            },
+          ],
         },
       });
 
@@ -453,28 +464,39 @@ const createBook = async (request) => {
     const countAvailableKamar = await prismaClient.kamar.count({
       where: {
         id_jenis_kamar: detail.id_jenis_kamar,
-        NOT: {
-          detail_ketersediaan_kamar: {
-            some: {
-              detail_booking_kamar: {
-                booking: {
-                  AND: [
-                    {
-                      tanggal_check_in: {
-                        lte: dataBooking.tanggal_check_out,
-                      },
+        OR: [
+          {
+            NOT: {
+              detail_ketersediaan_kamar: {
+                some: {
+                  detail_booking_kamar: {
+                    booking: {
+                      AND: [
+                        {
+                          tanggal_check_in: {
+                            lte: dataBooking.tanggal_check_out,
+                          },
+                        },
+                        {
+                          tanggal_check_out: {
+                            gte: dataBooking.tanggal_check_in,
+                          },
+                        },
+                      ],
                     },
-                    {
-                      tanggal_check_out: {
-                        gte: dataBooking.tanggal_check_in,
-                      },
-                    },
-                  ],
+                  },
                 },
               },
             },
           },
-        },
+          {
+            detail_ketersediaan_kamar: {
+              some: {
+                status: "Canceled",
+              },
+            },
+          },
+        ],
       },
     });
 
@@ -510,28 +532,39 @@ const createBook = async (request) => {
     const kamarAvail = await prismaClient.kamar.findMany({
       where: {
         id_jenis_kamar: detail.id_jenis_kamar,
-        NOT: {
-          detail_ketersediaan_kamar: {
-            some: {
-              detail_booking_kamar: {
-                booking: {
-                  AND: [
-                    {
-                      tanggal_check_in: {
-                        lte: dataBooking.tanggal_check_out,
-                      },
+        OR: [
+          {
+            NOT: {
+              detail_ketersediaan_kamar: {
+                some: {
+                  detail_booking_kamar: {
+                    booking: {
+                      AND: [
+                        {
+                          tanggal_check_in: {
+                            lte: dataBooking.tanggal_check_out,
+                          },
+                        },
+                        {
+                          tanggal_check_out: {
+                            gte: dataBooking.tanggal_check_in,
+                          },
+                        },
+                      ],
                     },
-                    {
-                      tanggal_check_out: {
-                        gte: dataBooking.tanggal_check_in,
-                      },
-                    },
-                  ],
+                  },
                 },
               },
             },
           },
-        },
+          {
+            detail_ketersediaan_kamar: {
+              some: {
+                status: "Canceled",
+              },
+            },
+          },
+        ],
       },
     });
 
@@ -568,6 +601,7 @@ const createBook = async (request) => {
               id_ketersediaan_kamar,
               id_kamar,
               id_detail_booking_kamar,
+              status: "Booked",
             },
           })
         );
