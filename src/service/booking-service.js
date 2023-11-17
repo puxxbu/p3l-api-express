@@ -687,6 +687,29 @@ const updateStatusBooking = async (request, id) => {
   });
 };
 
+const cancelBooking = async (id) => {
+  const idBooking = id;
+
+  const checkBooking = await prismaClient.booking.findUnique({
+    where: {
+      id_booking: idBooking,
+    },
+  });
+
+  if (checkBooking === null) {
+    throw new ResponseError(404, "Tarif is not found");
+  }
+
+  return prismaClient.booking.update({
+    where: {
+      id_booking: idBooking,
+    },
+    data: {
+      status_booking: "Dibatalkan",
+    },
+  });
+};
+
 export default {
   create,
   getTarifById,
