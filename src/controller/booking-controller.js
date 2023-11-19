@@ -108,6 +108,18 @@ const cancelBooking = async (req, res, next) => {
   }
 };
 
+const searchBooking = async (req, res, next) => {
+  try {
+    const result = await bookingService.searchBooking(req.query);
+    res.status(200).json({
+      data: result.data,
+      paging: result.paging,
+    });
+  } catch (e) {
+    next(e);
+  }
+};
+
 export default {
   create,
   getTarifById,
@@ -118,4 +130,5 @@ export default {
   createBook,
   updateBookingStatus,
   cancelBooking,
+  searchBooking,
 };

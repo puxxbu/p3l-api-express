@@ -6,6 +6,7 @@ import {
   detailBookingValidation,
   detailFasilitasValidation,
   searchKamarValidation,
+  searchBookingValidation,
 } from "../validation/booking-validation.js";
 import {
   createTarifValidation,
@@ -760,6 +761,85 @@ const cancelBooking = async (id) => {
   });
 };
 
+const searchBooking = async (request) => {
+  request = validate(searchBookingValidation, request);
+
+  const skip = (request.page - 1) * request.size;
+
+  const filters = [];
+
+  if (request.search_params !== undefined) {
+    if (/^\d+$/.test(request.search_params)) {
+      filters.push({
+        harga: parseInt(request.search_params),
+      });
+    } else {
+      filters.push({
+        customer: {
+          nama: {
+            contains: request.search_params,
+            mode: "insensitive",
+          },
+        },
+      });
+      filters.push({
+        id_booking: {
+          contains: request.search_params,
+          mode: "insensitive",
+        },
+      });
+    }
+  }
+
+  let where = {};
+
+  if (filters.length > 1) {
+    where = {
+      OR: filters,
+    };
+  } else {
+    where = {
+      AND: filters,
+    };
+  }
+
+  const booking = await prismaClient.booking.findMany({
+    where,
+    take: request.size,
+    skip: skip,
+    select: {
+      id_booking: true,
+      id_customer: true,
+      tanggal_booking: true,
+      tanggal_check_in: true,
+      tanggal_check_out: true,
+      tamu_dewasa: true,
+      tamu_anak: true,
+      tanggal_pembayaran: true,
+      jenis_booking: true,
+      status_booking: true,
+      no_rekening: true,
+      pegawai_1: true,
+      pegawai_2: true,
+      catatan_tambahan: true,
+      customer: true,
+    },
+  });
+
+  const totalItems = await prismaClient.booking.count({
+    where,
+  });
+
+  return {
+    data: booking,
+    paging: {
+      page: request.page,
+      total_item: totalItems,
+      total_page: Math.ceil(totalItems / request.size),
+    },
+  };
+};
+
 export default {
   create,
   getTarifById,
@@ -770,4 +850,5 @@ export default {
   createBook,
   updateStatusBooking,
   cancelBooking,
+  searchBooking,
 };

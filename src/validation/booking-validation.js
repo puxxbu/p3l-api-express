@@ -44,9 +44,16 @@ const detailBookingValidation = Joi.array()
   )
   .required();
 
+const searchBookingValidation = Joi.object({
+  page: Joi.number().positive().default(1),
+  size: Joi.number().min(1).positive().max(100).default(10),
+  search_params: Joi.string().optional(),
+});
+
 export {
   searchKamarValidation,
   createBookingValidation,
   detailBookingValidation,
   detailFasilitasValidation,
+  searchBookingValidation,
 };
