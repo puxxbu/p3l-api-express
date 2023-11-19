@@ -96,6 +96,18 @@ const updateBookingStatus = async (req, res, next) => {
   }
 };
 
+const cancelBooking = async (req, res, next) => {
+  try {
+    const id = req.params.id;
+    const result = await bookingService.cancelBooking(id);
+    res.status(200).json({
+      data: result,
+    });
+  } catch (e) {
+    next(e);
+  }
+};
+
 export default {
   create,
   getTarifById,
@@ -105,4 +117,5 @@ export default {
   searchAvailableKamar,
   createBook,
   updateBookingStatus,
+  cancelBooking,
 };

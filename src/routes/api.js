@@ -79,6 +79,7 @@ userRouter.get("/api/tarif", tarifController.search);
 //Booking API
 
 userRouter.post("/api/booking", bookingController.createBook);
+userRouter.put("/api/booking/cancel/:id", bookingController.cancelBooking);
 userRouter.put(
   "/api/booking/change-status/:id",
   bookingController.updateBookingStatus

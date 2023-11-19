@@ -731,8 +731,24 @@ const cancelBooking = async (id) => {
   });
 
   if (checkBooking === null) {
-    throw new ResponseError(404, "Tarif is not found");
+    throw new ResponseError(
+      404,
+      `Booking dengan id ${idBooking} tidak ditemukan`
+    );
   }
+
+  await prismaClient.detail_ketersediaan_kamar.updateMany({
+    where: {
+      detail_booking_kamar: {
+        booking: {
+          id_booking: idBooking,
+        },
+      },
+    },
+    data: {
+      status: "Canceled",
+    },
+  });
 
   return prismaClient.booking.update({
     where: {
@@ -753,4 +769,5 @@ export default {
   searchAvailableKamar,
   createBook,
   updateStatusBooking,
+  cancelBooking,
 };
