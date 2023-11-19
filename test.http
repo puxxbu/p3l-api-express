@@ -263,7 +263,7 @@ Content-Type: application/json
 Accept: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InBhYmxvMSIsImlhdCI6MTY5ODEzOTc1OSwiZXhwIjoxNjk4NjU4MTU5fQ.NpI6FQsfvpWVogUDovO1gio0vYuaJjnPDc8H_-2Zo5Q
 ### Tarif
-GET http://localhost:3000/api/customer/2/booking-history
+GET http://localhost:3000/api/customer/2/booking-history?search_params=401
 Content-Type: application/json
 Accept: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImN1c3RvbWVyMiIsImlhdCI6MTY5ODY1NTIwNCwiZXhwIjoxNzAxMjQ3MjA0fQ.ejkVfII83RTyspKYO8wHYJyEA-f8xefzEjiuHO7-qUo
@@ -358,7 +358,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNtI
 
 
 ### Fasilitas
-GET http://localhost:3000/api/booking/search?search_params=Isobabat
+GET http://localhost:3000/api/booking/search?search_params=Dibatalkan
 Content-Type: application/json
 Accept: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNtIiwiaWF0IjoxNjk4NzU0ODU5LCJleHAiOjE3MDEzNDY4NTl9.46MklXr0lciK4Y7bNaJIBrURDmZHDUrCaYB0oBZfyfs

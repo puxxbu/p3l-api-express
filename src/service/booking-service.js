@@ -788,6 +788,12 @@ const searchBooking = async (request) => {
           mode: "insensitive",
         },
       });
+      filters.push({
+        status_booking: {
+          contains: request.search_params,
+          mode: "insensitive",
+        },
+      });
     }
   }
 

@@ -170,10 +170,47 @@ const getUserBookingHistory = async (request, id) => {
 
   const skip = (request.page - 1) * request.size;
 
-  const history = await prismaClient.booking.findMany({
-    where: {
-      id_customer: id,
-    },
+  const filters = [];
+
+  if (request.search_params !== undefined) {
+    filters.push({
+      customer: {
+        nama: {
+          contains: request.search_params,
+          mode: "insensitive",
+        },
+      },
+    });
+    filters.push({
+      id_booking: {
+        contains: request.search_params,
+        mode: "insensitive",
+      },
+    });
+    filters.push({
+      status_booking: {
+        contains: request.search_params,
+        mode: "insensitive",
+      },
+    });
+  }
+
+  let where = {};
+
+  if (filters.length > 1) {
+    where = {
+      OR: filters,
+    };
+  } else {
+    where = {
+      AND: filters,
+    };
+  }
+
+  const booking = await prismaClient.booking.findMany({
+    where,
+    take: request.size,
+    skip: skip,
     select: {
       id_booking: true,
       pegawai_1: true,
@@ -184,18 +221,14 @@ const getUserBookingHistory = async (request, id) => {
       status_booking: true,
       status_booking: true,
     },
-    take: request.size,
-    skip: skip,
   });
 
-  const totalItems = await prismaClient.customer.count({
-    where: {
-      id_customer: id,
-    },
+  const totalItems = await prismaClient.booking.count({
+    where,
   });
 
   return {
-    data: history,
+    data: booking,
     paging: {
       page: request.page,
       total_item: totalItems,
