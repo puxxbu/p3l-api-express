@@ -444,7 +444,12 @@ const createBook = async (request) => {
   while (!isUnique) {
     const timestamp = moment().format("YYMMDD");
     const randomSuffix = Math.floor(Math.random() * 1000);
-    id_booking = `P${timestamp}-${randomSuffix}`;
+
+    if (dataBooking.jenis_booking === "Group") {
+      id_booking = `G${timestamp}-${randomSuffix}`;
+    } else {
+      id_booking = `P${timestamp}-${randomSuffix}`;
+    }
 
     isUnique = await isBookingIdUnique(id_booking);
   }
@@ -500,6 +505,8 @@ const createBook = async (request) => {
         ],
       },
     });
+
+    // return countAvailableKamar;
 
     if (countAvailableKamar < detail.jumlah) {
       await prismaClient.booking.delete({
@@ -722,6 +729,32 @@ const updateStatusBooking = async (request, id) => {
   });
 };
 
+const updateNomorRekening = async (request, id) => {
+  const no_rekening = request.no_rekening;
+  const status_booking = request.status_booking;
+  const idBooking = id;
+
+  const checkBooking = await prismaClient.booking.findUnique({
+    where: {
+      id_booking: idBooking,
+    },
+  });
+
+  if (checkBooking === null) {
+    throw new ResponseError(404, "Booking is not found");
+  }
+
+  return prismaClient.booking.update({
+    where: {
+      id_booking: idBooking,
+    },
+    data: {
+      no_rekening: no_rekening,
+      status_booking: status_booking,
+    },
+  });
+};
+
 const cancelBooking = async (id) => {
   const idBooking = id;
 
@@ -751,14 +784,28 @@ const cancelBooking = async (id) => {
     },
   });
 
-  return prismaClient.booking.update({
-    where: {
-      id_booking: idBooking,
-    },
-    data: {
-      status_booking: "Dibatalkan",
-    },
-  });
+  const twoWeeksFromNow = new Date();
+  twoWeeksFromNow.setDate(twoWeeksFromNow.getDate() + 14);
+
+  if (checkBooking.tanggal_check_in <= twoWeeksFromNow) {
+    return prismaClient.booking.update({
+      where: {
+        id_booking: idBooking,
+      },
+      data: {
+        status_booking: "Dibatalkan (Uang Kembali)",
+      },
+    });
+  } else {
+    return prismaClient.booking.update({
+      where: {
+        id_booking: idBooking,
+      },
+      data: {
+        status_booking: "Dibatalkan",
+      },
+    });
+  }
 };
 
 const searchBooking = async (request) => {
@@ -857,4 +904,5 @@ export default {
   updateStatusBooking,
   cancelBooking,
   searchBooking,
+  updateNomorRekening,
 };

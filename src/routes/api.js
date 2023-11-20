@@ -85,5 +85,9 @@ userRouter.put(
   "/api/booking/change-status/:id",
   bookingController.updateBookingStatus
 );
+userRouter.put(
+  "/api/booking/no-rekening/:id",
+  bookingController.updateNomorRekening
+);
 
 export { userRouter };

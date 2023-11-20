@@ -294,17 +294,16 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNtI
 
 {
    "booking" : {
-     "id_customer": 2,
+     "id_customer": 3,
       "tanggal_booking": "2023-09-19",
       "tanggal_check_in": "2022-11-06 08:00:00",
       "tanggal_check_out": "2022-11-28 10:00:00",
       "tamu_dewasa": 2,
       "tamu_anak": 8,
       "tanggal_pembayaran": "2023-09-20",
-      "jenis_booking": "Personal",
-      "status_booking": "Check Out",
-      "id_pegawai_fo": 3,
-      "no_rekening": "20202020"
+      "jenis_booking": "Group",
+      "status_booking": "Booked",
+      "id_pegawai_fo": 3
      
    },
    "detail_booking" : [
@@ -351,14 +350,27 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNtI
 
 
 ### Fasilitas
-PUT http://localhost:3000/api/booking/cancel/P231117-401
+PUT http://localhost:3000/api/booking/cancel/G231120-36
 Content-Type: application/json
 Accept: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNtIiwiaWF0IjoxNjk4NzU0ODU5LCJleHAiOjE3MDEzNDY4NTl9.46MklXr0lciK4Y7bNaJIBrURDmZHDUrCaYB0oBZfyfs
 
 
 ### Fasilitas
-GET http://localhost:3000/api/booking/search?search_params=Dibatalkan
+GET http://localhost:3000/api/booking/search
 Content-Type: application/json
 Accept: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNtIiwiaWF0IjoxNjk4NzU0ODU5LCJleHAiOjE3MDEzNDY4NTl9.46MklXr0lciK4Y7bNaJIBrURDmZHDUrCaYB0oBZfyfs
+
+### Fasilitas
+PUT http://localhost:3000/api/booking/no-rekening/P231117-894
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNtIiwiaWF0IjoxNjk4NzU0ODU5LCJleHAiOjE3MDEzNDY4NTl9.46MklXr0lciK4Y7bNaJIBrURDmZHDUrCaYB0oBZfyfs
+
+{
+    "status_booking" : "coba",
+    "no_rekening" : "12341234"
+}
+
+

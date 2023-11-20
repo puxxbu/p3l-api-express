@@ -20,7 +20,7 @@ const createBookingValidation = Joi.object({
   status_booking: Joi.string().required(),
   id_pegawai_fo: Joi.number().positive().optional(),
   id_pegawai_sm: Joi.number().positive().optional(),
-  no_rekening: Joi.string().required(),
+  no_rekening: Joi.string().optional(),
   catatan_tambahan: Joi.string().optional(),
 });
 

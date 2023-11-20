@@ -120,6 +120,18 @@ const searchBooking = async (req, res, next) => {
   }
 };
 
+const updateNomorRekening = async (req, res, next) => {
+  try {
+    const id = req.params.id;
+    const result = await bookingService.updateNomorRekening(req.body, id);
+    res.status(200).json({
+      data: result,
+    });
+  } catch (e) {
+    next(e);
+  }
+};
+
 export default {
   create,
   getTarifById,
@@ -131,4 +143,5 @@ export default {
   updateBookingStatus,
   cancelBooking,
   searchBooking,
+  updateNomorRekening,
 };
