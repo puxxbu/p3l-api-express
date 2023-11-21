@@ -120,10 +120,45 @@ const searchBooking = async (req, res, next) => {
   }
 };
 
+const searchBookingByCheckin = async (req, res, next) => {
+  try {
+    const result = await bookingService.searchBookingByCheckin(req.query);
+    res.status(200).json({
+      data: result.data,
+      paging: result.paging,
+    });
+  } catch (e) {
+    next(e);
+  }
+};
+
 const updateNomorRekening = async (req, res, next) => {
   try {
     const id = req.params.id;
     const result = await bookingService.updateNomorRekening(req.body, id);
+    res.status(200).json({
+      data: result,
+    });
+  } catch (e) {
+    next(e);
+  }
+};
+
+const updateFasilitas = async (req, res, next) => {
+  try {
+    const id = req.params.id;
+    const result = await bookingService.updateFasilitas(req.body, id);
+    res.status(200).json({
+      data: result,
+    });
+  } catch (e) {
+    next(e);
+  }
+};
+
+const createInvoice = async (req, res, next) => {
+  try {
+    const result = await bookingService.createInvoice(req.body);
     res.status(200).json({
       data: result,
     });
@@ -144,4 +179,7 @@ export default {
   cancelBooking,
   searchBooking,
   updateNomorRekening,
+  searchBookingByCheckin,
+  updateFasilitas,
+  createInvoice,
 };

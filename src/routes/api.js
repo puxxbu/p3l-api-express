@@ -79,6 +79,7 @@ userRouter.get("/api/tarif", tarifController.search);
 //Booking API
 
 userRouter.post("/api/booking", bookingController.createBook);
+userRouter.post("/api/invoice", bookingController.createInvoice);
 userRouter.get("/api/booking/search", bookingController.searchBooking);
 userRouter.put("/api/booking/cancel/:id", bookingController.cancelBooking);
 userRouter.put(
@@ -89,5 +90,11 @@ userRouter.put(
   "/api/booking/no-rekening/:id",
   bookingController.updateNomorRekening
 );
+userRouter.get(
+  "/api/booking/check-in/search",
+  bookingController.searchBookingByCheckin
+);
+
+userRouter.put("/api/booking/fasilitas/:id", bookingController.updateFasilitas);
 
 export { userRouter };

@@ -30,6 +30,19 @@ const detailFasilitasValidation = Joi.array()
       id_fasilitas: Joi.number().positive().required(),
       jumlah: Joi.number().positive().required(),
       sub_total: Joi.number().positive().required(),
+      tanggal: Joi.date().optional(),
+    })
+  )
+  .required();
+
+const updateFasilitasValidation = Joi.array()
+  .items(
+    Joi.object({
+      id_detail_booking_layanan: Joi.number().positive().optional(),
+      id_fasilitas: Joi.number().positive().required(),
+      jumlah: Joi.number().positive().required(),
+      sub_total: Joi.number().positive().required(),
+      tanggal: Joi.date().optional(),
     })
   )
   .required();
@@ -50,10 +63,20 @@ const searchBookingValidation = Joi.object({
   search_params: Joi.string().optional(),
 });
 
+const createInvoiceValidation = Joi.object({
+  id_booking: Joi.string().required(),
+  total_pajak: Joi.number().positive().required(),
+  jumlah_jaminan: Joi.number().positive().required(),
+  total_pembayaran: Joi.number().positive().required(),
+  id_pegawai_fo: Joi.number().positive().required(),
+});
+
 export {
   searchKamarValidation,
   createBookingValidation,
   detailBookingValidation,
   detailFasilitasValidation,
   searchBookingValidation,
+  updateFasilitasValidation,
+  createInvoiceValidation,
 };

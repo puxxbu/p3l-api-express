@@ -172,6 +172,10 @@ const getUserBookingHistory = async (request, id) => {
 
   const filters = [];
 
+  filters.push({
+    id_customer: id,
+  });
+
   if (request.search_params !== undefined) {
     filters.push({
       customer: {
@@ -266,6 +270,7 @@ const getBookingById = async (id) => {
       no_rekening: true,
       status_booking: true,
       jenis_booking: true,
+      tanggal_booking: true,
       tanggal_check_in: true,
       tanggal_check_out: true,
       tamu_dewasa: true,

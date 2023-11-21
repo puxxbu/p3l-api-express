@@ -7,6 +7,8 @@ import {
   detailFasilitasValidation,
   searchKamarValidation,
   searchBookingValidation,
+  updateFasilitasValidation,
+  createInvoiceValidation,
 } from "../validation/booking-validation.js";
 import {
   createTarifValidation,
@@ -16,6 +18,7 @@ import {
 import { validate } from "../validation/validation.js";
 import { PrismaClient } from "@prisma/client";
 import { formatToISO } from "../utils/date-formatter.js";
+import { check } from "express-validator";
 
 const create = async (request) => {
   const dataTarif = validate(createTarifValidation, request);
@@ -457,6 +460,7 @@ const createBook = async (request) => {
   dataBooking.id_booking = id_booking;
   dataBooking.tanggal_check_in = formatToISO(dataBooking.tanggal_check_in);
   dataBooking.tanggal_check_out = formatToISO(dataBooking.tanggal_check_out);
+  dataBooking.tanggal_booking = new Date();
 
   const dataBook = await prismaClient.booking.create({
     data: dataBooking,
@@ -893,6 +897,230 @@ const searchBooking = async (request) => {
   };
 };
 
+const searchBookingByCheckin = async (request) => {
+  request = validate(searchBookingValidation, request);
+
+  const skip = (request.page - 1) * request.size;
+
+  const filters = [];
+
+  filters.push({
+    status_booking: {
+      contains: "Jaminan Sudah Dibayar",
+    },
+  });
+  filters.push({
+    status_booking: {
+      contains: "Sudah 50% Dibayar",
+    },
+  });
+
+  if (request.search_params !== undefined) {
+    if (/^\d+$/.test(request.search_params)) {
+      filters.push({
+        harga: parseInt(request.search_params),
+      });
+    } else {
+      filters.push({
+        customer: {
+          nama: {
+            contains: request.search_params,
+            mode: "insensitive",
+          },
+        },
+      });
+      filters.push({
+        id_booking: {
+          contains: request.search_params,
+          mode: "insensitive",
+        },
+      });
+      filters.push({
+        status_booking: {
+          contains: request.search_params,
+          mode: "insensitive",
+        },
+      });
+    }
+  }
+
+  let where = {};
+
+  if (filters.length > 1) {
+    where = {
+      OR: filters,
+    };
+  } else {
+    where = {
+      AND: filters,
+    };
+  }
+
+  const booking = await prismaClient.booking.findMany({
+    where,
+    take: request.size,
+    skip: skip,
+    select: {
+      id_booking: true,
+      id_customer: true,
+      tanggal_booking: true,
+      tanggal_check_in: true,
+      tanggal_check_out: true,
+      tamu_dewasa: true,
+      tamu_anak: true,
+      tanggal_pembayaran: true,
+      jenis_booking: true,
+      status_booking: true,
+      no_rekening: true,
+      pegawai_1: true,
+      pegawai_2: true,
+      catatan_tambahan: true,
+      customer: true,
+    },
+  });
+
+  const totalItems = await prismaClient.booking.count({
+    where,
+  });
+
+  return {
+    data: booking,
+    paging: {
+      page: request.page,
+      total_item: totalItems,
+      total_page: Math.ceil(totalItems / request.size),
+    },
+  };
+};
+
+const updateFasilitas = async (request, id) => {
+  const dataFasilitas = validate(updateFasilitasValidation, request.fasilitas);
+  const idBooking = id;
+
+  const checkBooking = await prismaClient.booking.findUnique({
+    where: {
+      id_booking: idBooking,
+    },
+  });
+
+  if (checkBooking === null) {
+    throw new ResponseError(404, "Booking is not found");
+  }
+
+  for (const [index, detail] of dataFasilitas.entries()) {
+    let checkDupe = await prismaClient.detail_booking_layanan.findFirst({
+      where: {
+        id_booking: idBooking,
+        id_fasilitas: detail.id_fasilitas,
+      },
+    });
+
+    if (checkDupe === null) {
+      let countDbl = await prismaClient.detail_booking_layanan.findFirst({
+        orderBy: {
+          id_detail_booking_layanan: "desc",
+        },
+        take: 1,
+      });
+
+      if (countDbl === null) {
+        detail.id_detail_booking_layanan = 1;
+      } else {
+        detail.id_detail_booking_layanan =
+          countDbl.id_detail_booking_layanan + 1;
+      }
+
+      await prismaClient.detail_booking_layanan.create({
+        data: {
+          id_detail_booking_layanan: detail.id_detail_booking_layanan,
+          id_booking: idBooking,
+          id_fasilitas: detail.id_fasilitas,
+          jumlah: detail.jumlah,
+          tanggal: new Date(),
+          sub_total: detail.sub_total,
+        },
+      });
+    } else {
+      await prismaClient.detail_booking_layanan.update({
+        where: {
+          id_detail_booking_layanan: checkDupe.id_detail_booking_layanan,
+        },
+        data: {
+          jumlah: detail.jumlah,
+          sub_total: detail.sub_total,
+        },
+      });
+    }
+  }
+
+  return prismaClient.booking.findFirst({
+    where: {
+      id_booking: idBooking,
+    },
+    select: {
+      id_booking: true,
+      customer: true,
+      tanggal_booking: true,
+      tanggal_check_in: true,
+      tanggal_check_out: true,
+      tamu_dewasa: true,
+      tamu_anak: true,
+      tanggal_pembayaran: true,
+      jenis_booking: true,
+      status_booking: true,
+      no_rekening: true,
+      pegawai_1: true,
+      pegawai_2: true,
+      catatan_tambahan: true,
+      detail_booking_kamar: {
+        select: {
+          id_detail_booking_kamar: true,
+          id_booking: true,
+          id_jenis_kamar: true,
+          jumlah: true,
+          sub_total: true,
+          detail_ketersediaan_kamar: {
+            select: {
+              kamar: {
+                select: {
+                  jenis_kamar: true,
+                  nomor_kamar: true,
+                },
+              },
+            },
+          },
+        },
+      },
+      detail_booking_layanan: true,
+    },
+  });
+};
+
+const createInvoice = async (request) => {
+  const dataInvoice = validate(createInvoiceValidation, request);
+
+  let isUnique = false;
+  let id_invoice;
+
+  //todo hitung via backend , modify ketersediaan jadi Tersedia dan Booked
+
+  while (!isUnique) {
+    const timestamp = moment().format("YYMMDD");
+    const randomSuffix = Math.floor(Math.random() * 1000);
+
+    id_invoice = `INV${timestamp}-${randomSuffix}`;
+
+    isUnique = await isInvoiceIdUnique(id_invoice);
+  }
+
+  dataInvoice.id_invoice = id_invoice;
+  dataInvoice.tanggal_pelunasan = new Date();
+
+  return prismaClient.invoice.create({
+    data: dataInvoice,
+  });
+};
+
 export default {
   create,
   getTarifById,
@@ -905,4 +1133,7 @@ export default {
   cancelBooking,
   searchBooking,
   updateNomorRekening,
+  searchBookingByCheckin,
+  updateFasilitas,
+  createInvoice,
 };
