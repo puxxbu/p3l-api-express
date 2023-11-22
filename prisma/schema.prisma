@@ -99,7 +99,6 @@ model invoice {
   total_pajak       Int
   jumlah_jaminan    Int
   total_pembayaran  Int
-  nama_pic_fo       String   @db.VarChar(255)
   booking           booking  @relation(fields: [id_booking], references: [id_booking], onUpdate: Restrict, map: "fk_invoice_relations_booking")
 
   @@index([id_booking], map: "relationship_13_fk")

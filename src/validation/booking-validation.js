@@ -65,9 +65,6 @@ const searchBookingValidation = Joi.object({
 
 const createInvoiceValidation = Joi.object({
   id_booking: Joi.string().required(),
-  total_pajak: Joi.number().positive().required(),
-  jumlah_jaminan: Joi.number().positive().required(),
-  total_pembayaran: Joi.number().positive().required(),
   id_pegawai_fo: Joi.number().positive().required(),
 });
 

@@ -400,9 +400,6 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNtI
 
 {
     "id_booking" : "G231121-411",
-    "total_pajak" : 480000,
-    "jumlah_jaminan" : 480000,
-    "total_pembayaran" : 480000,
     "id_pegawai_fo" : 3
 }
 

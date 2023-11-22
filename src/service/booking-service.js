@@ -301,7 +301,7 @@ const searchAvailableKamar = async (request) => {
             {
               detail_ketersediaan_kamar: {
                 some: {
-                  status: "Canceled",
+                  status: "Tersedia",
                 },
               },
             },
@@ -502,7 +502,7 @@ const createBook = async (request) => {
           {
             detail_ketersediaan_kamar: {
               some: {
-                status: "Canceled",
+                status: "Tersedia",
               },
             },
           },
@@ -572,7 +572,7 @@ const createBook = async (request) => {
           {
             detail_ketersediaan_kamar: {
               some: {
-                status: "Canceled",
+                status: "Tersedia",
               },
             },
           },
@@ -784,7 +784,7 @@ const cancelBooking = async (id) => {
       },
     },
     data: {
-      status: "Canceled",
+      status: "Tersedia",
     },
   });
 
@@ -1102,6 +1102,70 @@ const createInvoice = async (request) => {
   let isUnique = false;
   let id_invoice;
 
+  let subTotalKamar = 0;
+  let subTotalFasilitas = 0;
+  let pajak = 0;
+  let total = 0;
+
+  const dataBooking = await prismaClient.booking.findUnique({
+    where: {
+      id_booking: dataInvoice.id_booking,
+    },
+    select: {
+      id_booking: true,
+      customer: true,
+      tanggal_booking: true,
+      tanggal_check_in: true,
+      tanggal_check_out: true,
+      tamu_dewasa: true,
+      tamu_anak: true,
+      tanggal_pembayaran: true,
+      jenis_booking: true,
+      status_booking: true,
+      no_rekening: true,
+      pegawai_1: true,
+      pegawai_2: true,
+      catatan_tambahan: true,
+      detail_booking_kamar: {
+        select: {
+          id_detail_booking_kamar: true,
+          id_booking: true,
+          id_jenis_kamar: true,
+          jumlah: true,
+          sub_total: true,
+          detail_ketersediaan_kamar: {
+            select: {
+              kamar: {
+                select: {
+                  jenis_kamar: true,
+                  nomor_kamar: true,
+                },
+              },
+            },
+          },
+        },
+      },
+      detail_booking_layanan: true,
+    },
+  });
+
+  dataBooking.detail_booking_kamar.forEach(async (data) => {
+    subTotalKamar += data.sub_total;
+  });
+
+  if (dataBooking.detail_booking_layanan.length > 0) {
+    dataBooking.detail_booking_layanan.forEach(async (data) => {
+      subTotalFasilitas += data.sub_total;
+    });
+  }
+
+  pajak = subTotalFasilitas * 0.1;
+  total = subTotalKamar + subTotalFasilitas + pajak;
+
+  dataInvoice.total_pajak = pajak;
+  dataInvoice.total_pembayaran = total;
+  dataInvoice.jumlah_jaminan = subTotalKamar;
+
   //todo hitung via backend , modify ketersediaan jadi Tersedia dan Booked
 
   while (!isUnique) {
@@ -1116,10 +1180,44 @@ const createInvoice = async (request) => {
   dataInvoice.id_invoice = id_invoice;
   dataInvoice.tanggal_pelunasan = new Date();
 
+  await prismaClient.booking.update({
+    where: {
+      id_booking: dataInvoice.id_booking,
+    },
+    data: {
+      status_booking: "Check Out",
+      id_pegawai_fo: dataInvoice.id_pegawai_fo,
+    },
+  });
+
+  await prismaClient.detail_ketersediaan_kamar.updateMany({
+    where: {
+      detail_booking_kamar: {
+        booking: {
+          id_booking: dataInvoice.id_booking,
+        },
+      },
+    },
+    data: {
+      status: "Tersedia",
+    },
+  });
+
+  delete dataInvoice.id_pegawai_fo;
+
   return prismaClient.invoice.create({
     data: dataInvoice,
   });
 };
+
+async function isInvoiceIdUnique(idInvoice) {
+  const existingBooking = await prismaClient.invoice.findUnique({
+    where: {
+      id_invoice: idInvoice,
+    },
+  });
+  return !existingBooking;
+}
 
 export default {
   create,
