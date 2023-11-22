@@ -294,38 +294,39 @@ const searchAvailableKamar = async (request) => {
                         ],
                       },
                     },
+                    status: "Booked",
                   },
                 },
               },
             },
-            {
-              detail_ketersediaan_kamar: {
-                some: {
-                  detail_booking_kamar: {
-                    booking: {
-                      AND: [
-                        {
-                          tanggal_check_in: {
-                            lte: tanggal_check_in.toISOString(),
-                          },
-                        },
-                        {
-                          tanggal_check_out: {
-                            gte: tanggal_check_out.toISOString(),
-                          },
-                        },
-                      ],
-                    },
-                  },
-                  status: "Tersedia",
-                },
-              },
-              // detail_ketersediaan_kamar: {
-              //   some: {
-              //     status: "Tersedia",
-              //   },
-              // },
-            },
+            // {
+            //   detail_ketersediaan_kamar: {
+            //     some: {
+            //       detail_booking_kamar: {
+            //         booking: {
+            //           AND: [
+            //             {
+            //               tanggal_check_in: {
+            //                 lte: tanggal_check_in.toISOString(),
+            //               },
+            //             },
+            //             {
+            //               tanggal_check_out: {
+            //                 gte: tanggal_check_out.toISOString(),
+            //               },
+            //             },
+            //           ],
+            //         },
+            //       },
+            //       status: "Tersedia",
+            //     },
+            //   },
+            //   // detail_ketersediaan_kamar: {
+            //   //   some: {
+            //   //     status: "Tersedia",
+            //   //   },
+            //   // },
+            // },
           ],
         },
       });
