@@ -22,6 +22,7 @@ userRouter.use(authMiddleware);
 
 // User API
 userRouter.get("/api/users/current", userController.get);
+userRouter.get("/api/pegawai/current", userController.getPegawai);
 userRouter.put("/api/users/password", userController.changePassword);
 
 //Customer API

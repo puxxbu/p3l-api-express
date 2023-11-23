@@ -151,6 +151,27 @@ const get = async (username) => {
   return user;
 };
 
+const getPegawai = async (username) => {
+  const user = await prismaClient.pegawai.findFirst({
+    where: {
+      akun: {
+        username: username,
+      },
+    },
+    select: {
+      id_pegawai: true,
+      nama_pegawai: true,
+      id_akun: true,
+    },
+  });
+
+  if (!user) {
+    throw new ResponseError(404, "user is not found");
+  }
+
+  return user;
+};
+
 const changePassword = async (request, username) => {
   const { oldPassword, newPassword } = request;
 
@@ -198,4 +219,5 @@ export default {
   get,
   changePassword,
   logout,
+  getPegawai,
 };

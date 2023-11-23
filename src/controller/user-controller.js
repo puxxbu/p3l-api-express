@@ -35,6 +35,18 @@ const get = async (req, res, next) => {
   }
 };
 
+const getPegawai = async (req, res, next) => {
+  try {
+    const username = req.user.username;
+    const result = await userService.getPegawai(username);
+    res.status(200).json({
+      data: result,
+    });
+  } catch (e) {
+    next(e);
+  }
+};
+
 const update = async (req, res, next) => {
   try {
     const username = req.user.username;
@@ -145,4 +157,5 @@ export default {
   refreshToken,
   removeToken,
   changePassword,
+  getPegawai,
 };

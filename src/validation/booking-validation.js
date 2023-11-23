@@ -45,7 +45,7 @@ const updateFasilitasValidation = Joi.array()
       tanggal: Joi.date().optional(),
     })
   )
-  .required();
+  .optional();
 
 const detailBookingValidation = Joi.array()
   .items(

@@ -779,6 +779,7 @@ const updateNomorRekening = async (request, id) => {
     data: {
       no_rekening: no_rekening,
       status_booking: status_booking,
+      tanggal_pembayaran: new Date(),
     },
   });
 };
@@ -928,44 +929,32 @@ const searchBookingByCheckin = async (request) => {
 
   const filters = [];
 
-  filters.push({
-    status_booking: {
-      contains: "Jaminan Sudah Dibayar",
-    },
-  });
-  filters.push({
-    status_booking: {
-      contains: "Sudah 50% Dibayar",
-    },
-  });
+  // filters.push({
+  //   status_booking: {
+  //     contains: "Jaminan Sudah Dibayar",
+  //   },
+  // });
+  // filters.push({
+  //   status_booking: {
+  //     contains: "Sudah 50% Dibayar",
+  //   },
+  // });
 
   if (request.search_params !== undefined) {
-    if (/^\d+$/.test(request.search_params)) {
-      filters.push({
-        harga: parseInt(request.search_params),
-      });
-    } else {
-      filters.push({
-        customer: {
-          nama: {
-            contains: request.search_params,
-            mode: "insensitive",
-          },
-        },
-      });
-      filters.push({
-        id_booking: {
+    filters.push({
+      customer: {
+        nama: {
           contains: request.search_params,
           mode: "insensitive",
         },
-      });
-      filters.push({
-        status_booking: {
-          contains: request.search_params,
-          mode: "insensitive",
-        },
-      });
-    }
+      },
+    });
+    filters.push({
+      id_booking: {
+        contains: request.search_params,
+        mode: "insensitive",
+      },
+    });
   }
 
   let where = {};
@@ -1007,8 +996,16 @@ const searchBookingByCheckin = async (request) => {
     where,
   });
 
+  const filteredData = booking.filter((obj) => {
+    return (
+      obj.status_booking === "Jaminan Sudah Dibayar" ||
+      obj.status_booking === "Sudah 50% Dibayar" ||
+      obj.status_booking === "Check In"
+    );
+  });
+
   return {
-    data: booking,
+    data: filteredData,
     paging: {
       page: request.page,
       total_item: totalItems,
@@ -1121,7 +1118,66 @@ const updateFasilitas = async (request, id) => {
 };
 
 const createInvoice = async (request) => {
-  const dataInvoice = validate(createInvoiceValidation, request);
+  const dataInvoice = validate(createInvoiceValidation, request.invoice);
+  const dataFasilitas = validate(updateFasilitasValidation, request.fasilitas);
+  const idBooking = dataInvoice.id_booking;
+
+  const checkBooking = await prismaClient.booking.findUnique({
+    where: {
+      id_booking: idBooking,
+    },
+  });
+
+  if (checkBooking === null) {
+    throw new ResponseError(404, "Booking is not found");
+  }
+
+  for (const [index, detail] of dataFasilitas.entries()) {
+    let checkDupe = await prismaClient.detail_booking_layanan.findFirst({
+      where: {
+        id_booking: idBooking,
+        id_fasilitas: detail.id_fasilitas,
+      },
+    });
+
+    if (checkDupe === null) {
+      let countDbl = await prismaClient.detail_booking_layanan.findFirst({
+        orderBy: {
+          id_detail_booking_layanan: "desc",
+        },
+        take: 1,
+      });
+
+      if (countDbl === null) {
+        detail.id_detail_booking_layanan = 1;
+      } else {
+        detail.id_detail_booking_layanan =
+          countDbl.id_detail_booking_layanan + 1;
+      }
+
+      await prismaClient.detail_booking_layanan.create({
+        data: {
+          id_detail_booking_layanan: detail.id_detail_booking_layanan,
+          id_booking: idBooking,
+          id_fasilitas: detail.id_fasilitas,
+          jumlah: detail.jumlah,
+          tanggal: new Date(),
+          sub_total: detail.sub_total,
+        },
+      });
+    } else {
+      await prismaClient.detail_booking_layanan.update({
+        where: {
+          id_detail_booking_layanan: checkDupe.id_detail_booking_layanan,
+        },
+        data: {
+          jumlah: detail.jumlah,
+          sub_total: detail.sub_total,
+          tanggal: new Date(),
+        },
+      });
+    }
+  }
 
   let isUnique = false;
   let id_invoice;
