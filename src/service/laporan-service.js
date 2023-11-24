@@ -54,29 +54,76 @@ const getLaporanJumlahTamu = async (request) => {
     },
   });
 
-  const laporan = result.reduce((acc, booking) => {
-    booking.detail_booking_kamar.forEach((detail) => {
-      const jenisKamar = detail.jenis_kamar.jenis_kamar;
-      const idJenisKamar = detail.jenis_kamar.id_jenis_kamar;
-      const jumlah = detail.jumlah || 0;
-      const jenisBooking = booking.jenis_booking || "Personal";
+  const jenisKamar = await prismaClient.jenis_kamar.findMany({
+    select: {
+      jenis_kamar: true,
+    },
+  });
 
-      if (!acc[idJenisKamar]) {
-        acc[idJenisKamar] = {
-          id_jenis_kamar: idJenisKamar,
-          jenis_kamar: jenisKamar,
-          Group: 0,
-          Personal: 0,
-          Total: 0,
-        };
-      }
+  const groupedJenisKamar = jenisKamar.reduce((acc, curr) => {
+    const jenisKamarNama = curr.jenis_kamar;
 
-      acc[idJenisKamar][jenisBooking] += jumlah;
-      acc[idJenisKamar].Total += jumlah;
-    });
+    if (!acc[jenisKamarNama]) {
+      acc[jenisKamarNama] = {
+        jenis_kamar: jenisKamarNama,
+      };
+    }
 
     return acc;
   }, {});
+
+  const dataJenisKamar = Object.values(groupedJenisKamar);
+
+  const laporan = dataJenisKamar.reduce((acc, jenisKamar) => {
+    const jenisKamarNama = jenisKamar.jenis_kamar;
+
+    acc[jenisKamarNama] = {
+      jenis_kamar: jenisKamarNama,
+      Group: 0,
+      Personal: 0,
+      Total: 0,
+    };
+
+    return acc;
+  }, {});
+
+  // Isi data jenis kamar dengan laporan
+  result.forEach((booking) => {
+    booking.detail_booking_kamar.forEach((detail) => {
+      const jenisKamar = detail.jenis_kamar.jenis_kamar;
+      const jumlah = detail.jumlah || 0;
+      const jenisBooking = booking.jenis_booking || "Personal";
+
+      laporan[jenisKamar][jenisBooking] += jumlah;
+      laporan[jenisKamar].Total += jumlah;
+    });
+  });
+
+  // return laporan;
+
+  // const laporan = result.reduce((acc, booking) => {
+  //   booking.detail_booking_kamar.forEach((detail) => {
+  //     const jenisKamar = detail.jenis_kamar.jenis_kamar;
+  //     // const idJenisKamar = detail.jenis_kamar.id_jenis_kamar;
+  //     const jumlah = detail.jumlah || 0;
+  //     const jenisBooking = booking.jenis_booking || "Personal";
+
+  //     if (!acc[jenisKamar]) {
+  //       acc[jenisKamar] = {
+  //         // id_jenis_kamar: idJenisKamar,
+  //         jenis_kamar: jenisKamar,
+  //         Group: 0,
+  //         Personal: 0,
+  //         Total: 0,
+  //       };
+  //     }
+
+  //     acc[jenisKamar][jenisBooking] += jumlah;
+  //     acc[jenisKamar].Total += jumlah;
+  //   });
+
+  //   return acc;
+  // }, {});
 
   let total = 0;
   let no = 1;
