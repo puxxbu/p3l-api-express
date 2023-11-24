@@ -3,6 +3,7 @@ import express from "express";
 import { authMiddleware } from "../middleware/auth-middleware.js";
 
 import cookieParser from "cookie-parser";
+import laporanController from "../controller/laporan-controller.js";
 import userController from "../controller/user-controller.js";
 import customerController from "../controller/customer-controller.js";
 import kamarController from "../controller/kamar-controller.js";
@@ -97,5 +98,11 @@ userRouter.get(
 );
 
 userRouter.put("/api/booking/fasilitas/:id", bookingController.updateFasilitas);
+
+// Laporan
+userRouter.post(
+  "/api/laporan/jumlah-tamu",
+  laporanController.getLaporanJumlahTamu
+);
 
 export { userRouter };
