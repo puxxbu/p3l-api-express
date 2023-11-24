@@ -104,5 +104,9 @@ userRouter.post(
   "/api/laporan/jumlah-tamu",
   laporanController.getLaporanJumlahTamu
 );
+userRouter.post(
+  "/api/laporan/pendapatan-bulanan",
+  laporanController.getLaporanPendapatanBulanan
+);
 
 export { userRouter };
