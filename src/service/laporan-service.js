@@ -173,8 +173,7 @@ const getLaporanJumlahTamu = async (request) => {
 const getLaporanPendapatanBulanan = async (request) => {
   const laporanFilter = validate(createLaporanJumlahTamuValidation, request);
 
-  const today = new Date();
-  const year = today.getFullYear();
+  const year = laporanFilter.tahun;
 
   const result = await prismaClient.invoice.findMany({
     select: {
@@ -190,7 +189,7 @@ const getLaporanPendapatanBulanan = async (request) => {
     where: {
       tanggal_pelunasan: {
         gte: new Date(year, 0, 1), // Tanggal awal tahun
-        lte: today, // Tanggal saat ini
+        lt: new Date(year + 1, 0, 1), // Tanggal awal tahun berikutny
       },
     },
     orderBy: {

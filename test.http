@@ -418,24 +418,17 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNtI
 }
 
 ### Fasilitas
-POST http://localhost:3000/api/laporan/jumlah-tamu
+GET  http://localhost:3000/api/laporan/jumlah-tamu?tahun=2023&bulan=11
 Content-Type: application/json
 Accept: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNtIiwiaWF0IjoxNjk4NzU0ODU5LCJleHAiOjE3MDEzNDY4NTl9.46MklXr0lciK4Y7bNaJIBrURDmZHDUrCaYB0oBZfyfs
 
-{
-    "tahun" : 2023,
-    "bulan" : 11
-}
+
 
 ### Fasilitas
-POST http://localhost:3000/api/laporan/pendapatan-bulanan
+GET http://localhost:3000/api/laporan/pendapatan-bulanan?tahun=2023
 Content-Type: application/json
 Accept: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNtIiwiaWF0IjoxNjk4NzU0ODU5LCJleHAiOjE3MDEzNDY4NTl9.46MklXr0lciK4Y7bNaJIBrURDmZHDUrCaYB0oBZfyfs
-
-{
-    "tahun" : 2023
-}
 
 

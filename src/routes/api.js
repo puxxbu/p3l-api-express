@@ -100,11 +100,11 @@ userRouter.get(
 userRouter.put("/api/booking/fasilitas/:id", bookingController.updateFasilitas);
 
 // Laporan
-userRouter.post(
+userRouter.get(
   "/api/laporan/jumlah-tamu",
   laporanController.getLaporanJumlahTamu
 );
-userRouter.post(
+userRouter.get(
   "/api/laporan/pendapatan-bulanan",
   laporanController.getLaporanPendapatanBulanan
 );

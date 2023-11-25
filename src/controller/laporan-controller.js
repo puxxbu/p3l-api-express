@@ -2,7 +2,7 @@ import laporanService from "../service/laporan-service.js";
 
 const getLaporanJumlahTamu = async (req, res, next) => {
   try {
-    const result = await laporanService.getLaporanJumlahTamu(req.body);
+    const result = await laporanService.getLaporanJumlahTamu(req.query);
     res.status(200).json({
       data: result,
     });
@@ -13,7 +13,7 @@ const getLaporanJumlahTamu = async (req, res, next) => {
 
 const getLaporanPendapatanBulanan = async (req, res, next) => {
   try {
-    const result = await laporanService.getLaporanPendapatanBulanan(req.body);
+    const result = await laporanService.getLaporanPendapatanBulanan(req.query);
     res.status(200).json({
       data: result,
     });
