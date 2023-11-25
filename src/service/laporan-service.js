@@ -24,6 +24,128 @@ const namaBulan = [
   "Desember",
 ];
 
+const bulanIndonesia = {
+  January: "Januari",
+  February: "Februari",
+  March: "Maret",
+  April: "April",
+  May: "Mei",
+  June: "Juni",
+  July: "Juli",
+  August: "Agustus",
+  September: "September",
+  October: "Oktober",
+  November: "November",
+  December: "Desember",
+};
+
+const getLaporanCustomerBaru = async (request) => {
+  const laporanFilter = validate(createLaporanJumlahTamuValidation, request);
+
+  const year = laporanFilter.tahun;
+  const bulan = laporanFilter.bulan;
+
+  // const result = await prismaClient.booking.findMany({
+  //   where: {
+  //     status_booking: "Check Out",
+  //     tanggal_check_in: {
+  //       gte: new Date(tahun, bulan - 1, 1),
+  //       lt: new Date(tahun, bulan, 1),
+  //     },
+  //   },
+  //   select: {
+  //     detail_booking_kamar: {
+  //       select: {
+  //         jenis_kamar: {
+  //           select: {
+  //             jenis_kamar: true,
+  //             id_jenis_kamar: true,
+  //           },
+  //         },
+  //         jumlah: true,
+  //       },
+  //     },
+  //     jenis_booking: true,
+  //   },
+  // });
+
+  const result = await prismaClient.customer.groupBy({
+    by: ["tanggal_dibuat"],
+    where: {
+      tanggal_dibuat: {
+        gte: new Date(year, 0, 1), // Tanggal awal tahun
+        lt: new Date(year + 1, 0, 1), // Tanggal awal tahun berikutny
+      },
+    },
+    _count: {
+      tanggal_dibuat: true,
+    },
+    orderBy: {
+      tanggal_dibuat: "asc",
+    },
+  });
+
+  const total = await prismaClient.customer.aggregate({
+    where: {
+      tanggal_dibuat: {
+        gte: new Date(year, 0, 1), // Tanggal awal tahun
+        lt: new Date(year + 1, 0, 1), // Tanggal awal tahun berikutny
+      },
+    },
+    _count: {
+      _all: true,
+    },
+  });
+
+  const totalCustomerBaru = total._count._all;
+
+  // Membuat objek untuk menyimpan hasil per bulan
+  const monthlyResult = {};
+
+  // Inisialisasi nilai awal 0 untuk setiap bulan
+  for (let month = 0; month < 12; month++) {
+    const monthName = new Intl.DateTimeFormat("en-US", {
+      month: "long",
+    }).format(new Date(year, month, 1));
+
+    monthlyResult[monthName] = 0;
+  }
+
+  // Mengisi hasil yang sebenarnya dari data customer
+  result.forEach((item) => {
+    const month = item.tanggal_dibuat.getMonth();
+    const monthName = new Intl.DateTimeFormat("en-US", {
+      month: "long",
+    }).format(new Date(year, month, 1));
+
+    monthlyResult[monthName] += item._count.tanggal_dibuat;
+  });
+
+  Object.entries(monthlyResult).forEach(([monthName, customerCount]) => {
+    monthlyResult[monthName] = {
+      nama_bulan: monthName,
+      customer_baru: customerCount,
+    };
+  });
+
+  const dataIndonesia = {};
+
+  for (const [namaBulan, dataBulan] of Object.entries(monthlyResult)) {
+    const namaBulanIndo = bulanIndonesia[namaBulan];
+    dataIndonesia[namaBulanIndo] = {
+      nama_bulan: namaBulanIndo,
+      customer_baru: dataBulan.customer_baru,
+    };
+  }
+
+  let hasil = {};
+  hasil["laporan"] = Object.values(dataIndonesia);
+  hasil["tahun"] = laporanFilter["tahun"];
+  hasil["total"] = totalCustomerBaru;
+
+  return hasil;
+};
+
 const getLaporanJumlahTamu = async (request) => {
   const laporanFilter = validate(createLaporanJumlahTamuValidation, request);
 
@@ -265,4 +387,5 @@ const getLaporanPendapatanBulanan = async (request) => {
 export default {
   getLaporanJumlahTamu,
   getLaporanPendapatanBulanan,
+  getLaporanCustomerBaru,
 };

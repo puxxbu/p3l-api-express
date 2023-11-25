@@ -101,6 +101,10 @@ userRouter.put("/api/booking/fasilitas/:id", bookingController.updateFasilitas);
 
 // Laporan
 userRouter.get(
+  "/api/laporan/customer-baru",
+  laporanController.getLaporanCustomerBaru
+);
+userRouter.get(
   "/api/laporan/jumlah-tamu",
   laporanController.getLaporanJumlahTamu
 );
