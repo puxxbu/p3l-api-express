@@ -33,8 +33,20 @@ const getLaporanCustomerBaru = async (req, res, next) => {
   }
 };
 
+const getLaporanTopCustomer = async (req, res, next) => {
+  try {
+    const result = await laporanService.getLaporanTopCustomer(req.query);
+    res.status(200).json({
+      data: result,
+    });
+  } catch (e) {
+    next(e);
+  }
+};
+
 export default {
   getLaporanJumlahTamu,
   getLaporanPendapatanBulanan,
   getLaporanCustomerBaru,
+  getLaporanTopCustomer,
 };

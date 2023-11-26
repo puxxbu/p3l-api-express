@@ -45,30 +45,6 @@ const getLaporanCustomerBaru = async (request) => {
   const year = laporanFilter.tahun;
   const bulan = laporanFilter.bulan;
 
-  // const result = await prismaClient.booking.findMany({
-  //   where: {
-  //     status_booking: "Check Out",
-  //     tanggal_check_in: {
-  //       gte: new Date(tahun, bulan - 1, 1),
-  //       lt: new Date(tahun, bulan, 1),
-  //     },
-  //   },
-  //   select: {
-  //     detail_booking_kamar: {
-  //       select: {
-  //         jenis_kamar: {
-  //           select: {
-  //             jenis_kamar: true,
-  //             id_jenis_kamar: true,
-  //           },
-  //         },
-  //         jumlah: true,
-  //       },
-  //     },
-  //     jenis_booking: true,
-  //   },
-  // });
-
   const result = await prismaClient.customer.groupBy({
     by: ["tanggal_dibuat"],
     where: {
@@ -221,46 +197,12 @@ const getLaporanJumlahTamu = async (request) => {
     });
   });
 
-  // return laporan;
-
-  // const laporan = result.reduce((acc, booking) => {
-  //   booking.detail_booking_kamar.forEach((detail) => {
-  //     const jenisKamar = detail.jenis_kamar.jenis_kamar;
-  //     // const idJenisKamar = detail.jenis_kamar.id_jenis_kamar;
-  //     const jumlah = detail.jumlah || 0;
-  //     const jenisBooking = booking.jenis_booking || "Personal";
-
-  //     if (!acc[jenisKamar]) {
-  //       acc[jenisKamar] = {
-  //         // id_jenis_kamar: idJenisKamar,
-  //         jenis_kamar: jenisKamar,
-  //         Group: 0,
-  //         Personal: 0,
-  //         Total: 0,
-  //       };
-  //     }
-
-  //     acc[jenisKamar][jenisBooking] += jumlah;
-  //     acc[jenisKamar].Total += jumlah;
-  //   });
-
-  //   return acc;
-  // }, {});
-
   let total = 0;
   let no = 1;
   for (const jenisKamar in laporan) {
     const group = laporan[jenisKamar].Group || 0;
     const personal = laporan[jenisKamar].Personal || 0;
     const jumlah = laporan[jenisKamar].Total || 0;
-
-    // console.log(
-    //   `${no}   ${jenisKamar.padEnd(18)} ${group
-    //     .toString()
-    //     .padStart(6)}  ${personal.toString().padStart(8)}  ${jumlah
-    //     .toString()
-    //     .padStart(5)}`
-    // );
 
     total += jumlah;
     no++;
@@ -384,8 +326,79 @@ const getLaporanPendapatanBulanan = async (request) => {
   return hasil;
 };
 
+const getLaporanTopCustomer = async (request) => {
+  const laporanFilter = validate(createLaporanJumlahTamuValidation, request);
+
+  const year = laporanFilter.tahun;
+
+  const topCustomers = await prismaClient.customer.findMany({
+    where: {
+      booking: {
+        some: {
+          status_booking: "Check Out",
+          tanggal_check_out: {
+            gte: new Date(`${year}-01-01`),
+            lte: new Date(`${year}-12-31`),
+          },
+        },
+      },
+    },
+    select: {
+      id_customer: true,
+      nama: true,
+      booking: {
+        select: {
+          invoice: true,
+        },
+        where: {
+          status_booking: "Check Out",
+        },
+      },
+    },
+    orderBy: {
+      booking: {
+        _count: "desc",
+      },
+    },
+    take: 5,
+  });
+
+  topCustomers.forEach((customer) => {
+    const { nama, booking } = customer;
+    const jumlahBooking = booking.length;
+
+    console.log(`Nama Customer: ${nama}`);
+    console.log(`Jumlah Booking: ${jumlahBooking}`);
+  });
+
+  const result = topCustomers.map((customer) => {
+    const { nama, booking } = customer;
+    let totalPembayaran = 0;
+
+    booking.forEach((booking) => {
+      const { total_pembayaran } = booking.invoice[0];
+
+      totalPembayaran += total_pembayaran;
+    });
+    const jumlahReservasi = booking.length;
+
+    return {
+      nama_customer: nama,
+      jumlah_reservasi: jumlahReservasi,
+      total_pembayaran: totalPembayaran,
+    };
+  });
+
+  const laporan = {};
+
+  laporan["topCustomers"] = result;
+
+  return laporan;
+};
+
 export default {
   getLaporanJumlahTamu,
   getLaporanPendapatanBulanan,
   getLaporanCustomerBaru,
+  getLaporanTopCustomer,
 };

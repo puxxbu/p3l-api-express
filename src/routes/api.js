@@ -113,4 +113,9 @@ userRouter.get(
   laporanController.getLaporanPendapatanBulanan
 );
 
+userRouter.get(
+  "/api/laporan/top-customer",
+  laporanController.getLaporanTopCustomer
+);
+
 export { userRouter };
