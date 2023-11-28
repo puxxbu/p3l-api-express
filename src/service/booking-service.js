@@ -940,6 +940,25 @@ const searchBookingByCheckin = async (request) => {
   //   },
   // });
 
+  const today = new Date();
+  const startOfDay = new Date(
+    today.getFullYear(),
+    today.getMonth(),
+    today.getDate()
+  );
+  const endOfDay = new Date(
+    today.getFullYear(),
+    today.getMonth(),
+    today.getDate() + 1
+  );
+
+  filters.push({
+    tanggal_check_in: {
+      gte: startOfDay,
+      lt: endOfDay,
+    },
+  });
+
   if (request.search_params !== undefined) {
     filters.push({
       customer: {
@@ -991,6 +1010,8 @@ const searchBookingByCheckin = async (request) => {
       customer: true,
     },
   });
+
+  // return booking;
 
   const totalItems = await prismaClient.booking.count({
     where,
