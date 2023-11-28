@@ -1273,13 +1273,27 @@ const createInvoice = async (request) => {
     const timestamp = moment().format("YYMMDD");
     const randomSuffix = Math.floor(Math.random() * 1000);
 
-    id_invoice = `INV${timestamp}-${randomSuffix}`;
+    const jenis_booking = dataBooking.jenis_booking;
+    const invoicePrefix =
+      jenis_booking === "Personal" ? "P" : jenis_booking === "Group" ? "G" : "";
+
+    id_invoice = `${invoicePrefix}${timestamp}-${randomSuffix}`;
 
     isUnique = await isInvoiceIdUnique(id_invoice);
   }
 
   dataInvoice.id_invoice = id_invoice;
-  dataInvoice.tanggal_pelunasan = new Date();
+  // dataInvoice.tanggal_pelunasan = new Date();
+
+  //untuk keperluan seeding data
+
+  const startDate = new Date("2023-01-01").getTime();
+  const endDate = new Date("2023-12-31").getTime();
+
+  const randomTimestamp = Math.random() * (endDate - startDate) + startDate;
+  const randomDate = new Date(randomTimestamp);
+
+  dataInvoice.tanggal_pelunasan = randomDate;
 
   await prismaClient.booking.update({
     where: {

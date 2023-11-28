@@ -197,6 +197,7 @@ const getLaporanJumlahTamu = async (request) => {
     });
   });
 
+  // return laporan;
   let total = 0;
   let no = 1;
   for (const jenisKamar in laporan) {
