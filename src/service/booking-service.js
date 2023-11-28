@@ -952,12 +952,12 @@ const searchBookingByCheckin = async (request) => {
     today.getDate() + 1
   );
 
-  filters.push({
-    tanggal_check_in: {
-      gte: startOfDay,
-      lt: endOfDay,
-    },
-  });
+  // filters.push({
+  // tanggal_check_in: {
+  //   gte: startOfDay,
+  //   lt: endOfDay,
+  // },
+  // });
 
   if (request.search_params !== undefined) {
     filters.push({
@@ -976,17 +976,25 @@ const searchBookingByCheckin = async (request) => {
     });
   }
 
-  let where = {};
-
-  if (filters.length > 1) {
-    where = {
+  let where = {
+    AND: {
+      tanggal_check_in: {
+        gte: startOfDay,
+        lt: endOfDay,
+      },
       OR: filters,
-    };
-  } else {
-    where = {
-      AND: filters,
-    };
-  }
+    },
+  };
+
+  // if (filters.length > 1) {
+  //   where = {
+  //     OR: filters,
+  //   };
+  // } else {
+  //   where = {
+  //     AND: filters,
+  //   };
+  // }
 
   const booking = await prismaClient.booking.findMany({
     where,
