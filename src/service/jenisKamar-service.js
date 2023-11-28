@@ -1,3 +1,4 @@
+import { format } from "path";
 import { prismaClient } from "../app/database.js";
 import { ResponseError } from "../error/response-error.js";
 import { formatToISO } from "../utils/date-formatter.js";
@@ -133,33 +134,68 @@ const remove = async (id) => {
 const showAvailability = async (request) => {
   const data = validate(showAvailabilityValidation, request);
 
-  return prismaClient.kamar.count({
+  const jumlahKamar = await prismaClient.kamar.count({
     where: {
       id_jenis_kamar: data.id_jenis_kamar,
-      NOT: {
-        detail_ketersediaan_kamar: {
-          some: {
-            detail_booking_kamar: {
-              booking: {
-                AND: [
-                  {
-                    tanggal_check_in: {
-                      lte: formatToISO(data.tanggal_check_out),
-                    },
+      OR: [
+        {
+          NOT: {
+            detail_ketersediaan_kamar: {
+              some: {
+                detail_booking_kamar: {
+                  booking: {
+                    AND: [
+                      {
+                        tanggal_check_in: {
+                          lte: formatToISO(data.tanggal_check_out),
+                        },
+                      },
+                      {
+                        tanggal_check_out: {
+                          gte: formatToISO(data.tanggal_check_in),
+                        },
+                      },
+                    ],
                   },
-                  {
-                    tanggal_check_out: {
-                      gte: formatToISO(data.tanggal_check_in),
-                    },
-                  },
-                ],
+                },
+                status: "Booked",
               },
             },
           },
         },
-      },
+        // {
+        //   detail_ketersediaan_kamar: {
+        //     some: {
+        //       detail_booking_kamar: {
+        //         booking: {
+        //           AND: [
+        //             {
+        //               tanggal_check_in: {
+        //                 lte: formatToISO(data.tanggal_check_in),
+        //               },
+        //             },
+        //             {
+        //               tanggal_check_out: {
+        //                 gte: formatToISO(data.tanggal_check_out),
+        //               },
+        //             },
+        //           ],
+        //         },
+        //       },
+        //       status: "Tersedia",
+        //     },
+        //   },
+        //   // detail_ketersediaan_kamar: {
+        //   //   some: {
+        //   //     status: "Tersedia",
+        //   //   },
+        //   // },
+        // },
+      ],
     },
   });
+
+  return jumlahKamar;
 };
 
 const search = async (request) => {

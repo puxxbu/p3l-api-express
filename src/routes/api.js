@@ -3,6 +3,7 @@ import express from "express";
 import { authMiddleware } from "../middleware/auth-middleware.js";
 
 import cookieParser from "cookie-parser";
+import laporanController from "../controller/laporan-controller.js";
 import userController from "../controller/user-controller.js";
 import customerController from "../controller/customer-controller.js";
 import kamarController from "../controller/kamar-controller.js";
@@ -22,6 +23,7 @@ userRouter.use(authMiddleware);
 
 // User API
 userRouter.get("/api/users/current", userController.get);
+userRouter.get("/api/pegawai/current", userController.getPegawai);
 userRouter.put("/api/users/password", userController.changePassword);
 
 //Customer API
@@ -79,9 +81,41 @@ userRouter.get("/api/tarif", tarifController.search);
 //Booking API
 
 userRouter.post("/api/booking", bookingController.createBook);
+userRouter.post("/api/invoice", bookingController.createInvoice);
+userRouter.get("/api/booking/search", bookingController.searchBooking);
+userRouter.put("/api/booking/cancel/:id", bookingController.cancelBooking);
 userRouter.put(
   "/api/booking/change-status/:id",
   bookingController.updateBookingStatus
+);
+userRouter.put(
+  "/api/booking/no-rekening/:id",
+  bookingController.updateNomorRekening
+);
+userRouter.get(
+  "/api/booking/check-in/search",
+  bookingController.searchBookingByCheckin
+);
+
+userRouter.put("/api/booking/fasilitas/:id", bookingController.updateFasilitas);
+
+// Laporan
+userRouter.get(
+  "/api/laporan/customer-baru",
+  laporanController.getLaporanCustomerBaru
+);
+userRouter.get(
+  "/api/laporan/jumlah-tamu",
+  laporanController.getLaporanJumlahTamu
+);
+userRouter.get(
+  "/api/laporan/pendapatan-bulanan",
+  laporanController.getLaporanPendapatanBulanan
+);
+
+userRouter.get(
+  "/api/laporan/top-customer",
+  laporanController.getLaporanTopCustomer
 );
 
 export { userRouter };

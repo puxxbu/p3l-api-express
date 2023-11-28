@@ -5,6 +5,7 @@ const searchKamarValidation = Joi.object({
   size: Joi.number().min(1).positive().max(100).default(10),
   kamar_attribute: Joi.string().optional(),
   tanggal_check_in: Joi.string().optional(),
+  tanggal_check_out: Joi.string().optional(),
 });
 
 const createBookingValidation = Joi.object({
@@ -19,7 +20,7 @@ const createBookingValidation = Joi.object({
   status_booking: Joi.string().required(),
   id_pegawai_fo: Joi.number().positive().optional(),
   id_pegawai_sm: Joi.number().positive().optional(),
-  no_rekening: Joi.string().required(),
+  no_rekening: Joi.string().optional(),
   catatan_tambahan: Joi.string().optional(),
 });
 
@@ -29,9 +30,22 @@ const detailFasilitasValidation = Joi.array()
       id_fasilitas: Joi.number().positive().required(),
       jumlah: Joi.number().positive().required(),
       sub_total: Joi.number().positive().required(),
+      tanggal: Joi.date().optional(),
     })
   )
   .required();
+
+const updateFasilitasValidation = Joi.array()
+  .items(
+    Joi.object({
+      id_detail_booking_layanan: Joi.number().positive().optional(),
+      id_fasilitas: Joi.number().positive().required(),
+      jumlah: Joi.number().positive().required(),
+      sub_total: Joi.number().positive().required(),
+      tanggal: Joi.date().optional(),
+    })
+  )
+  .optional();
 
 const detailBookingValidation = Joi.array()
   .items(
@@ -43,9 +57,23 @@ const detailBookingValidation = Joi.array()
   )
   .required();
 
+const searchBookingValidation = Joi.object({
+  page: Joi.number().positive().default(1),
+  size: Joi.number().min(1).positive().max(100).default(10),
+  search_params: Joi.string().optional(),
+});
+
+const createInvoiceValidation = Joi.object({
+  id_booking: Joi.string().required(),
+  id_pegawai_fo: Joi.number().positive().required(),
+});
+
 export {
   searchKamarValidation,
   createBookingValidation,
   detailBookingValidation,
   detailFasilitasValidation,
+  searchBookingValidation,
+  updateFasilitasValidation,
+  createInvoiceValidation,
 };

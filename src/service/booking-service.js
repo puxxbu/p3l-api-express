@@ -6,6 +6,9 @@ import {
   detailBookingValidation,
   detailFasilitasValidation,
   searchKamarValidation,
+  searchBookingValidation,
+  updateFasilitasValidation,
+  createInvoiceValidation,
 } from "../validation/booking-validation.js";
 import {
   createTarifValidation,
@@ -15,6 +18,7 @@ import {
 import { validate } from "../validation/validation.js";
 import { PrismaClient } from "@prisma/client";
 import { formatToISO } from "../utils/date-formatter.js";
+import { check } from "express-validator";
 
 const create = async (request) => {
   const dataTarif = validate(createTarifValidation, request);
@@ -235,11 +239,15 @@ const searchAvailableKamar = async (request) => {
   }
 
   let tanggal_check_in = new Date();
+  let tanggal_check_out = new Date();
 
   // request.tanggal_check_in = "2023-09-12T11:00:00.000Z";
 
   if (request.tanggal_check_in !== undefined) {
     tanggal_check_in = new Date(request.tanggal_check_in);
+  }
+  if (request.tanggal_check_out !== undefined) {
+    tanggal_check_out = new Date(request.tanggal_check_out);
   }
 
   let where = {};
@@ -254,47 +262,111 @@ const searchAvailableKamar = async (request) => {
     };
   }
 
-  const ketersediaanKamar = await prismaClient.detail_booking_kamar.findMany({
-    where: {
-      booking: {
-        tanggal_check_in: {
-          lte: tanggal_check_in,
-        },
-        tanggal_check_out: {
-          gte: tanggal_check_in,
-        },
-      },
-    },
+  const ketersediaanKamar = await prismaClient.jenis_kamar.findMany({
     select: {
       id_jenis_kamar: true,
-      booking: {
-        select: {
-          tanggal_check_in: true,
-          tanggal_check_out: true,
-        },
-      },
     },
   });
 
-  // Membuat objek Map untuk menghitung jumlah yang sama
-  const kamarMap = new Map();
-  ketersediaanKamar.forEach((kamar) => {
-    const key = JSON.stringify(kamar);
-    const count = kamarMap.get(key) || 0;
-    kamarMap.set(key, count + 1);
-  });
+  const updatedKetersediaanKamar = await Promise.all(
+    ketersediaanKamar.map(async (data) => {
+      const jumlahKamar = await prismaClient.kamar.count({
+        where: {
+          id_jenis_kamar: data.id_jenis_kamar,
+          OR: [
+            {
+              NOT: {
+                detail_ketersediaan_kamar: {
+                  some: {
+                    detail_booking_kamar: {
+                      booking: {
+                        AND: [
+                          {
+                            tanggal_check_in: {
+                              lte: tanggal_check_out.toISOString(),
+                            },
+                          },
+                          {
+                            tanggal_check_out: {
+                              gte: tanggal_check_in.toISOString(),
+                            },
+                          },
+                        ],
+                      },
+                    },
+                    status: "Booked",
+                  },
+                },
+              },
+            },
+            // {
+            //   detail_ketersediaan_kamar: {
+            //     some: {
+            //       detail_booking_kamar: {
+            //         booking: {
+            //           AND: [
+            //             {
+            //               tanggal_check_in: {
+            //                 lte: tanggal_check_in.toISOString(),
+            //               },
+            //             },
+            //             {
+            //               tanggal_check_out: {
+            //                 gte: tanggal_check_out.toISOString(),
+            //               },
+            //             },
+            //           ],
+            //         },
+            //       },
+            //       status: "Tersedia",
+            //     },
+            //   },
+            //   // detail_ketersediaan_kamar: {
+            //   //   some: {
+            //   //     status: "Tersedia",
+            //   //   },
+            //   // },
+            // },
+          ],
+        },
+      });
 
-  // Mengonversi kembali ke array objek dengan atribut "jumlah"
-  const ketersediaanSederhana = Array.from(kamarMap.entries()).map(
-    ([key, count]) => {
-      const { id_jenis_kamar, booking } = JSON.parse(key);
       return {
-        id_jenis_kamar,
-        booking,
-        jumlah: count,
+        ...data,
+        ketersediaan_kamar: jumlahKamar,
       };
-    }
+    })
   );
+
+  if (ketersediaanKamar.length === 0) {
+    return {
+      data: [],
+      ketersediaan: [],
+      paging: {
+        page: request.page,
+        total_item: 0,
+        total_page: 0,
+      },
+    };
+  }
+
+  // const kamarMap = new Map();
+  // ketersediaanKamar.forEach((kamar) => {
+  //   const key = JSON.stringify(kamar);
+  //   const count = kamarMap.get(key) || 0;
+  //   kamarMap.set(key, count + 1);
+  // });
+
+  // const ketersediaanSederhana = Array.from(kamarMap.entries()).map(
+  //   ([key, count]) => {
+  //     const { id_jenis_kamar, booking } = JSON.parse(key);
+  //     return {
+  //       id_jenis_kamar,
+  //       booking,
+  //       jumlah: count,
+  //     };
+  //   }
+  // );
 
   const jenisKamarCounts = await prismaClient.kamar.groupBy({
     by: ["id_jenis_kamar"],
@@ -353,10 +425,18 @@ const searchAvailableKamar = async (request) => {
     where,
   });
 
+  const kamarTersedia = kamar.filter((kamarItem) => {
+    const idJenisKamar = kamarItem.id_jenis_kamar;
+    const ketersediaan = updatedKetersediaanKamar.find(
+      (ketersediaanItem) => ketersediaanItem.id_jenis_kamar === idJenisKamar
+    );
+
+    return ketersediaan && ketersediaan.ketersediaan_kamar > 0;
+  });
+
   return {
-    data: kamar,
-    ketersediaan: ketersediaanSederhana,
-    jumlahKamar: jenisKamarCounts,
+    data: kamarTersedia,
+    ketersediaan: updatedKetersediaanKamar,
     paging: {
       page: request.page,
       total_item: totalItems,
@@ -374,6 +454,8 @@ async function isBookingIdUnique(bookingId) {
   return !existingBooking;
 }
 
+// Contoh penggunaan fungsi
+
 const createBook = async (request) => {
   const dataBooking = validate(createBookingValidation, request.booking);
   const dataDetailBooking = validate(
@@ -387,7 +469,12 @@ const createBook = async (request) => {
   while (!isUnique) {
     const timestamp = moment().format("YYMMDD");
     const randomSuffix = Math.floor(Math.random() * 1000);
-    id_booking = `P${timestamp}-${randomSuffix}`;
+
+    if (dataBooking.jenis_booking === "Group") {
+      id_booking = `G${timestamp}-${randomSuffix}`;
+    } else {
+      id_booking = `P${timestamp}-${randomSuffix}`;
+    }
 
     isUnique = await isBookingIdUnique(id_booking);
   }
@@ -395,6 +482,7 @@ const createBook = async (request) => {
   dataBooking.id_booking = id_booking;
   dataBooking.tanggal_check_in = formatToISO(dataBooking.tanggal_check_in);
   dataBooking.tanggal_check_out = formatToISO(dataBooking.tanggal_check_out);
+  dataBooking.tanggal_booking = new Date();
 
   const dataBook = await prismaClient.booking.create({
     data: dataBooking,
@@ -408,30 +496,44 @@ const createBook = async (request) => {
     const countAvailableKamar = await prismaClient.kamar.count({
       where: {
         id_jenis_kamar: detail.id_jenis_kamar,
-        NOT: {
-          detail_ketersediaan_kamar: {
-            some: {
-              detail_booking_kamar: {
-                booking: {
-                  AND: [
-                    {
-                      tanggal_check_in: {
-                        lte: dataBooking.tanggal_check_out,
-                      },
+        OR: [
+          {
+            NOT: {
+              detail_ketersediaan_kamar: {
+                some: {
+                  detail_booking_kamar: {
+                    booking: {
+                      AND: [
+                        {
+                          tanggal_check_in: {
+                            lte: dataBooking.tanggal_check_out,
+                          },
+                        },
+                        {
+                          tanggal_check_out: {
+                            gte: dataBooking.tanggal_check_in,
+                          },
+                        },
+                      ],
                     },
-                    {
-                      tanggal_check_out: {
-                        gte: dataBooking.tanggal_check_in,
-                      },
-                    },
-                  ],
+                  },
+                  status: "Booked",
                 },
               },
             },
           },
-        },
+          // {
+          //   detail_ketersediaan_kamar: {
+          //     some: {
+          //       status: "Tersedia",
+          //     },
+          //   },
+          // },
+        ],
       },
     });
+
+    // return countAvailableKamar;
 
     if (countAvailableKamar < detail.jumlah) {
       await prismaClient.booking.delete({
@@ -465,28 +567,40 @@ const createBook = async (request) => {
     const kamarAvail = await prismaClient.kamar.findMany({
       where: {
         id_jenis_kamar: detail.id_jenis_kamar,
-        NOT: {
-          detail_ketersediaan_kamar: {
-            some: {
-              detail_booking_kamar: {
-                booking: {
-                  AND: [
-                    {
-                      tanggal_check_in: {
-                        lte: dataBooking.tanggal_check_out,
-                      },
+        OR: [
+          {
+            NOT: {
+              detail_ketersediaan_kamar: {
+                some: {
+                  detail_booking_kamar: {
+                    booking: {
+                      AND: [
+                        {
+                          tanggal_check_in: {
+                            lte: dataBooking.tanggal_check_out,
+                          },
+                        },
+                        {
+                          tanggal_check_out: {
+                            gte: dataBooking.tanggal_check_in,
+                          },
+                        },
+                      ],
                     },
-                    {
-                      tanggal_check_out: {
-                        gte: dataBooking.tanggal_check_in,
-                      },
-                    },
-                  ],
+                  },
+                  status: "Booked",
                 },
               },
             },
           },
-        },
+          // {
+          //   detail_ketersediaan_kamar: {
+          //     some: {
+          //       status: "Tersedia",
+          //     },
+          //   },
+          // },
+        ],
       },
     });
 
@@ -523,6 +637,7 @@ const createBook = async (request) => {
               id_ketersediaan_kamar,
               id_kamar,
               id_detail_booking_kamar,
+              status: "Booked",
             },
           })
         );
@@ -642,6 +757,591 @@ const updateStatusBooking = async (request, id) => {
   });
 };
 
+const updateNomorRekening = async (request, id) => {
+  const no_rekening = request.no_rekening;
+  const status_booking = request.status_booking;
+  const idBooking = id;
+
+  const checkBooking = await prismaClient.booking.findUnique({
+    where: {
+      id_booking: idBooking,
+    },
+  });
+
+  if (checkBooking === null) {
+    throw new ResponseError(404, "Booking is not found");
+  }
+
+  return prismaClient.booking.update({
+    where: {
+      id_booking: idBooking,
+    },
+    data: {
+      no_rekening: no_rekening,
+      status_booking: status_booking,
+      tanggal_pembayaran: new Date(),
+    },
+  });
+};
+
+const cancelBooking = async (id) => {
+  const idBooking = id;
+
+  const checkBooking = await prismaClient.booking.findUnique({
+    where: {
+      id_booking: idBooking,
+    },
+  });
+
+  if (checkBooking === null) {
+    throw new ResponseError(
+      404,
+      `Booking dengan id ${idBooking} tidak ditemukan`
+    );
+  }
+
+  await prismaClient.detail_ketersediaan_kamar.updateMany({
+    where: {
+      detail_booking_kamar: {
+        booking: {
+          id_booking: idBooking,
+        },
+      },
+    },
+    data: {
+      status: "Tersedia",
+    },
+  });
+
+  const twoWeeksFromNow = new Date();
+  twoWeeksFromNow.setDate(twoWeeksFromNow.getDate() + 14);
+
+  if (checkBooking.tanggal_check_in <= twoWeeksFromNow) {
+    return prismaClient.booking.update({
+      where: {
+        id_booking: idBooking,
+      },
+      data: {
+        status_booking: "Dibatalkan (Uang Kembali)",
+      },
+    });
+  } else {
+    return prismaClient.booking.update({
+      where: {
+        id_booking: idBooking,
+      },
+      data: {
+        status_booking: "Dibatalkan",
+      },
+    });
+  }
+};
+
+const searchBooking = async (request) => {
+  request = validate(searchBookingValidation, request);
+
+  const skip = (request.page - 1) * request.size;
+
+  const filters = [];
+
+  if (request.search_params !== undefined) {
+    if (/^\d+$/.test(request.search_params)) {
+      filters.push({
+        harga: parseInt(request.search_params),
+      });
+    } else {
+      filters.push({
+        customer: {
+          nama: {
+            contains: request.search_params,
+            mode: "insensitive",
+          },
+        },
+      });
+      filters.push({
+        id_booking: {
+          contains: request.search_params,
+          mode: "insensitive",
+        },
+      });
+      filters.push({
+        status_booking: {
+          contains: request.search_params,
+          mode: "insensitive",
+        },
+      });
+    }
+  }
+
+  let where = {};
+
+  if (filters.length > 1) {
+    where = {
+      OR: filters,
+    };
+  } else {
+    where = {
+      AND: filters,
+    };
+  }
+
+  const booking = await prismaClient.booking.findMany({
+    where,
+    take: request.size,
+    skip: skip,
+    select: {
+      id_booking: true,
+      id_customer: true,
+      tanggal_booking: true,
+      tanggal_check_in: true,
+      tanggal_check_out: true,
+      tamu_dewasa: true,
+      tamu_anak: true,
+      tanggal_pembayaran: true,
+      jenis_booking: true,
+      status_booking: true,
+      no_rekening: true,
+      pegawai_1: true,
+      pegawai_2: true,
+      catatan_tambahan: true,
+      customer: true,
+    },
+  });
+
+  const totalItems = await prismaClient.booking.count({
+    where,
+  });
+
+  return {
+    data: booking,
+    paging: {
+      page: request.page,
+      total_item: totalItems,
+      total_page: Math.ceil(totalItems / request.size),
+    },
+  };
+};
+
+const searchBookingByCheckin = async (request) => {
+  request = validate(searchBookingValidation, request);
+
+  const skip = (request.page - 1) * request.size;
+
+  const filters = [];
+
+  // filters.push({
+  //   status_booking: {
+  //     contains: "Jaminan Sudah Dibayar",
+  //   },
+  // });
+  // filters.push({
+  //   status_booking: {
+  //     contains: "Sudah 50% Dibayar",
+  //   },
+  // });
+
+  const today = new Date();
+  const startOfDay = new Date(
+    today.getFullYear(),
+    today.getMonth(),
+    today.getDate()
+  );
+  const endOfDay = new Date(
+    today.getFullYear(),
+    today.getMonth(),
+    today.getDate() + 1
+  );
+
+  // filters.push({
+  // tanggal_check_in: {
+  //   gte: startOfDay,
+  //   lt: endOfDay,
+  // },
+  // });
+
+  if (request.search_params !== undefined) {
+    filters.push({
+      customer: {
+        nama: {
+          contains: request.search_params,
+          mode: "insensitive",
+        },
+      },
+    });
+    filters.push({
+      id_booking: {
+        contains: request.search_params,
+        mode: "insensitive",
+      },
+    });
+  }
+
+  let where = {
+    AND: {
+      tanggal_check_in: {
+        gte: startOfDay,
+        lt: endOfDay,
+      },
+      OR: filters,
+    },
+  };
+
+  // if (filters.length > 1) {
+  //   where = {
+  //     OR: filters,
+  //   };
+  // } else {
+  //   where = {
+  //     AND: filters,
+  //   };
+  // }
+
+  const booking = await prismaClient.booking.findMany({
+    where,
+    take: request.size,
+    skip: skip,
+    select: {
+      id_booking: true,
+      id_customer: true,
+      tanggal_booking: true,
+      tanggal_check_in: true,
+      tanggal_check_out: true,
+      tamu_dewasa: true,
+      tamu_anak: true,
+      tanggal_pembayaran: true,
+      jenis_booking: true,
+      status_booking: true,
+      no_rekening: true,
+      pegawai_1: true,
+      pegawai_2: true,
+      catatan_tambahan: true,
+      customer: true,
+    },
+  });
+
+  // return booking;
+
+  const totalItems = await prismaClient.booking.count({
+    where,
+  });
+
+  const filteredData = booking.filter((obj) => {
+    return (
+      obj.status_booking === "Jaminan Sudah Dibayar" ||
+      obj.status_booking === "Sudah 50% Dibayar" ||
+      obj.status_booking === "Check In"
+    );
+  });
+
+  return {
+    data: filteredData,
+    paging: {
+      page: request.page,
+      total_item: totalItems,
+      total_page: Math.ceil(totalItems / request.size),
+    },
+  };
+};
+
+const updateFasilitas = async (request, id) => {
+  const dataFasilitas = validate(updateFasilitasValidation, request.fasilitas);
+  const idBooking = id;
+
+  const checkBooking = await prismaClient.booking.findUnique({
+    where: {
+      id_booking: idBooking,
+    },
+  });
+
+  if (checkBooking === null) {
+    throw new ResponseError(404, "Booking is not found");
+  }
+
+  for (const [index, detail] of dataFasilitas.entries()) {
+    let checkDupe = await prismaClient.detail_booking_layanan.findFirst({
+      where: {
+        id_booking: idBooking,
+        id_fasilitas: detail.id_fasilitas,
+      },
+    });
+
+    if (checkDupe === null) {
+      let countDbl = await prismaClient.detail_booking_layanan.findFirst({
+        orderBy: {
+          id_detail_booking_layanan: "desc",
+        },
+        take: 1,
+      });
+
+      if (countDbl === null) {
+        detail.id_detail_booking_layanan = 1;
+      } else {
+        detail.id_detail_booking_layanan =
+          countDbl.id_detail_booking_layanan + 1;
+      }
+
+      await prismaClient.detail_booking_layanan.create({
+        data: {
+          id_detail_booking_layanan: detail.id_detail_booking_layanan,
+          id_booking: idBooking,
+          id_fasilitas: detail.id_fasilitas,
+          jumlah: detail.jumlah,
+          tanggal: new Date(),
+          sub_total: detail.sub_total,
+        },
+      });
+    } else {
+      await prismaClient.detail_booking_layanan.update({
+        where: {
+          id_detail_booking_layanan: checkDupe.id_detail_booking_layanan,
+        },
+        data: {
+          jumlah: detail.jumlah,
+          sub_total: detail.sub_total,
+        },
+      });
+    }
+  }
+
+  return prismaClient.booking.findFirst({
+    where: {
+      id_booking: idBooking,
+    },
+    select: {
+      id_booking: true,
+      customer: true,
+      tanggal_booking: true,
+      tanggal_check_in: true,
+      tanggal_check_out: true,
+      tamu_dewasa: true,
+      tamu_anak: true,
+      tanggal_pembayaran: true,
+      jenis_booking: true,
+      status_booking: true,
+      no_rekening: true,
+      pegawai_1: true,
+      pegawai_2: true,
+      catatan_tambahan: true,
+      detail_booking_kamar: {
+        select: {
+          id_detail_booking_kamar: true,
+          id_booking: true,
+          id_jenis_kamar: true,
+          jumlah: true,
+          sub_total: true,
+          detail_ketersediaan_kamar: {
+            select: {
+              kamar: {
+                select: {
+                  jenis_kamar: true,
+                  nomor_kamar: true,
+                },
+              },
+            },
+          },
+        },
+      },
+      detail_booking_layanan: true,
+    },
+  });
+};
+
+const createInvoice = async (request) => {
+  const dataInvoice = validate(createInvoiceValidation, request.invoice);
+  const dataFasilitas = validate(updateFasilitasValidation, request.fasilitas);
+  const idBooking = dataInvoice.id_booking;
+
+  const checkBooking = await prismaClient.booking.findUnique({
+    where: {
+      id_booking: idBooking,
+    },
+  });
+
+  if (checkBooking === null) {
+    throw new ResponseError(404, "Booking is not found");
+  }
+
+  for (const [index, detail] of dataFasilitas.entries()) {
+    let checkDupe = await prismaClient.detail_booking_layanan.findFirst({
+      where: {
+        id_booking: idBooking,
+        id_fasilitas: detail.id_fasilitas,
+      },
+    });
+
+    if (checkDupe === null) {
+      let countDbl = await prismaClient.detail_booking_layanan.findFirst({
+        orderBy: {
+          id_detail_booking_layanan: "desc",
+        },
+        take: 1,
+      });
+
+      if (countDbl === null) {
+        detail.id_detail_booking_layanan = 1;
+      } else {
+        detail.id_detail_booking_layanan =
+          countDbl.id_detail_booking_layanan + 1;
+      }
+
+      await prismaClient.detail_booking_layanan.create({
+        data: {
+          id_detail_booking_layanan: detail.id_detail_booking_layanan,
+          id_booking: idBooking,
+          id_fasilitas: detail.id_fasilitas,
+          jumlah: detail.jumlah,
+          tanggal: new Date(),
+          sub_total: detail.sub_total,
+        },
+      });
+    } else {
+      await prismaClient.detail_booking_layanan.update({
+        where: {
+          id_detail_booking_layanan: checkDupe.id_detail_booking_layanan,
+        },
+        data: {
+          jumlah: detail.jumlah,
+          sub_total: detail.sub_total,
+          tanggal: new Date(),
+        },
+      });
+    }
+  }
+
+  let isUnique = false;
+  let id_invoice;
+
+  let subTotalKamar = 0;
+  let subTotalFasilitas = 0;
+  let pajak = 0;
+  let total = 0;
+
+  const dataBooking = await prismaClient.booking.findUnique({
+    where: {
+      id_booking: dataInvoice.id_booking,
+    },
+    select: {
+      id_booking: true,
+      customer: true,
+      tanggal_booking: true,
+      tanggal_check_in: true,
+      tanggal_check_out: true,
+      tamu_dewasa: true,
+      tamu_anak: true,
+      tanggal_pembayaran: true,
+      jenis_booking: true,
+      status_booking: true,
+      no_rekening: true,
+      pegawai_1: true,
+      pegawai_2: true,
+      catatan_tambahan: true,
+      detail_booking_kamar: {
+        select: {
+          id_detail_booking_kamar: true,
+          id_booking: true,
+          id_jenis_kamar: true,
+          jumlah: true,
+          sub_total: true,
+          detail_ketersediaan_kamar: {
+            select: {
+              kamar: {
+                select: {
+                  jenis_kamar: true,
+                  nomor_kamar: true,
+                },
+              },
+            },
+          },
+        },
+      },
+      detail_booking_layanan: true,
+    },
+  });
+
+  dataBooking.detail_booking_kamar.forEach(async (data) => {
+    subTotalKamar += data.sub_total;
+  });
+
+  if (dataBooking.detail_booking_layanan.length > 0) {
+    dataBooking.detail_booking_layanan.forEach(async (data) => {
+      subTotalFasilitas += data.sub_total;
+    });
+  }
+
+  pajak = subTotalFasilitas * 0.1;
+  total = subTotalKamar + subTotalFasilitas + pajak;
+
+  dataInvoice.total_pajak = pajak;
+  dataInvoice.total_pembayaran = total;
+  dataInvoice.jumlah_jaminan = subTotalKamar;
+
+  //todo hitung via backend , modify ketersediaan jadi Tersedia dan Booked
+
+  while (!isUnique) {
+    const timestamp = moment().format("YYMMDD");
+    const randomSuffix = Math.floor(Math.random() * 1000);
+
+    const jenis_booking = dataBooking.jenis_booking;
+    const invoicePrefix =
+      jenis_booking === "Personal" ? "P" : jenis_booking === "Group" ? "G" : "";
+
+    id_invoice = `${invoicePrefix}${timestamp}-${randomSuffix}`;
+
+    isUnique = await isInvoiceIdUnique(id_invoice);
+  }
+
+  dataInvoice.id_invoice = id_invoice;
+  // dataInvoice.tanggal_pelunasan = new Date();
+
+  //untuk keperluan seeding data
+
+  const startDate = new Date("2023-01-01").getTime();
+  const endDate = new Date("2023-12-31").getTime();
+
+  const randomTimestamp = Math.random() * (endDate - startDate) + startDate;
+  const randomDate = new Date(randomTimestamp);
+
+  dataInvoice.tanggal_pelunasan = randomDate;
+
+  await prismaClient.booking.update({
+    where: {
+      id_booking: dataInvoice.id_booking,
+    },
+    data: {
+      status_booking: "Check Out",
+      id_pegawai_fo: dataInvoice.id_pegawai_fo,
+    },
+  });
+
+  await prismaClient.detail_ketersediaan_kamar.updateMany({
+    where: {
+      detail_booking_kamar: {
+        booking: {
+          id_booking: dataInvoice.id_booking,
+        },
+      },
+    },
+    data: {
+      status: "Tersedia",
+    },
+  });
+
+  delete dataInvoice.id_pegawai_fo;
+
+  return prismaClient.invoice.create({
+    data: dataInvoice,
+  });
+};
+
+async function isInvoiceIdUnique(idInvoice) {
+  const existingBooking = await prismaClient.invoice.findUnique({
+    where: {
+      id_invoice: idInvoice,
+    },
+  });
+  return !existingBooking;
+}
+
 export default {
   create,
   getTarifById,
@@ -651,4 +1351,10 @@ export default {
   searchAvailableKamar,
   createBook,
   updateStatusBooking,
+  cancelBooking,
+  searchBooking,
+  updateNomorRekening,
+  searchBookingByCheckin,
+  updateFasilitas,
+  createInvoice,
 };

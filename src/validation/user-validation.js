@@ -34,6 +34,7 @@ const searchUserValidation = Joi.object({
   page: Joi.number().positive().default(1),
   size: Joi.number().min(1).positive().max(100).default(10),
   id_customer: Joi.string().optional(),
+  search_params: Joi.string().optional(),
 });
 
 const searchGroupValidation = Joi.object({

@@ -796,28 +796,358 @@ async function main() {
   //   },
   // });
 
-  const result = await prisma.kamar.findMany({
+  // const result = await prisma.kamar.findMany({
+  //   where: {
+  //     id_jenis_kamar: 1,
+  //     NOT: {
+  //       detail_ketersediaan_kamar: {
+  //         some: {
+  //           detail_booking_kamar: {
+  //             booking: {
+  //               AND: [
+  //                 { tanggal_check_in: { lte: "2022-11-28T00:00:00.000Z" } },
+  //                 { tanggal_check_out: { gte: "2022-11-06T00:00:00.000Z" } },
+  //               ],
+  //             },
+  //           },
+  //         },
+  //       },
+  //     },
+  //   },
+  // });
+
+  // const result2 = await prisma.kamar.findMany({
+  //   where: {
+  //     id_jenis_kamar: 1,
+  //     detail_ketersediaan_kamar: {
+  //       some: {
+  //         status: "Canceled",
+  //       },
+  //     },
+  //   },
+  // });
+
+  // const result = await prisma.kamar.findMany({
+  //   where: {
+  //     id_jenis_kamar: 1,
+  //     OR: [
+  //       {
+  //         NOT: {
+  //           detail_ketersediaan_kamar: {
+  //             some: {
+  //               detail_booking_kamar: {
+  //                 booking: {
+  //                   AND: [
+  //                     { tanggal_check_in: { lte: "2022-11-28T00:00:00.000Z" } },
+  //                     {
+  //                       tanggal_check_out: { gte: "2022-11-06T00:00:00.000Z" },
+  //                     },
+  //                   ],
+  //                 },
+  //               },
+  //             },
+  //           },
+  //         },
+  //       },
+  //       {
+  //         detail_ketersediaan_kamar: {
+  //           some: {
+  //             status: "Canceled",
+  //           },
+  //         },
+  //       },
+  //     ],
+  //   },
+  // });
+
+  // console.log(await result);
+  // console.log(await result2);
+  // console.log(new Date());
+
+  // const today = new Date();
+
+  // Laporan 1
+  // const year = 2023; // Tahun yang ingin difilter
+
+  // const result = await prisma.customer.groupBy({
+  //   by: ["tanggal_dibuat"],
+  //   where: {
+  //     tanggal_dibuat: {
+  //       gte: new Date(year, 0, 1), // Tanggal awal tahun
+  //       lte: new Date(year, 11, 31), // Tanggal akhir tahun
+  //     },
+  //   },
+  //   _count: {
+  //     tanggal_dibuat: true,
+  //   },
+  //   orderBy: {
+  //     tanggal_dibuat: "asc",
+  //   },
+  // });
+
+  // const total = await prisma.customer.aggregate({
+  //   where: {
+  //     tanggal_dibuat: {
+  //       gte: new Date(year, 0, 1), // Tanggal awal tahun
+  //       lte: new Date(year, 11, 31), // Tanggal akhir tahun
+  //     },
+  //   },
+  //   _count: {
+  //     _all: true,
+  //   },
+  // });
+
+  // const totalCustomerBaru = total._count._all;
+
+  // // Membuat objek untuk menyimpan hasil per bulan
+  // const monthlyResult = {};
+
+  // // Inisialisasi nilai awal 0 untuk setiap bulan
+  // for (let month = 0; month < 12; month++) {
+  //   const monthName = new Intl.DateTimeFormat("en-US", {
+  //     month: "long",
+  //   }).format(new Date(year, month, 1));
+
+  //   monthlyResult[monthName] = 0;
+  // }
+
+  // // Mengisi hasil yang sebenarnya dari data customer
+  // result.forEach((item) => {
+  //   const month = item.tanggal_dibuat.getMonth();
+  //   const monthName = new Intl.DateTimeFormat("en-US", {
+  //     month: "long",
+  //   }).format(new Date(year, month, 1));
+
+  //   monthlyResult[monthName] += item._count.tanggal_dibuat;
+  // });
+
+  // // Membentuk hasil akhir dengan mencantumkan bulan dan jumlah orang
+  // const formattedResult = Object.entries(monthlyResult).map(
+  //   ([month, count]) => {
+  //     return `${month} ${count} orang`;
+  //   }
+  // );
+
+  // formattedResult.push(`Total ${totalCustomerBaru} orang`);
+
+  // console.log(formattedResult);
+
+  // Laporan 2
+
+  // const today = new Date();
+  // const year = today.getFullYear();
+
+  // const result = await prisma.invoice.findMany({
+  //   select: {
+  //     id_invoice: true,
+  //     tanggal_pelunasan: true,
+  //     total_pembayaran: true,
+  //     booking: {
+  //       select: {
+  //         jenis_booking: true,
+  //       },
+  //     },
+  //   },
+  //   where: {
+  //     tanggal_pelunasan: {
+  //       gte: new Date(year, 0, 1), // Tanggal awal tahun
+  //       lte: today, // Tanggal saat ini
+  //     },
+  //   },
+  //   orderBy: {
+  //     tanggal_pelunasan: "asc",
+  //   },
+  // });
+
+  // // Membuat objek untuk menyimpan hasil per bulan
+  // const monthlyResult = {};
+
+  // // Mengisi hasil penghasilan bulanan berdasarkan jenis_booking
+  // result.forEach((item) => {
+  //   const month = item.tanggal_pelunasan.getMonth();
+  //   const monthName = new Intl.DateTimeFormat("en-US", {
+  //     month: "long",
+  //   }).format(new Date(year, month, 1));
+
+  //   const jenisBooking = item.booking.jenis_booking;
+  //   const totalPembayaran = item.total_pembayaran;
+
+  //   if (!monthlyResult[monthName]) {
+  //     monthlyResult[monthName] = {
+  //       Personal: 0,
+  //       Group: 0,
+  //     };
+  //   }
+
+  //   monthlyResult[monthName][jenisBooking] += totalPembayaran;
+  // });
+
+  // // Membentuk hasil akhir dalam bentuk array
+  // const formattedResult = Object.entries(monthlyResult).map(
+  //   ([month, data], index) => {
+  //     const personalTotal = data.Personal.toLocaleString();
+  //     const groupTotal = data.Group.toLocaleString();
+  //     const total = (data.Personal + data.Group).toLocaleString();
+
+  //     return `${
+  //       index + 1
+  //     }\t${month}\t${groupTotal}\t${personalTotal}\t${total}`;
+  //   }
+  // );
+
+  // // Menampilkan hasil laporan
+  // console.log(`No\tBulan\tGrup\tPersonal\tTotal`);
+  // formattedResult.forEach((row) => console.log(row));
+
+  // Laporan 3
+
+  // const tahun = 2023;
+  // const bulan = "Desember";
+
+  // const result = await prisma.booking.findMany({
+  //   where: {
+  //     status_booking: "Check Out",
+  //   },
+  //   select: {
+  //     detail_booking_kamar: {
+  //       select: {
+  //         jenis_kamar: {
+  //           select: {
+  //             jenis_kamar: true,
+  //           },
+  //         },
+  //         jumlah: true,
+  //       },
+  //     },
+  //     jenis_booking: true,
+  //   },
+  // });
+
+  // const laporan = result.reduce((acc, booking) => {
+  //   booking.detail_booking_kamar.forEach((detail) => {
+  //     const jenisKamar = detail.jenis_kamar.jenis_kamar;
+  //     const jumlah = detail.jumlah || 0;
+  //     const jenisBooking = booking.jenis_booking || "Personal";
+
+  //     if (!acc[jenisKamar]) {
+  //       acc[jenisKamar] = {
+  //         Group: 0,
+  //         Personal: 0,
+  //         Total: 0,
+  //       };
+  //     }
+
+  //     acc[jenisKamar][jenisBooking] += jumlah;
+  //     acc[jenisKamar].Total += jumlah;
+  //   });
+
+  //   return acc;
+  // }, {});
+
+  // console.log(`Tahun: ${tahun}`);
+  // console.log(`Bulan: ${bulan}`);
+  // console.log("");
+  // console.log("No  Jenis Kamar        Group  Personal  Total");
+  // console.log("-------------------------------------------");
+
+  // let total = 0;
+  // let no = 1;
+
+  // for (const jenisKamar in laporan) {
+  //   const group = laporan[jenisKamar].Group || 0;
+  //   const personal = laporan[jenisKamar].Personal || 0;
+  //   const jumlah = laporan[jenisKamar].Total || 0;
+
+  //   console.log(
+  //     `${no}   ${jenisKamar.padEnd(18)} ${group
+  //       .toString()
+  //       .padStart(6)}  ${personal.toString().padStart(8)}  ${jumlah
+  //       .toString()
+  //       .padStart(5)}`
+  //   );
+
+  //   total += jumlah;
+  //   no++;
+  // }
+
+  // console.log("-------------------------------------------");
+  // console.log(`TOTAL                 ${total.toString().padStart(5)}`);
+
+  const tahun = 2023;
+  const bulan = 11;
+
+  const result = await prisma.booking.findMany({
     where: {
-      id_jenis_kamar: 6,
-      NOT: {
-        detail_ketersediaan_kamar: {
-          some: {
-            detail_booking_kamar: {
-              booking: {
-                AND: [
-                  { tanggal_check_in: { lte: "2024-11-28T00:00:00.000Z" } },
-                  { tanggal_check_out: { gte: "2024-11-06T00:00:00.000Z" } },
-                ],
-              },
+      status_booking: "Check Out",
+      tanggal_check_in: {
+        gte: new Date(tahun, bulan - 1, 1),
+        lt: new Date(tahun, bulan, 1),
+      },
+    },
+    select: {
+      detail_booking_kamar: {
+        select: {
+          jenis_kamar: {
+            select: {
+              jenis_kamar: true,
             },
           },
+          jumlah: true,
         },
       },
+      jenis_booking: true,
     },
   });
 
-  console.log(await result);
-  console.log(new Date());
+  const laporan = result.reduce((acc, booking) => {
+    booking.detail_booking_kamar.forEach((detail) => {
+      const jenisKamar = detail.jenis_kamar.jenis_kamar;
+      const jumlah = detail.jumlah || 0;
+      const jenisBooking = booking.jenis_booking || "Personal";
+
+      if (!acc[jenisKamar]) {
+        acc[jenisKamar] = {
+          Group: 0,
+          Personal: 0,
+          Total: 0,
+        };
+      }
+
+      acc[jenisKamar][jenisBooking] += jumlah;
+      acc[jenisKamar].Total += jumlah;
+    });
+
+    return acc;
+  }, {});
+
+  console.log(`Tahun: ${tahun}`);
+  console.log(`Bulan: ${bulan}`);
+  console.log("");
+  console.log("No  Jenis Kamar        Group  Personal  Total");
+  console.log("-------------------------------------------");
+
+  let total = 0;
+  let no = 1;
+
+  for (const jenisKamar in laporan) {
+    const group = laporan[jenisKamar].Group || 0;
+    const personal = laporan[jenisKamar].Personal || 0;
+    const jumlah = laporan[jenisKamar].Total || 0;
+
+    console.log(
+      `${no}   ${jenisKamar.padEnd(18)} ${group
+        .toString()
+        .padStart(6)}  ${personal.toString().padStart(8)}  ${jumlah
+        .toString()
+        .padStart(5)}`
+    );
+
+    total += jumlah;
+    no++;
+  }
+
+  console.log("-------------------------------------------");
+  console.log(`TOTAL                 ${total.toString().padStart(5)}`);
 
   console.log("Seed data created successfully!");
   console.log(await getPajak("1"));

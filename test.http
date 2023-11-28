@@ -33,12 +33,12 @@ Accept: application/json
 
 ###
 
-POST http://localhost:3000/api/users/login
+POST http://20.2.72.17/api/users/login
 Content-Type: application/json
 Accept: application/json
 
 {
-  "username" : "sm",
+  "username" : "customer2",
   "password" : "rahasia"
 }
 
@@ -263,20 +263,20 @@ Content-Type: application/json
 Accept: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InBhYmxvMSIsImlhdCI6MTY5ODEzOTc1OSwiZXhwIjoxNjk4NjU4MTU5fQ.NpI6FQsfvpWVogUDovO1gio0vYuaJjnPDc8H_-2Zo5Q
 ### Tarif
-GET http://localhost:3000/api/customer/2/booking-history?page=1
+GET http://localhost:3000/api/customer/3/booking-history?search_params=401
 Content-Type: application/json
 Accept: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImN1c3RvbWVyIiwiaWF0IjoxNjk4NjQyNTQ4LCJleHAiOjE2OTkxNjA5NDh9.yuhGmNrwj7s9ZOAmhLu-3nOc_Q3DEtrrHvoFdKGSksg
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImN1c3RvbWVyMiIsImlhdCI6MTY5ODY1NTIwNCwiZXhwIjoxNzAxMjQ3MjA0fQ.ejkVfII83RTyspKYO8wHYJyEA-f8xefzEjiuHO7-qUo
 
 ### Tarif
-GET http://localhost:3000/api/customer/booking/2
+GET http://localhost:3000/api/customer/booking/G231121-411
 Content-Type: application/json
 Accept: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImN1c3RvbWVyIiwiaWF0IjoxNjk4NjQyNTQ4LCJleHAiOjE2OTkxNjA5NDh9.yuhGmNrwj7s9ZOAmhLu-3nOc_Q3DEtrrHvoFdKGSksg
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImN1c3RvbWVyMiIsImlhdCI6MTY5ODY1NTIwNCwiZXhwIjoxNzAxMjQ3MjA0fQ.ejkVfII83RTyspKYO8wHYJyEA-f8xefzEjiuHO7-qUo
 
 
 ### Tarif
-GET http://localhost:3000/api/booking/kamar?tanggal_check_in=2023-11-09
+GET http://localhost:3000/api/booking/kamar?tanggal_check_in=2023-11-22&tanggal_check_out=2023-11-24&kamar_attribute=superior
 Content-Type: application/json
 Accept: application/json
 
@@ -296,42 +296,16 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNtI
    "booking" : {
      "id_customer": 2,
       "tanggal_booking": "2023-09-19",
-      "tanggal_check_in": "2025-11-06 08:00:00",
-      "tanggal_check_out": "2025-11-28 10:00:00",
+      "tanggal_check_in": "2023-11-28 08:00:00",
+      "tanggal_check_out": "2023-11-30 10:00:00",
       "tamu_dewasa": 2,
       "tamu_anak": 8,
-      "tanggal_pembayaran": "2023-09-20",
       "jenis_booking": "Personal",
-      "status_booking": "Check Out",
-      "id_pegawai_fo": 3,
-      "no_rekening": "20202020"
-     
+      "status_booking": "Booked"
    },
    "detail_booking" : [
     {
-      "id_jenis_kamar": 1,
-      "jumlah": 2,
-      "sub_total": 480000
-    },
-    {
-      "id_jenis_kamar": 2,
-      "jumlah": 2,
-      "sub_total": 480000
-    },
-    {
       "id_jenis_kamar": 3,
-      "jumlah": 2,
-      "sub_total": 480000
-    },
-    {
-      "id_jenis_kamar": 4,
-      "jumlah": 2,
-      "sub_total": 480000
-    }
-   ],
-   "fasilitas" : [
-    {
-      "id_fasilitas": 1,
       "jumlah": 2,
       "sub_total": 480000
     }
@@ -339,26 +313,126 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNtI
 }
 
 ### Fasilitas
-GET http://localhost:3000/api/jenis-kamar/status?id_jenis_kamar=1&tanggal_check_in=2021-11-06 08:00:00&tanggal_check_out=2021-11-28 10:00:00
+GET http://localhost:3000/api/jenis-kamar/status?id_jenis_kamar=1&tanggal_check_in=2023-11-22 08:00:00&tanggal_check_out=2023-11-24 10:00:00
 Content-Type: application/json
 Accept: application/json
 
 ### Fasilitas
 
 ### Fasilitas
-PUT http://localhost:3000/api/booking/change-status/P231114-451
+PUT http://localhost:3000/api/booking/change-status/P231128-805
 Content-Type: application/json
 Accept: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNtIiwiaWF0IjoxNjk4NzU0ODU5LCJleHAiOjE3MDEzNDY4NTl9.46MklXr0lciK4Y7bNaJIBrURDmZHDUrCaYB0oBZfyfs
 
 {
-   "status_booking" : "coba"
+   "status_booking" : "Jaminan Sudah Dibayar"
 }
 
 ### Fasilitas
 
 ### Fasilitas
-GET http://localhost:3000/api/customer/booking/P231114-451
+GET http://localhost:3000/api/customer/booking/G231128-65
 Content-Type: application/json
 Accept: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNtIiwiaWF0IjoxNjk4NzU0ODU5LCJleHAiOjE3MDEzNDY4NTl9.46MklXr0lciK4Y7bNaJIBrURDmZHDUrCaYB0oBZfyfs
+
+
+### Fasilitas
+PUT http://localhost:3000/api/booking/cancel/P231122-95
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNtIiwiaWF0IjoxNjk4NzU0ODU5LCJleHAiOjE3MDEzNDY4NTl9.46MklXr0lciK4Y7bNaJIBrURDmZHDUrCaYB0oBZfyfs
+
+
+### Fasilitas
+GET http://localhost:3000/api/booking/check-in/search
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNtIiwiaWF0IjoxNjk4NzU0ODU5LCJleHAiOjE3MDEzNDY4NTl9.46MklXr0lciK4Y7bNaJIBrURDmZHDUrCaYB0oBZfyfs
+
+### Fasilitas
+PUT http://localhost:3000/api/booking/no-rekening/P231128-215
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNtIiwiaWF0IjoxNjk4NzU0ODU5LCJleHAiOjE3MDEzNDY4NTl9.46MklXr0lciK4Y7bNaJIBrURDmZHDUrCaYB0oBZfyfs
+
+{
+    "status_booking" : "Jaminan Sudah Dibayar",
+    "no_rekening" : "12341234"
+}
+                                                                                                                                                            
+### Fasilitas
+PUT http://localhost:3000/api/booking/fasilitas/G231120-453
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNtIiwiaWF0IjoxNjk4NzU0ODU5LCJleHAiOjE3MDEzNDY4NTl9.46MklXr0lciK4Y7bNaJIBrURDmZHDUrCaYB0oBZfyfs
+
+{
+    "fasilitas" : [
+        {
+            "id_fasilitas" : 1,
+            "jumlah" : 4,
+            "sub_total" : 480000
+        },
+        {
+            "id_fasilitas" : 2,
+            "jumlah" : 4,
+            "sub_total" : 480000
+        }
+    ]
+}
+
+### Fasilitas
+POST http://localhost:3000/api/invoice
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNtIiwiaWF0IjoxNjk4NzU0ODU5LCJleHAiOjE3MDEzNDY4NTl9.46MklXr0lciK4Y7bNaJIBrURDmZHDUrCaYB0oBZfyfs
+
+{
+    "invoice" :{
+      "id_booking" : "G231123-848",
+      "id_pegawai_fo" : 3
+    },
+    "fasilitas" : [
+        {
+            "id_fasilitas" : 1,
+            "jumlah" : 4,
+            "sub_total" : 480000
+        },
+        {
+            "id_fasilitas" : 2,
+            "jumlah" : 4,
+            "sub_total" : 480000
+        }
+    ]
+}
+
+### Fasilitas
+GET  http://localhost:3000/api/laporan/jumlah-tamu?tahun=2023&bulan=11
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNtIiwiaWF0IjoxNjk4NzU0ODU5LCJleHAiOjE3MDEzNDY4NTl9.46MklXr0lciK4Y7bNaJIBrURDmZHDUrCaYB0oBZfyfs
+
+
+
+### Fasilitas
+GET http://localhost:3000/api/laporan/pendapatan-bulanan?tahun=2023
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNtIiwiaWF0IjoxNjk4NzU0ODU5LCJleHAiOjE3MDEzNDY4NTl9.46MklXr0lciK4Y7bNaJIBrURDmZHDUrCaYB0oBZfyfs
+
+### Fasilitas /api/laporan/top-customer
+GET http://localhost:3000/api/laporan/customer-baru?tahun=2023
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNtIiwiaWF0IjoxNjk4NzU0ODU5LCJleHAiOjE3MDEzNDY4NTl9.46MklXr0lciK4Y7bNaJIBrURDmZHDUrCaYB0oBZfyfs
+
+### Fasilitas /api/laporan/top-customer
+GET http://localhost:3000/api/laporan/top-customer?tahun=2023
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNtIiwiaWF0IjoxNjk4NzU0ODU5LCJleHAiOjE3MDEzNDY4NTl9.46MklXr0lciK4Y7bNaJIBrURDmZHDUrCaYB0oBZfyfs
+
+
+

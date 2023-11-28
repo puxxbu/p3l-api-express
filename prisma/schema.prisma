@@ -99,7 +99,6 @@ model invoice {
   total_pajak       Int
   jumlah_jaminan    Int
   total_pembayaran  Int
-  nama_pic_fo       String   @db.VarChar(255)
   booking           booking  @relation(fields: [id_booking], references: [id_booking], onUpdate: Restrict, map: "fk_invoice_relations_booking")
 
   @@index([id_booking], map: "relationship_13_fk")
@@ -175,6 +174,7 @@ model detail_ketersediaan_kamar {
   id_ketersediaan_kamar   Int                  @id(map: "pk_detail_ketersediaan_kamar") @unique(map: "detail_ketersediaan_kamar_pk")
   id_kamar                Int
   id_detail_booking_kamar Int
+  status                  String?              @db.VarChar(100)
   detail_booking_kamar    detail_booking_kamar @relation(fields: [id_detail_booking_kamar], references: [id_detail_booking_kamar], onUpdate: Restrict, onDelete: Cascade, map: "fk_detail_k_relations_detail_b")
   kamar                   kamar                @relation(fields: [id_kamar], references: [id_kamar], onUpdate: Restrict, map: "fk_detail_k_relations_kamar")
 
