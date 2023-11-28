@@ -747,6 +747,21 @@ const updateStatusBooking = async (request, id) => {
     throw new ResponseError(404, "Tarif is not found");
   }
 
+  if (
+    status_booking === "Sudah 50% Dibayar" ||
+    status_booking === "Jaminan Sudah Dibayar"
+  ) {
+    return prismaClient.booking.update({
+      where: {
+        id_booking: idBooking,
+      },
+      data: {
+        status_booking: status_booking,
+        tanggal_pembayaran: new Date(),
+      },
+    });
+  }
+
   return prismaClient.booking.update({
     where: {
       id_booking: idBooking,

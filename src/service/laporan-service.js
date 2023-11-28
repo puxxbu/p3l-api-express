@@ -262,6 +262,30 @@ const getLaporanPendapatanBulanan = async (request) => {
     },
   });
 
+  // const resultDbk = await prismaClient.booking.findMany({
+  //   select: {
+  //     id_booking: true,
+  //     tanggal_pembayaran: true,
+  //     detail_booking_kamar: {
+  //       select: {
+  //         sub_total: true,
+  //       },
+  //     },
+  //   },
+  //   where: {
+  //     status_booking: "Jaminan Sudah Dibayar",
+  //     tanggal_pembayaran: {
+  //       gte: new Date(year, 0, 1), // Tanggal awal tahun
+  //       lt: new Date(year + 1, 0, 1), // Tanggal awal tahun berikutny
+  //     },
+  //   },
+  //   orderBy: {
+  //     tanggal_pembayaran: "asc",
+  //   },
+  // });
+
+  // return resultDbk;
+
   // Membuat objek untuk menyimpan hasil per bulan
   const monthlyResult = {};
   let totalOverall = 0;
