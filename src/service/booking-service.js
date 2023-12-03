@@ -1306,17 +1306,17 @@ const createInvoice = async (request) => {
   }
 
   dataInvoice.id_invoice = id_invoice;
-  // dataInvoice.tanggal_pelunasan = new Date();
+  dataInvoice.tanggal_pelunasan = new Date();
 
   //untuk keperluan seeding data
 
-  const startDate = new Date("2023-01-01").getTime();
-  const endDate = new Date("2023-12-31").getTime();
+  // const startDate = new Date("2023-01-01").getTime();
+  // const endDate = new Date("2023-12-31").getTime();
 
-  const randomTimestamp = Math.random() * (endDate - startDate) + startDate;
-  const randomDate = new Date(randomTimestamp);
+  // const randomTimestamp = Math.random() * (endDate - startDate) + startDate;
+  // const randomDate = new Date(randomTimestamp);
 
-  dataInvoice.tanggal_pelunasan = randomDate;
+  // dataInvoice.tanggal_pelunasan = randomDate;
 
   await prismaClient.booking.update({
     where: {

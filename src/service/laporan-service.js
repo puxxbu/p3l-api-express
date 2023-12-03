@@ -262,6 +262,8 @@ const getLaporanPendapatanBulanan = async (request) => {
     },
   });
 
+  // return result;
+
   // const resultDbk = await prismaClient.booking.findMany({
   //   select: {
   //     id_booking: true,
