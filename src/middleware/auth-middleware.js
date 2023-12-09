@@ -5,6 +5,7 @@ export const authMiddleware = async (req, res, next) => {
   if (!authHeader) return res.sendStatus(401);
   const token = authHeader.split(" ")[1];
   jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, async (err, decoded) => {
+    console.log(err + " " + "error");
     if (err) return res.sendStatus(403); //token is invalid
 
     const user = await prismaClient.akun.findFirst({
@@ -12,6 +13,8 @@ export const authMiddleware = async (req, res, next) => {
         username: decoded.username,
       },
     });
+
+    console.log(user.token + " " + token);
 
     if (user.token !== token) return res.sendStatus(403); //token is invalid
 

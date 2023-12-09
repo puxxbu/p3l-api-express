@@ -47,7 +47,8 @@ Accept: application/json
 GET http://localhost:3000/api/users/current
 Content-Type: application/json
 Accept: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImN1c3RvbWVyMiIsImlhdCI6MTY5ODY1NTIwNCwiZXhwIjoxNzAxMjQ3MjA0fQ.ejkVfII83RTyspKYO8wHYJyEA-f8xefzEjiuHO7-qUo
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImN1c3RvbWVyMiIsImlhdCI6MTcwMTYyMTU1MCwiZXhwIjoxNzA0MjEzNTUwfQ.ARfhMiiU26FBBSRjwPZM9XfwShUd2BD5ooa4L9EDt6Q
+
 ###
 
 GET http://localhost:3000/api/customer/current
@@ -269,10 +270,10 @@ Accept: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImN1c3RvbWVyMiIsImlhdCI6MTY5ODY1NTIwNCwiZXhwIjoxNzAxMjQ3MjA0fQ.ejkVfII83RTyspKYO8wHYJyEA-f8xefzEjiuHO7-qUo
 
 ### Tarif
-GET http://localhost:3000/api/customer/booking/G231121-411
+GET http://localhost:3000/api/customer/booking/P231128-611
 Content-Type: application/json
 Accept: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImN1c3RvbWVyMiIsImlhdCI6MTY5ODY1NTIwNCwiZXhwIjoxNzAxMjQ3MjA0fQ.ejkVfII83RTyspKYO8wHYJyEA-f8xefzEjiuHO7-qUo
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImN1c3RvbWVyMiIsImlhdCI6MTcwMTYyMTU1MCwiZXhwIjoxNzA0MjEzNTUwfQ.ARfhMiiU26FBBSRjwPZM9XfwShUd2BD5ooa4L9EDt6Q
 
 
 ### Tarif

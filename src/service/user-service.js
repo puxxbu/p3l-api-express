@@ -102,10 +102,34 @@ const login = async (request) => {
   const accessToken = jwt.sign(
     { username: loginRequest.username },
     process.env.ACCESS_TOKEN_SECRET,
-    { expiresIn: "30d" }
+    { expiresIn: "120d" }
   );
 
-  if (user.token !== null) {
+  //isToken expired
+  jwt.verify(
+    accessToken,
+    process.env.ACCESS_TOKEN_SECRET,
+    async (err, decoded) => {
+      if (err && err.name === "TokenExpiredError") {
+        console.log(err);
+        const updatedUser = await prismaClient.akun.update({
+          data: {
+            token: null,
+          },
+          where: {
+            username: user.username,
+          },
+          select: {
+            token: true,
+            role: true,
+          },
+        });
+        return updatedUser;
+      }
+    }
+  );
+
+  if (user.token !== null && user.token !== "") {
     return prismaClient.akun.findUnique({
       where: {
         username: user.username,
